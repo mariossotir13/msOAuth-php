@@ -10,17 +10,17 @@
  *
  * @author Marios
  */
-class Client extends User{
+class Client extends User {
+
     private $appTitle;
     private $redirectionUri;
     private $type;
     private $id;
-    
+
     function __construct() {
         parent::__construct();
     }
 
-    
     public function getAppTitle() {
         return $this->appTitle;
     }
@@ -52,7 +52,6 @@ class Client extends User{
     public function setId($id) {
         $this->id = $id;
     }
-
 
 }
 

@@ -6,14 +6,16 @@
  */
 
 /**
- * Description of Uri
+ * Description of AccessTokenResponse
  *
  * @author Marios
  */
-class Uri {
-
+class AccessTokenResponse extends Response{
+    private $accessToken;
+    private $refreshToken;
+    
     function __construct() {
-        
+        parent::__construct();
     }
 
 }

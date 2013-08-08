@@ -6,14 +6,18 @@
  */
 
 /**
- * Description of ResourceOwner
+ * Description of AuthorizationRequest
  *
  * @author Marios
  */
-class ResourceOwner extends User {
+class AuthorizationRequest extends Request {
+
+    private $clientId;
+    private $scope;
 
     function __construct() {
         parent::__construct();
+        $this->redirectionUri = $redirectionUri;
     }
 
 }

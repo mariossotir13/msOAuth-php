@@ -6,15 +6,14 @@
  */
 
 /**
- * Description of Uri
+ * Description of ResponseType
  *
  * @author Marios
  */
-class Uri {
+class ResponseType {
 
-    function __construct() {
-        
-    }
+    const CODE = 1;
+    const TOKEN = 2;
 
 }
 

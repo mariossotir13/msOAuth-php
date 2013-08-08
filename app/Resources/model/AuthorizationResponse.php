@@ -6,14 +6,17 @@
  */
 
 /**
- * Description of Uri
+ * Description of AuthorizationResponse
  *
  * @author Marios
  */
-class Uri {
+class AuthorizationResponse {
+
+    private $code;
+    private $state;
 
     function __construct() {
-        
+        $this->grant = $grant;
     }
 
 }

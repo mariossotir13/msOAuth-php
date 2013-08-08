@@ -11,14 +11,14 @@
  * @author Marios
  */
 class User {
+
     private $email;
     private $username;
-    
+
     function __construct() {
         
     }
 
-    
     public function getEmail() {
         return $this->email;
     }
@@ -35,7 +35,6 @@ class User {
         $this->username = $username;
     }
 
-  
 }
 
 ?>

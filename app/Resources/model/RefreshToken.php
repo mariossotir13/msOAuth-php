@@ -6,14 +6,14 @@
  */
 
 /**
- * Description of Uri
+ * Description of RefreshToken
  *
  * @author Marios
  */
-class Uri {
+class RefreshToken extends Token {
 
     function __construct() {
-        
+        parent::__construct();
     }
 
 }

@@ -11,8 +11,10 @@
  * @author Marios
  */
 class ClientType {
+
     const TYPE_CONFIDENTIAL = 1;
     const TYPE_PUBLIC = 2;
+
 }
 
 ?>

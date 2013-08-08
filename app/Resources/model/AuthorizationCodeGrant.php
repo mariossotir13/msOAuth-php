@@ -6,15 +6,14 @@
  */
 
 /**
- * Description of Uri
+ * Description of AuthorizationCodeGrant
  *
  * @author Marios
  */
-class Uri {
-
+class AuthorizationCodeGrant extends AuthorizationGrant{
     function __construct() {
-        
-    }
+        parent::__construct();
+        }
 
 }
 

@@ -6,11 +6,11 @@
  */
 
 /**
- * Description of Uri
+ * Description of Response
  *
  * @author Marios
  */
-class Uri {
+class Response {
 
     function __construct() {
         
