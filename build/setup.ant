@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="."
+         default="setup"
+         name="MsOAuth PHP Setup Script">
+    <description>
+        Sets up the environment for the main build script.
+    </description>
+    
+    <!--
+    ! Tell Ant where to find the Ant-Contrib tasks. 
+    !-->
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <pathelement location="${basedir}\lib\ant-contrib\ant-contrib-1.0b3.jar"/>
+        </classpath>
+    </taskdef>
+    
+    <!-- Load properties. -->
+    <property environment="env"/>
+    <property file="ftp.properties"/>
+    <property file="setup.properties"/>
+    
+    <!-- clean-up -->
+    <target name="clean-up"
+            description="Deletes all temporary files and folders.">
+        <delete dir="${dir.dist}"/>
+        <if>
+            <equals arg1="${symfony.cleanup}" arg2="true"/>
+            <then>
+                <delete dir="${symfony.install.dir}"/>
+            </then>
+        </if>        
+    </target>
+    
+    <!-- 
+    ! Sets up the environment for the main build script.
+    !
+    ! This target is responsible for the proper installation of Symfony. To this
+    ! end, a check is performed that Composer is installed. If that isn't the
+    ! case, then the process stops and the user is prompted to install Composer.
+    !
+    ! After a successful Composer installation has been established, the process
+    ! continues onto installing Symfony. The installation takes place in the
+    ! folder indicated by the property:
+    !
+    !       symfony.install.dir
+    !
+    ! This folder is probably pointing somewhere locally. If the user wishes to
+    ! transfer the installation of Symfony to a remote host, then she should set
+    ! the property:
+    !
+    !       symfony.install.upload
+    !
+    ! to "true". Furthermore, the FTP related properties should be set.
+    !-->
+    <target name="setup"
+            depends="-init-environment,
+                -composer-install,
+                -symfony-install"
+            description="Sets up the environment of the main build script.">
+        <echo message="The setup process has been completed."/>
+    </target>
+    
+    <!--
+    ! Uploads the Symfony installation to a remote host.
+    !
+    ! The process goes as follows:
+    !  1. The Symfony installation folder is zipped.
+    !  2. The ZIP file is uploaded to the remote host.
+    !
+    ! If shell access, for example SSH, to the host is available, then the ZIP
+    ! can be extracted, too. The extraction of the zipped file is the final step
+    ! in the upload process. After that the new Symfony version is installed on
+    ! your host.
+    !
+    ! If property "symfony.install.upload" is not "true", then no action is taken.
+    !-->
+    <target name="symfony-upload"
+            depends="-symfony-should-upload"
+            if="symfony.upload">
+        <zip basedir="${symfony.install.dir}"
+             destfile="${symfony.install.zip.dest}.zip"/>
+        <echo message="Uploading zipped file '${symfony.install.zip.dest}.zip' to the remote folder '${ftp.remotedir}'."/>
+        <ftp server="${ftp.server}"
+             userid="${ftp.userid}"
+             password="${ftp.password}"
+             port="${ftp.port}"
+             remotedir="${ftp.remotedir}">
+            <fileset file="${symfony.install.zip.dest}.zip"/>
+        </ftp>
+        <echo message="The file has been uploaded successfully!"/>
+        <echo message="Please, unzip it in order to complete the remote installation process."/>
+    </target>
+    
+    <!--
+    ! Installs Composer.
+    !-->
+    <target name="-composer-install"
+            depends="-composer-is-installed"
+            unless="composer.installed">
+        <echo message="Composer was not found in ${composer.dir}..."/>
+        <if>
+            <isset property="os.windows"/>
+            <then>
+                <mkdir dir="${composer.setup.dest}"/>
+                <get src="${composer.setup.url}"
+                     dest="${composer.setup.dest}"
+                     usetimestamp="true"
+                     verbose="true"/>
+                <echo message="The Composer-Setup file has been downloaded to: ${composer.setup.dest}"/>
+                <echo message="Please, use it in order to install Composer in your system."/>
+            </then>
+            <else>
+                <echo message="Please, visit ${composer.docs.intro.url} that contains instructions on how to install Composer on your system."/>
+            </else>
+        </if>
+        
+        <fail message="If Composer is indeed installed and this script falsely reported it missing, then, in order to prevent it from happening again, please update the value of the $${composer.dir.base} property in file: ${setup.properties.file.path}"/>
+    </target>
+    
+    <!--
+    ! Checks if Composer is successfully installed in this system.
+    !
+    ! If Composer is installed, then the "composer.installed" property is set
+    ! to "true". Otherwise, it is not set at all.
+    !-->
+    <target name="-composer-is-installed">
+        <echo message="Checking if Composer is installed..."/>
+        <available file="${composer.dir}"
+                   type="dir"
+                   property="composer.installed"/>
+        <if>
+            <isset property="composer.installed"/>
+            <then>
+                <echo message="Composer is installed."/>
+            </then>
+            <else>
+                <echo message="Composer is not installed."/>
+            </else>
+        </if>
+    </target>
+    
+    <!--
+    ! Prepares the environment of the setup process.
+    !
+    ! This target sets the property "os.windows" if the system is of the Windows
+    ! family. If that isn't the case, then this property is simply not set. This
+    ! is very useful for other targets that want to know if this system is a
+    ! Windows machine.
+    !-->
+    <target name="-init-environment">
+        <echo message="Initializing the environment..."/>
+        <condition property="os.windows">
+            <os family="windows"/>
+        </condition>
+        <mkdir dir="${symfony.install.zip.dest}"/>
+        <echo message="Environment has been initialized successfully!"/>
+    </target>
+    
+    <!-- -symfony-install -->
+    <target name="-symfony-install"
+            depends="-symfony-is-installed"
+            unless="symfony.installed">
+        <echo message="Installing Symfony..."/>
+        <exec executable="cmd"
+              dir="${symfony.install.dir.base}">
+            <arg value="/c"/>
+            <arg line="${composer.cmd}"/>
+            <arg line="${symfony.install.cmd}"/>
+        </exec>
+        <echo message="Symfony has been installed successfully!"/>
+        <echo message="You can find it at: ${symfony.install.dir}"/>
+    </target>
+    
+    <!--
+    ! Checks if Symfony is successfully installed in this system.
+    !
+    ! If Symfony is installed, then the "symfony.installed" property is set to
+    ! "true". Otherwise, it is not set at all.
+    !-->
+    <target name="-symfony-is-installed">
+        <echo message="Checking if Symfony is installed..."/>
+        <available file="${symfony.install.dir}"
+                   type="dir"
+                   property="symfony.installed"/>
+        <if>
+            <isset property="symfony.installed"/>
+            <then>
+                <echo message="Symfony is installed."/>
+            </then>
+            <else>
+                <echo message="Symfony is not installed."/>
+            </else>
+        </if>
+    </target>
+    
+    <!--
+    ! Checks if the Symfony installation should be uploaded to a remote host.
+    !
+    ! This target sets the property "symfony.upload" if Symfony should be uploaded.
+    !
+    ! The user should can control the upload happening or not by setting the 
+    ! property:
+    !
+    !       "symfony.install.upload"
+    !
+    ! A value of "true" shows that an upload should take place. Any other value,
+    ! for example "false", shows otherwise.
+    !
+    ! @see #symfony-upload
+    !-->
+    <target name="-symfony-should-upload">
+        <condition property="symfony.upload">
+            <istrue value="${symfony.install.upload}"/>
+        </condition>
+    </target>
+</project>

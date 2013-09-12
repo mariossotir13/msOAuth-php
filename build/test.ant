@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="MsOAuth-PHP Build Test">
+    <description>
+        Tests the build script.
+    </description>
+    
+    <!-- Import the build script under test. -->
+    <import file="build.ant"/>
+    
+    <!-- Load properties. -->
+    <property file="test.properties"/>
+
+    <!-- Tests the target "build". -->
+    <target name="test-build"
+            depends="-set-up,
+                build,
+                -assert-exists-dir-dist,
+                -assert-exists-zip,
+                -tear-down">
+        <fail message="No distribution folder has been created."
+              unless="assertion.exists.dir.dist"/>
+        <fail message="No zip file has been created."
+              unless="assertion.exists.zip"/>
+    </target>
+   
+    <!-- -assert-exists-dir-dist -->
+    <target name="-assert-exists-dir-dist">
+        <condition property="assertion.exists.dir.dist">
+            <available file="${dir.dist}"
+                       type="dir"/>
+        </condition>
+    </target>
+   
+    <!-- -assert-exists-zip -->
+    <target name="-assert-exists-zip">
+        <condition property="assertion.exists.zip">
+            <available file="${zip.destfile}"/>
+        </condition>
+    </target>
+   
+    <!--
+    ! Tests that a property has been set.
+    !
+    ! @param property The name of the property to be checked.
+    !-->
+    <target name="-isset-property">
+        <fail message="Property has not been set: ${property}."
+              unless="property"/>
+    </target>
+    
+    <!--
+    ! Prepares the testing enviroment.
+    !-->
+    <target name="-set-up">
+        <touch file="${symfony.bundle.dir.src}/${test.bundle.src.file.name}"
+               mkdirs="true"/>
+    </target>
+    
+    <!--
+    ! Cleans up after all the tests have been executed.
+    !-->
+    <target name="-tear-down">
+        <delete dir="${dir.project}"/>
+        <delete dir="${dir.dist}"/>
+    </target>
+</project>
