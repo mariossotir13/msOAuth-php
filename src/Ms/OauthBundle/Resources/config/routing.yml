@@ -1,0 +1,7 @@
+ms_oauth_homepage:
+    pattern:  /hello/{name}
+    defaults: { _controller: MsOauthBundle:Default:index }
+
+ms_oauth_clientregistration:
+    pattern: /registration/client
+    defaults: { _controller: MsOauthBundle:Registration:client }
