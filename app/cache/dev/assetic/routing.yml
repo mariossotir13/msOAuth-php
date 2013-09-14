@@ -1,5 +1,0 @@
-_assetic:
-    resource: .
-    type: assetic
-_app:
-    resource: 'D:/Public Library/Marios/thesis/construction/source/php/msOAuth-php/app/config/routing_dev.yml'
