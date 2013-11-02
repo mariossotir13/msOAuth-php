@@ -1,0 +1,23 @@
+## YAML Template.
+---
+Ms\OauthBundle\Entity\User:
+    type: entity
+    table: users
+    id:
+        id:
+            type: string
+            length: 36
+    fields:
+        email:
+            type: string
+            length: 255
+        password:
+            type: text
+    inheritanceType: SINGLE_TABLE
+    discriminatorColumn:
+        name: discriminator
+        type: smallint
+    discriminatorMap:
+        1: User
+        2: Client
+    

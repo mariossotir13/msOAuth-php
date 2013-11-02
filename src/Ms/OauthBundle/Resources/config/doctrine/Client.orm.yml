@@ -1,0 +1,12 @@
+## YAML Template.
+---
+Ms\OauthBundle\Entity\Client:
+    type: entity
+    fields:
+        appTitle:
+            type: string
+            length: 120
+        redirectionUri:
+            type: text
+        clientType:
+            type: smallint
