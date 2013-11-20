@@ -5,3 +5,7 @@ ms_oauth_homepage:
 ms_oauth_clientregistration:
     pattern: /registration/client
     defaults: { _controller: MsOauthBundle:Registration:client }
+    
+ms_oauth_clientdetails:
+    pattern: /client/{id}
+    defaults: { _controller: MsOauthBundle:Registration:clientDetails }

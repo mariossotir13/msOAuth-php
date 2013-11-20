@@ -6,7 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Ms\OauthBundle\Entity\Client;
 use Ms\OauthBundle\Form\Type\ClientType;
 use Symfony\Component\HttpFoundation\Request;
-use Ms\OauthBundle\Component\Authentication\MsOauthAuthenticationService;
+use Ms\OauthBundle\Component\Authentication\AuthenticationServiceInterface;
 
 /**
  * 
@@ -23,16 +23,22 @@ class RegistrationController extends Controller {
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            // TODO: Generate user password.
-            /* @var $authService MsOauthAuthenticationService */
+            /* @var $authService AuthenticationServiceInterface */
             $authService = $this->get('ms_oauthbundle_authentication');
-            $id = $authService->createClientId($client);
+            $id = trim($authService->createClientId($client), '=');
+            $passwordSalt = $authService->createPasswordSalt();
+            $password = $authService->createPassword($passwordSalt);
             
             $client->setId($id)
-                ->setPassword('1');
+                ->setSalt($passwordSalt)
+                ->setPassword($password);
             $em = $this->getDoctrine()->getEntityManager();
             $em->persist($client);
             $em->flush();
+            
+            return $this->redirect(
+                "/client/{$id}"
+            );
         }
 
         return $this->render(
@@ -40,5 +46,20 @@ class RegistrationController extends Controller {
             array('form' => $form->createView())
         );
     }
-
+    
+    /**
+     * 
+     * @param string $id Το Αναγνωριστικό Πελάτη.
+     */
+    public function clientDetailsAction($id) {
+        $repository = $this->getDoctrine()->getRepository('Ms\OauthBundle\Entity\Client');
+        $client = $repository->find($id);
+        
+        return $this->render(
+            'MsOauthBundle:Registration:client_details.html.twig',
+            array(
+                'client' => $client
+            )
+        );
+    }
 }

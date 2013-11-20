@@ -6,7 +6,7 @@ Ms\OauthBundle\Entity\User:
     id:
         id:
             type: string
-            length: 36
+            length: 43
     fields:
         email:
             type: string
