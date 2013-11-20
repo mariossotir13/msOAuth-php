@@ -17,4 +17,19 @@ interface AuthenticationServiceInterface {
      * @return string The id of the `$client`.
      */
     public function createClientId(Client $client); 
+    
+    /**
+     * Δημιουργεί το αλάτι του κωδικού του χρήστη.
+     * 
+     * @return string Το αλάτι του κωδικού του χρήστη.
+     */
+    public function createPasswordSalt();
+    
+    /**
+     * Δημιουργεί τον κωδικό του χρήστη.
+     * 
+     * @param string $salt To αλάτι του κωδικού του χρήστη.
+     * @return string Τον κωδικό του χρήστη.
+     */
+    public function createPassword($salt);
 }
