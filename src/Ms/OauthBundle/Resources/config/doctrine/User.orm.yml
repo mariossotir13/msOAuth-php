@@ -13,6 +13,8 @@ Ms\OauthBundle\Entity\User:
             length: 255
         password:
             type: text
+        salt:
+            type: text
     inheritanceType: SINGLE_TABLE
     discriminatorColumn:
         name: discriminator

@@ -34,6 +34,13 @@ class User {
     protected $password;
 
     /**
+     * Το αλάτι του password του χρήστη.
+     * 
+     * @var string
+     */
+    protected $salt;
+
+    /**
      * Set id
      *
      * @param string $id
@@ -94,6 +101,27 @@ class User {
      */
     public function getPassword() {
         return $this->password;
+    }
+
+    /**
+     * Set salt
+     *
+     * @param string $salt
+     * @return User
+     */
+    public function setSalt($salt) {
+        $this->salt = $salt;
+
+        return $this;
+    }
+
+    /**
+     * Get salt
+     *
+     * @return string 
+     */
+    public function getSalt() {
+        return $this->salt;
     }
 
 }
