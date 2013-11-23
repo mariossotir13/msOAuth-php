@@ -23,6 +23,6 @@ class MsOauthClientIdGenerator implements ClientIdGeneratorInterface {
                 . $client->getEmail();
         $id = hash('sha256', $information, true);
 
-        return base64_encode($id);
+        return trim(base64_encode($id), '=');
     }
 }
