@@ -25,19 +25,22 @@ class RegistrationController extends Controller {
         if ($form->isValid()) {
             /* @var $authService AuthenticationServiceInterface */
             $authService = $this->get('ms_oauthbundle_authentication');
-            $id = trim($authService->createClientId($client), '=');
+            $id = $authService->createClientId($client);
             $passwordSalt = $authService->createPasswordSalt();
             $password = $authService->createPassword($passwordSalt);
             
             $client->setId($id)
                 ->setSalt($passwordSalt)
                 ->setPassword($password);
-            $em = $this->getDoctrine()->getEntityManager();
+            $em = $this->getDoctrine()->getManager();
             $em->persist($client);
             $em->flush();
             
             return $this->redirect(
-                "/client/{$id}"
+                $this->generateUrl(
+                    'ms_oauth_clientdetails', 
+                    array('id' => urlencode($id))
+                )
             );
         }
 
@@ -53,7 +56,10 @@ class RegistrationController extends Controller {
      */
     public function clientDetailsAction($id) {
         $repository = $this->getDoctrine()->getRepository('Ms\OauthBundle\Entity\Client');
-        $client = $repository->find($id);
+        $client = $repository->find(urldecode($id));
+        if ($client === null) {
+            throw $this->createNotFoundException("could not find client: {$id}");
+        }
         
         return $this->render(
             'MsOauthBundle:Registration:client_details.html.twig',
