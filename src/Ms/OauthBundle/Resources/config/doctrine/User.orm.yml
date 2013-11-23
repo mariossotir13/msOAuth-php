@@ -22,4 +22,7 @@ Ms\OauthBundle\Entity\User:
     discriminatorMap:
         1: User
         2: Client
+    indexes:
+        app_title_INDEX:
+            columns: [appTitle]
     
