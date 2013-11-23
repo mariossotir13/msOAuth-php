@@ -9,3 +9,7 @@ ms_oauth_clientregistration:
 ms_oauth_clientdetails:
     pattern: /client/{id}
     defaults: { _controller: MsOauthBundle:Registration:clientDetails }
+    
+ms_oauth_benchmark_auth:
+    pattern: /benchmark/authentication
+    defaults: { _controller: MsOauthBundle:Benchmark:authentication }
