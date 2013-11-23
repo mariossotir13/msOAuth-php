@@ -3,6 +3,7 @@
 namespace Ms\OauthBundle\Component\Authentication;
 
 use Symfony\Component\Security\Core\Util\SecureRandom;
+use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 use Symfony\Component\Security\Core\Encoder\Pbkdf2PasswordEncoder;
 
 /**
@@ -20,7 +21,7 @@ class MsOauthPasswordGenerator implements PasswordGeneratorInterface {
     
     /**
      *
-     * @var Pbkdf2PasswordEncoder 
+     * @var PasswordEncoderInterface 
      */
     private $encoder;
     
@@ -45,7 +46,7 @@ class MsOauthPasswordGenerator implements PasswordGeneratorInterface {
      * @inheritdoc
      */
     public function createSalt() {
-        return $this->rng->nextBytes(10);
+        return base64_encode($this->rng->nextBytes(10));
     }
 
 }
