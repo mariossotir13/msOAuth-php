@@ -2,6 +2,8 @@
 
 namespace Ms\OauthBundle\Component\Authentication;
 
+use Ms\OauthBundle\Entity\Client;
+
 /**
  * Δημιουργεί Αναγνωριστικά Πελατών.
  */
@@ -15,5 +17,5 @@ interface ClientIdGeneratorInterface {
      * @return string Το αναγνωριστικό για τον πελάτη `$client`.
      * @throws \InvalidArgumentException Εάν η `$client` είναι null.
      */
-    public function generate($client);
+    public function generate(Client $client);
 }

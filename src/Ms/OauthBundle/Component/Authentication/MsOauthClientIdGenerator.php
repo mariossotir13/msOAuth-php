@@ -12,7 +12,7 @@ class MsOauthClientIdGenerator implements ClientIdGeneratorInterface {
     /**
      * @inheritdoc
      */
-    public function generate($client) {
+    public function generate(Client $client) {
         if ($client === null) {
             throw new \InvalidArgumentException("No client was provided.");
         }
