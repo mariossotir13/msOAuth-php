@@ -1,0 +1,11 @@
+{# Authorization Request Acceptance Page #}
+{% extends "MsOauthBundle:Authorization:base.html.twig" %}
+
+{% block body %}
+<p>Μία εφαρμογή ζητάει πρόσβαση στις παρακάτω πληρφορίες του λογαριασμού σας:</p>
+<ul>
+    {% for scope in scopes %}
+        <li>{{ scope }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}
