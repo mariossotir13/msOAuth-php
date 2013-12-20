@@ -36,7 +36,7 @@ class MsOauthPasswordGenerator implements PasswordGeneratorInterface {
     /**
      * @inheritdoc
      */
-    public function createPassword($salt) {
+    public function hashPassword($salt) {
         $random = $this->rng->nextBytes(20);
         
         return $this->encoder->encodePassword($random, $salt);

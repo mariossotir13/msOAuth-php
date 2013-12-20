@@ -26,10 +26,10 @@ interface AuthenticationServiceInterface {
     public function createPasswordSalt();
     
     /**
-     * Δημιουργεί τον κωδικό του χρήστη.
+     * Δημιουργεί το hash του κωδικού του χρήστη.
      * 
      * @param string $salt To αλάτι του κωδικού του χρήστη.
      * @return string Τον κωδικό του χρήστη.
      */
-    public function createPassword($salt);
+    public function hashPassword($salt);
 }

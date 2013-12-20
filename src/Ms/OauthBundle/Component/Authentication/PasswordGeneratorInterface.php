@@ -25,6 +25,6 @@ interface PasswordGeneratorInterface {
      * 
      * @return string. Τον κωδικό του χρήστη.
      */
-    public function createPassword($salt);
+    public function hashPassword($salt);
     
 }

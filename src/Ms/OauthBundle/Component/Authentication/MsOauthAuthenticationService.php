@@ -51,8 +51,8 @@ class MsOauthAuthenticationService implements AuthenticationServiceInterface {
     /**
      * @inheritdoc
      */
-    public function createPassword($salt) {
-        return $this->passGenerator->createPassword($salt);
+    public function hashPassword($salt) {
+        return $this->passGenerator->hashPassword($salt);
     }
 
     /**

@@ -27,7 +27,7 @@ class RegistrationController extends Controller {
             $authService = $this->get('ms_oauthbundle_authentication');
             $id = $authService->createClientId($client);
             $passwordSalt = $authService->createPasswordSalt();
-            $password = $authService->createPassword($passwordSalt);
+            $password = $authService->hashPassword($passwordSalt);
             
             $client->setId($id)
                 ->setSalt($passwordSalt)
