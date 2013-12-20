@@ -13,3 +13,11 @@ ms_oauth_clientdetails:
 ms_oauth_benchmark_auth:
     pattern: /benchmark/authentication
     defaults: { _controller: MsOauthBundle:Benchmark:authentication }
+    
+ms_oauth_authorization:
+    pattern: /authorization
+    defaults: { _controller: MsOauthBundle:Authorization:authorizationCode }
+    
+ms_oauth_client_demo1:
+  pattern: /client-app/demo1
+  defaults: { _controller: MsOauthBundle:Client:demo1 }
