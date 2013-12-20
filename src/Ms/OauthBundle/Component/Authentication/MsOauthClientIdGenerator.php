@@ -2,6 +2,8 @@
 
 namespace Ms\OauthBundle\Component\Authentication;
 
+use Ms\OauthBundle\Entity\Client;
+
 /**
  * Δημιουργεί Αναγνωριστικά Πελατών.
  *
