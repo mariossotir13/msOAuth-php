@@ -18,13 +18,22 @@ interface PasswordGeneratorInterface {
      * 
      * @return string. To αλάτι του κωδικού του χρήστη.
      */
-    public function createSalt(); 
+    public function createSalt();
     
     /**
-     * Δημιουργεί τον κωδικό του χρήστη.
+     * Κωδικοποιεί έναν κωδικό πρόσβασης με ένα *αλάτι* χρησιμοποιώντας μία
+     * συνάρτηση κατακερματισμού.
      * 
-     * @return string. Τον κωδικό του χρήστη.
+     * @return string Την τιμή της συνάρτησης κατακερματισμου για τα δεδομένα
+     * `$password` και `$salt`.
      */
-    public function hashPassword($salt);
+    public function hashPassword($password, $salt);
+    
+    /**
+     * Δημιουργεί τον κωδικό πρόσβασης του χρήστη.
+     * 
+     * @return string Τον κωδικό πρόσβασης του χρήστη.
+     */
+    public function createPassword();
     
 }

@@ -15,7 +15,7 @@ class RegistrationController extends Controller {
 
     /**
      * 
-     * @return type
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function clientAction(Request $request) {
         $client = new Client();
@@ -27,11 +27,12 @@ class RegistrationController extends Controller {
             $authService = $this->get('ms_oauthbundle_authentication');
             $id = $authService->createClientId($client);
             $passwordSalt = $authService->createPasswordSalt();
-            $password = $authService->hashPassword($passwordSalt);
+            $password = $authService->createPassword();
+            $hashedPassword = $authService->hashPassword($password, $passwordSalt);
             
             $client->setId($id)
                 ->setSalt($passwordSalt)
-                ->setPassword($password);
+                ->setPassword($hashedPassword);
             $em = $this->getDoctrine()->getManager();
             $em->persist($client);
             $em->flush();
@@ -53,6 +54,7 @@ class RegistrationController extends Controller {
     /**
      * 
      * @param string $id Το Αναγνωριστικό Πελάτη.
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function clientDetailsAction($id) {
         $repository = $this->getDoctrine()->getRepository('Ms\OauthBundle\Entity\Client');
