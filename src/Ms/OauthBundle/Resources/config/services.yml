@@ -11,6 +11,11 @@ services:
         class: Ms\OauthBundle\Component\Authentication\MsOauthClientIdGenerator
     ms_oauthbundle_passwordGenerator:
         class: Ms\OauthBundle\Component\Authentication\MsOauthPasswordGenerator
+    ms_oauthbundle_randomStringGenerator:
+        class: Symfony\Component\Security\Core\Util\SecureRandom
     ms_oauthbundle_authentication: 
         class: Ms\OauthBundle\Component\Authentication\MsOauthAuthenticationService
         arguments: [@ms_oauthbundle_clientIdGenerator, @ms_oauthbundle_passwordGenerator, @ms_oauthbundle_cipherGenerator]
+    ms_oauthbundle_authorization:
+        class: Ms\OauthBundle\Component\Authorization\AuthorizationService
+        arguments: [@ms_oauthbundle_randomStringGenerator]
