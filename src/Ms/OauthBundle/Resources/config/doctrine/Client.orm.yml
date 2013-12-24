@@ -10,3 +10,7 @@ Ms\OauthBundle\Entity\Client:
             type: text
         clientType:
             type: smallint
+    oneToMany:
+        authorizationCodeProfiles:
+            targetEntity: AuthorizationCodeProfile
+            mappedBy: client
