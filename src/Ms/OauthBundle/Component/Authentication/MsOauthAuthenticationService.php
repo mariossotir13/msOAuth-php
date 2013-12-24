@@ -5,6 +5,7 @@ namespace Ms\OauthBundle\Component\Authentication;
 use Ms\OauthBundle\Entity\Client;
 use Ms\OauthBundle\Component\Authentication\PasswordGeneratorInterface;
 use Ms\OauthBundle\Component\Authentication\ClientIdGeneratorInterface;
+use Ms\OauthBundle\Component\Authentication\CipherGeneratorInterace;
 
 /**
  * Description of MsOauthAuthenticationService
@@ -14,31 +15,43 @@ use Ms\OauthBundle\Component\Authentication\ClientIdGeneratorInterface;
 class MsOauthAuthenticationService implements AuthenticationServiceInterface {
 
     /**
+     *
+     * @var CipherGeneratorInterace
+     */
+    protected $cipherGen;
+
+    /**
      * @var ClientIdGeneratorInterface
      */
-    private $clientIdGen;
+    protected $clientIdGen;
 
     /**
      * @var PasswordGeneratorInterface
      */
-    private $passGenerator;
+    protected $passGenerator;
 
     /**
      * 
      * @param ClientIdGeneratorInterface $clientIdGen
      * @param PasswordGeneratorInterface $passGen
-     * @throws \InvalidArgumentException if `$passGen` is null.
+     * @param CipherGeneratorInterace $cipherGen
+     * @throws \InvalidArgumentException εάν οποιοδήποτε όρισμα είναι `null`.
      */
     function __construct(ClientIdGeneratorInterface $clientIdGen,
-            PasswordGeneratorInterface $passGen) {
+            PasswordGeneratorInterface $passGen,
+            CipherGeneratorInterace $cipherGen) {
         if ($clientIdGen === null) {
             throw new \InvalidArgumentException('No client ID generator was provided.');
         }
         if ($passGen === null) {
             throw new \InvalidArgumentException('No password generator was provided.');
         }
+        if ($cipherGen === null) {
+            throw new \InvalidArgumentException('No cipher generator was provided.');
+        }
         $this->clientIdGen = $clientIdGen;
         $this->passGenerator = $passGen;
+        $this->cipherGen = $cipherGen;
     }
 
     /**
@@ -60,6 +73,20 @@ class MsOauthAuthenticationService implements AuthenticationServiceInterface {
      */
     public function createPasswordSalt() {
         return $this->passGenerator->createSalt();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function decryptPassword($password, $key) {
+        return $this->cipherGen->decrypt($password, $key);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function encryptPassword($password, $key) {
+        return $this->cipherGen->encrypt($password, $key);
     }
 
     /**

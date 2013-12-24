@@ -37,6 +37,24 @@ interface AuthenticationServiceInterface {
     public function createPasswordSalt();
     
     /**
+     * Αποκρυπτογραφεί ένα Μυστικό Πελάτη.
+     * 
+     * @param string $password Το Μυστικό Πελάτη το οποίο πρόκειται να αποκρυπτογραφηθεί.
+     * @param string $key Το κλειδί αποκρυπτογράφησης.
+     * @return string Το αποκρυπτογραφημένο Μυστικό Πελάτη.
+     */
+    public function decryptPassword($password, $key);
+    
+    /**
+     * Κρυπτογραφεί ένα Μυστικό Πελάτη.
+     * 
+     * @param string $password Το Μυστικό Πελάτη το οποίο πρόκειται να κρυπτογραφηθεί.
+     * @param string $key Το κλειδί κρυπτογράφησης.
+     * @return string Το κρυπτογραφημένο Μυστικό Πελάτη.
+     */
+    public function encryptPassword($password, $key);
+    
+    /**
      * Κατακερματίζει ένα Μυστικό Πελάτη χρησιμοποιώντας ένα κρυπτογραφικό *αλάτι*.
      * 
      * @param string $password Το Μυστικό Πελάτη.
