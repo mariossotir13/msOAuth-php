@@ -20,7 +20,7 @@ class AuthorizationErrorResponse {
     
     /**
      *
-     * @var AuthorizationError
+     * @var string
      */
     private $error = '';
     
@@ -98,11 +98,17 @@ class AuthorizationErrorResponse {
     
     /**
      * 
-     * @param AuthorizationError $error
+     * @param string $error
+     * @return void
+     * @throws \InvalidArgumentException εάν το όρισμα `$error` είτε είναι `null`
+     * είτε έχει τιμή η οποία δεν έχει δηλωθεί στην κλάση `AuthorizationError`.
      */
-    public function setError(AuthorizationError $error) {
+    public function setError($error) {
         if ($error === null) {
             throw new \InvalidArgumentException('No error was specified.');
+        }
+        if (!in_array($error, AuthorizationError::getValues())) {
+            throw new \InvalidArgumentException('Invalid error: ' . $error);
         }
         $this->error = $error;
     }
@@ -110,7 +116,8 @@ class AuthorizationErrorResponse {
     /**
      * 
      * @param string $errorDescription
-     * @throws \InvalidArgumentException
+     * @throws \InvalidArgumentException εάν το όρισμα `$errorDescription` είναι
+     * `null`.
      */
     public function setErrorDescription($errorDescription) {
         if ($errorDescription === null) {
@@ -119,6 +126,11 @@ class AuthorizationErrorResponse {
         $this->errorDescription = $errorDescription;
     }
     
+    /**
+     * 
+     * @param string $errorUri
+     * @throws \InvalidArgumentException εάν το όρισμα `$errorUri` είναι `null`.
+     */
     public function setErrorUri($errorUri) {
         if ($errorUri === null) {
             throw new \InvalidArgumentException('No error URI was specified.');
@@ -129,7 +141,8 @@ class AuthorizationErrorResponse {
     /**
      * 
      * @param boolean $redirected
-     * @throws \InvalidArgumentException
+     * @throws \InvalidArgumentException εάν το όρισμα `$errorUri` δεν είναι τύπου
+     * `boolean`.
      */
     public function setRedirected($redirected) {
         if (!is_bool($redirected)) {
@@ -141,7 +154,7 @@ class AuthorizationErrorResponse {
     /**
      * 
      * @param string $state
-     * @throws \InvalidArgumentException
+     * @throws \InvalidArgumentException εάν το όρισμα `$state` είναι `null`.
      */
     public function setState($state) {
         if ($state === null) {
@@ -155,11 +168,11 @@ class AuthorizationErrorResponse {
      */
     public function toUri() {
         $uri = '';
-        $uri .= $this->error ? '&' . static::$ERROR . '=' . $this->error : '';
+        $uri .= $this->error ? static::$ERROR . '=' . $this->error : '';
         $uri .= $this->errorDescription ? '&' . static::$ERROR_DESCRIPTION . '=' . $this->errorDescription : '';
         $uri .= $this->errorUri ? '&' . static::$ERROR_URI . '=' . $this->errorUri : '';
         $uri .= $this->state ? '&' . static::$STATE . '=' . $this->state : '';
         
-        return urlencode($uri);
+        return $uri;
     }
 }
