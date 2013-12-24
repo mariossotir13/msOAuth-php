@@ -11,3 +11,5 @@ Ms\OauthBundle\Entity\AuthorizationCodeScope:
         title:
             type: string
             length: 64
+        description:
+            type: text

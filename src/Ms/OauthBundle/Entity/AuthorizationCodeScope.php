@@ -20,6 +20,11 @@ class AuthorizationCodeScope {
     const FULL = 'full';
 
     /**
+     * @var string
+     */
+    private $description;
+
+    /**
      * @var int
      */
     private $id;
@@ -41,6 +46,15 @@ class AuthorizationCodeScope {
     }
 
     /**
+     * Get description
+     *
+     * @return string 
+     */
+    public function getDescription() {
+        return $this->description;
+    }
+
+    /**
      * Get id
      *
      * @return int 
@@ -59,6 +73,18 @@ class AuthorizationCodeScope {
     }
 
     /**
+     * Set description
+     *
+     * @param string $description
+     * @return AuthorizationCodeScope
+     */
+    public function setDescription($description) {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
      * Set title
      *
      * @param string $title
@@ -69,4 +95,5 @@ class AuthorizationCodeScope {
 
         return $this;
     }
+
 }
