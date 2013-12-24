@@ -21,12 +21,12 @@ class AuthorizationCodeScope {
     
     /**
      * 
-     * @return array
+     * @return string[]
      */
-    public static function getScopes() {
+    public static function getValues() {
         return array(
-            BASIC,
-            FULL
+            static::BASIC,
+            static::FULL
         );
     }
 }

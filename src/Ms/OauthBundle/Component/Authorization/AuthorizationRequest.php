@@ -101,7 +101,7 @@ class AuthorizationRequest {
         if ($scope === null) {
             throw new \InvalidArgumentException('No scope was specified.');
         }
-        if (!in_array($scope, AuthorizationCodeScope::getScopes())) {
+        if (!in_array($scope, AuthorizationCodeScope::getValues())) {
             throw new \InvalidArgumentException('Invalid scope: ' . $scope);
         }
         if (!in_array($scope, $this->scopes)) {
