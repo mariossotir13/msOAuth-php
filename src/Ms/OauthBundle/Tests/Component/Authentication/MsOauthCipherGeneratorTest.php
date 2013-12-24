@@ -45,9 +45,15 @@ class MsOauthCipherGeneratorTest extends \PHPUnit_Framework_TestCase {
         $ciphertext = $this->generator->encrypt(static::$PLAINTEXT, static::$KEY);
         $this->assertNotEquals(static::$PLAINTEXT, $ciphertext);
         $this->assertNotEquals(static::$KEY, $ciphertext);
+        
+        $base64Charset = 'A-Za-z0-9\+/=';
         $this->assertEquals(
             1,
-            preg_match('#[A-Za-z0-9\+/=]+#', $ciphertext)
+            preg_match('#[' . $base64Charset . ']+#', $ciphertext)
+        );
+        $this->assertEquals(
+            0,
+            preg_match('#[^' . $base64Charset . ']+#', $ciphertext)
         );
     }
     

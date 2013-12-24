@@ -5,10 +5,12 @@ services:
 #    ms_oauth.example:
 #        class: %ms_oauth.example.class%
 #        arguments: [@service_id, "plain_value", %parameter%]
+    ms_oauthbundle_cipherGenerator:
+        class: Ms\OauthBundle\Component\Authentication\MsOauthCipherGenerator
     ms_oauthbundle_clientIdGenerator:
         class: Ms\OauthBundle\Component\Authentication\MsOauthClientIdGenerator
     ms_oauthbundle_passwordGenerator:
         class: Ms\OauthBundle\Component\Authentication\MsOauthPasswordGenerator
     ms_oauthbundle_authentication: 
         class: Ms\OauthBundle\Component\Authentication\MsOauthAuthenticationService
-        arguments: [@ms_oauthbundle_clientIdGenerator, @ms_oauthbundle_passwordGenerator]
+        arguments: [@ms_oauthbundle_clientIdGenerator, @ms_oauthbundle_passwordGenerator, @ms_oauthbundle_cipherGenerator]
