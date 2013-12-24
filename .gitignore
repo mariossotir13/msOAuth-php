@@ -7,3 +7,4 @@
 /.travis.yml
 /app/logs
 /web/bundles/acmedemo
+/app/config/parameters.yml
