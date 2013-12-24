@@ -12,6 +12,11 @@ use Ms\OauthBundle\Entity\AuthorizationCodeScope;
  */
 class AuthorizationRequest {
     
+    /**
+     * @var string
+     */
+    const QUERY_PARAM = 'authz_rq';
+    
     /**#@+
      *
      * @var string
@@ -77,6 +82,29 @@ class AuthorizationRequest {
         $authorizationRequest->setState($request->query->get(static::$STATE));
         
         return $authorizationRequest;
+    }
+    
+    /**
+     * Δημιουργεί ένα νέο στιγμιότυπο της κλάσης AuthorizationRequest αντλώντας
+     * δεδομένα από ένα URI.
+     * 
+     * @param string $uri
+     * @return AuthorizationRequest
+     * @throws \InvalidArgumentException εάν το όρισμα `$uri` είναι `null`.
+     */
+    public static function fromUri($uri) {
+        if ($uri === null) {
+            throw new \InvalidArgumentException('No uri was provided.');
+        }
+        
+        $request = new AuthorizationRequest(static::$SERVER_URI);
+        $request->setClientId(static::extractParameterFromUri($uri, static::$CLIENT_ID));
+        $request->setRedirectionUri(static::extractParameterFromUri($uri, static::$REDIRECTION_URI));
+        $request->setResponseType(static::extractParameterFromUri($uri, static::$RESPONSE_TYPE));
+        $request->setScopes(static::extractParameterFromUri($uri, static::$SCOPE));
+        $request->setState(static::extractParameterFromUri($uri, static::$STATE));
+        
+        return $request;
     }
     
     /**
@@ -246,7 +274,26 @@ class AuthorizationRequest {
         $uri .= $this->state ? '&' . static::$STATE . '=' . $this->state : '';
         $uri .= $this->scopes ? '&' . static::$SCOPE . '=' . $this->formatScopes() : '';
         
-        return urlencode($uri);
+        return $uri;
+    }
+    
+    /**
+     * 
+     * @param string $uri
+     * @param string $paramName
+     * @return string
+     * @throws \InvalidArgumentException εάν το `$uri` δεν περιέχει την παράμετρο
+     * `$paramName`.
+     */
+    private static function extractParameterFromUri($uri, $paramName) {
+        $pattern = '#' . $paramName . '=([^&]+)#';
+        $matches = array();
+        $matched = preg_match($pattern, $uri, $matches);
+        if ($matched !== 1) {
+            throw new \InvalidArgumentException('Missing parameter "' . $paramName . '" from URI: '. $uri);
+        }
+        
+        return $matches[1];
     }
     
     /**
