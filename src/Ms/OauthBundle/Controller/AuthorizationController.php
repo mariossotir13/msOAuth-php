@@ -14,6 +14,11 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AuthorizationController extends Controller {
     
+    /**
+     * 
+     * @param Request $request
+     * @return Response
+     */
     public function authorizationCodeAction(Request $request) {
         
         return new Response('hello');
