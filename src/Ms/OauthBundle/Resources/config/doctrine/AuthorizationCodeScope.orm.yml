@@ -1,0 +1,13 @@
+## YAML Template.
+---
+Ms\OauthBundle\Entity\AuthorizationCodeScope:
+    type: entity
+    table: authorization_code_scopes
+    id:
+        id:
+            type: smallint
+            generator: { strategy: AUTO }
+    fields:
+        title:
+            type: string
+            length: 64
