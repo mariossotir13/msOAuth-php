@@ -1,0 +1,28 @@
+## YAML Template.
+---
+Ms\OauthBundle\Entity\AuthorizationCodeProfile:
+    type: entity
+    table: authorization_code_profiles
+    id:
+        id:
+            type: integer
+            generator: { strategy: AUTO }
+    fields:
+        authorizationCode:
+            name: code
+            type: string
+            length: 128
+        redirectionUri:
+            type: text
+        responseType:
+            type: string
+            length: 255
+        state:
+            type: text
+    manyToOne:
+        client:
+            targetEntity: Client
+            inversedBy: authorizationCodeProfiles
+            joinColumn:
+                name: client_id
+                referencedColumnName: id

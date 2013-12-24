@@ -2,97 +2,167 @@
 
 namespace Ms\OauthBundle\Entity;
 
+use Ms\OauthBundle\Component\Authorization\AuthorizationResponseType;
+use Ms\OauthBundle\Entity\Client;
+
 /**
  * Description of AuthorizationCodeProfile
  *
  * @author Marios
  */
 class AuthorizationCodeProfile {
-    
+
     /**
      *
      * @var string 
      */
     private $authorizationCode;
-    
+
     /**
      *
-     * @var string 
+     * @var Client 
      */
-    private $responseType;
-    
+    private $client;
+
     /**
-     *
-     * @var string 
+     * @var integer
      */
-    private $clientId;
-    
+    private $id;
+
     /**
      *
      * @var string 
      */
     private $redirectionUri;
-  
+
     /**
      *
      * @var string 
      */
-    private $scopes;
-    
+    private $responseType;
+
     /**
      *
      * @var string 
      */
     private $state;
+
+    /**
+     * Get authorizationCode
+     *
+     * @return string 
+     */
     public function getAuthorizationCode() {
         return $this->authorizationCode;
     }
 
-    public function setAuthorizationCode($authorizationCode) {
-        $this->authorizationCode = $authorizationCode;
+    /**
+     * Get client
+     *
+     * @return Client 
+     */
+    public function getClient() {
+        return $this->client;
     }
 
-    public function getResponseType() {
-        return $this->responseType;
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId() {
+        return $this->id;
     }
 
-    public function setResponseType($responseType) {
-        $this->responseType = $responseType;
-    }
-
-    public function getClientId() {
-        return $this->clientId;
-    }
-
-    public function setClientId($clientId) {
-        $this->clientId = $clientId;
-    }
-
+    /**
+     * Get redirectionUri
+     *
+     * @return string 
+     */
     public function getRedirectionUri() {
         return $this->redirectionUri;
     }
 
-    public function setRedirectionUri($redirectionUri) {
-        $this->redirectionUri = $redirectionUri;
+    /**
+     * Get responseType
+     *
+     * @return string 
+     */
+    public function getResponseType() {
+        return $this->responseType;
     }
 
-    public function getScopes() {
-        return $this->scopes;
-    }
-
-    public function setScopes($scopes) {
-        $this->scopes = $scopes;
-    }
-
+    /**
+     * Get state
+     *
+     * @return string 
+     */
     public function getState() {
         return $this->state;
     }
 
-    public function setState($state) {
-        $this->state = $state;
+    /**
+     * Set authorizationCode
+     *
+     * @param string $authorizationCode
+     * @return AuthorizationCodeProfile
+     */
+    public function setAuthorizationCode($authorizationCode) {
+        $this->authorizationCode = $authorizationCode;
+
+        return $this;
     }
 
+    /**
+     * Set client
+     *
+     * @param Client $client
+     * @return AuthorizationCodeProfile
+     */
+    public function setClient(Client $client = null) {
+        $this->client = $client;
 
+        return $this;
+    }
+
+    /**
+     * Set redirectionUri
+     *
+     * @param string $redirectionUri
+     * @return AuthorizationCodeProfile
+     */
+    public function setRedirectionUri($redirectionUri) {
+        $this->redirectionUri = $redirectionUri;
+
+        return $this;
+    }
+
+    /**
+     * Set responseType
+     *
+     * @param string $responseType
+     * @return AuthorizationCodeProfile
+     * @throws \InvalidArgumentException if `$responseType` is not declared in the
+     * `AuthorizationResponseType` class.
+     */
+    public function setResponseType($responseType) {
+        if (!in_array($responseType, AuthorizationResponseType::getValues())) {
+            throw new \InvalidArgumentException('Invalid response type: ' . $responseType);
+        }
+        $this->responseType = $responseType;
+
+        return $this;
+    }
+
+    /**
+     * Set state
+     *
+     * @param string $state
+     * @return AuthorizationCodeProfile
+     */
+    public function setState($state) {
+        $this->state = $state;
+
+        return $this;
+    }
 }
-
-
