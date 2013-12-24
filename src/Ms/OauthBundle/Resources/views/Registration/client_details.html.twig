@@ -6,12 +6,14 @@
 {% block body %}
 <h2>Στοιχεία Πελάτη</h2>
 
-<ul>
-    <li>Αναγνωριστικό Πελάτη: {{ client.id }}</li>
-    <li>Μυστικό Πελάτη: {{ client.password }}</li>
-    <li>e-mail: {{ client.email }}</li>
-    <li>Τίτλος: {{ client.appTitle }}</li>
-    <li>URI ανακατεύθυνσης: {{ client.redirectionUri }}</li>
-</ul>
-        
+<table>
+    <tbody style="text-align: left">
+        <tr><th>Αναγνωριστικό Πελάτη:</th><td>{{ client.id }}</td></tr>
+        <tr><th>Μυστικό Πελάτη:</th><td>{{ secret }}</td></tr>
+        <tr><th>e-mail:</th><td>{{ client.email }}</td></tr>
+        <tr><th>Τίτλος:</th><td>{{ client.appTitle }}</td></tr>
+        <tr><th>URI Aνακατεύθυνσης:</th><td>{{ client.redirectionUri }}</td></tr>
+    </tbody>
+</table>
+
 {% endblock %}
