@@ -20,6 +20,14 @@ ms_oauth_authorization:
     pattern: /authorization
     defaults: { _controller: MsOauthBundle:Authorization:authorizationCode }
     
+ms_oauth_authorization_acceptance:
+    pattern: /authorization/accept
+    defaults: { _controller: MsOauthBundle:Authorization:resourceOwnerAcceptance }
+    
+ms_oauth_authorization_access_denied:
+    pattern: /authorization/access_denied
+    defaults: { _controller: MsOauthBundle:Authorization:accessDenied }
+    
 ms_oauth_authentication_resource_owner:
     pattern: /authentication/resource_owner
     defaults: { _controller: MsOauthBundle:Authentication:resourceOwner }

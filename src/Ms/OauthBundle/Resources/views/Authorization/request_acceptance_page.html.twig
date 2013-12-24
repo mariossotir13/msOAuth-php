@@ -2,10 +2,12 @@
 {% extends "MsOauthBundle:Authorization:base.html.twig" %}
 
 {% block body %}
-<p>Μία εφαρμογή ζητάει πρόσβαση στις παρακάτω πληρφορίες του λογαριασμού σας:</p>
+<p>Η εφαρμογή "{{ client.appTitle }}" ζητάει πρόσβαση στις παρακάτω πληροφορίες του λογαριασμού σας:</p>
 <ul>
     {% for scope in scopes %}
-        <li>{{ scope }}</li>
+        <li>{{ scope.description }}</li>
     {% endfor %}
 </ul>
+<a href="">Δέχομαι</a> 
+<a href="{{ path('ms_oauth_authorization_access_denied', {'authz_rq': authz_rq}) }}">Αρνούμαι</a>
 {% endblock %}
