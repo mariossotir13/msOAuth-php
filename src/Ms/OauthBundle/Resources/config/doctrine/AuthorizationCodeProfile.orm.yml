@@ -25,4 +25,15 @@ Ms\OauthBundle\Entity\AuthorizationCodeProfile:
             inversedBy: authorizationCodeProfiles
             joinColumn:
                 name: client_id
-                referencedColumnName: id
+                referencedColumnName: id    
+    manyToMany:
+        scopes:
+            targetEntity: AuthorizationCodeScope
+            joinTable:
+                name: authorization_code_profiles_to_scopes
+                joinColumns:
+                    code_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    scope_id:
+                        referencedColumnName: id

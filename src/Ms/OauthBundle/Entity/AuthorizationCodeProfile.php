@@ -3,7 +3,10 @@
 namespace Ms\OauthBundle\Entity;
 
 use Ms\OauthBundle\Component\Authorization\AuthorizationResponseType;
+use Ms\OauthBundle\Entity\AuthorizationCodeScope;
 use Ms\OauthBundle\Entity\Client;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Description of AuthorizationCodeProfile
@@ -42,10 +45,34 @@ class AuthorizationCodeProfile {
     private $responseType;
 
     /**
+     * @var Collection
+     */
+    private $scopes;
+
+    /**
      *
      * @var string 
      */
     private $state;
+
+    /**
+     * Constructor
+     */
+    public function __construct() {
+        $this->scopes = new ArrayCollection();
+    }
+
+    /**
+     * Add scopes
+     *
+     * @param AuthorizationCodeScope $scopes
+     * @return AuthorizationCodeProfile
+     */
+    public function addScope(\Ms\OauthBundle\Entity\AuthorizationCodeScope $scopes) {
+        $this->scopes[] = $scopes;
+
+        return $this;
+    }
 
     /**
      * Get authorizationCode
@@ -93,12 +120,31 @@ class AuthorizationCodeProfile {
     }
 
     /**
+     * Get scopes
+     *
+     * @return Collection 
+     */
+    public function getScopes() {
+        return $this->scopes;
+    }
+
+    /**
      * Get state
      *
      * @return string 
      */
     public function getState() {
         return $this->state;
+    }
+
+    /**
+     * Remove scopes
+     *
+     * @param AuthorizationCodeScope $scopes
+     * @return void
+     */
+    public function removeScope(AuthorizationCodeScope $scopes) {
+        $this->scopes->removeElement($scopes);
     }
 
     /**
