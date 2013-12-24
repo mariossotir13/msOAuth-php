@@ -3,6 +3,7 @@
 namespace Ms\OauthBundle\Component\Authorization;
 
 use Symfony\Component\HttpFoundation\Request;
+use Ms\OauthBundle\Entity\AuthorizationCodeScope;
 
 /**
  * Αποθηκεύει τις πληροφορίες για μία αίτηση για κωδικό εξουσιοδότησης.
