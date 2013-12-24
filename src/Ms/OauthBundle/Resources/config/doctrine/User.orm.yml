@@ -15,6 +15,7 @@ Ms\OauthBundle\Entity\User:
             type: text
         salt:
             type: text
+            nullable: true
     inheritanceType: SINGLE_TABLE
     discriminatorColumn:
         name: discriminator
