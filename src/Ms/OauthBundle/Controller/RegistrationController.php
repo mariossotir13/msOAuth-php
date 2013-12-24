@@ -42,7 +42,7 @@ class RegistrationController extends Controller {
                 $this->generateUrl(
                     'ms_oauth_clientdetails', 
                     array(
-                        'id' => urlencode($id)
+                        'id' => $id
                     )
                 )
             );
@@ -63,7 +63,7 @@ class RegistrationController extends Controller {
     public function clientDetailsAction($id) {
         $repository = $this->getDoctrine()->getRepository('Ms\OauthBundle\Entity\Client');
         /* @var $client Client */
-        $client = $repository->find(urldecode($id));
+        $client = $repository->find($id);
         if ($client === null) {
             throw $this->createNotFoundException("could not find client: {$id}");
         }
