@@ -95,6 +95,7 @@ class AuthorizationRequest {
     /**
      * 
      * @param string $scope
+     * @return void
      * @throws \InvalidArgumentException εάν η παράμετρος `$scope` είναι *null*
      * ή δεν είναι έγκυρη η τιμή της.
      */
@@ -161,6 +162,7 @@ class AuthorizationRequest {
     /**
      * 
      * @param string $clientId
+     * @return void
      */
     public function setClientId($clientId) {
         if ($clientId === null) {
@@ -172,6 +174,7 @@ class AuthorizationRequest {
     /**
      * 
      * @param string $redirectionUri
+     * @return void
      */
     public function setRedirectionUri($redirectionUri) {
         if ($redirectionUri === null) {
@@ -182,11 +185,15 @@ class AuthorizationRequest {
 
     /**
      * 
-     * @param AuthorizationResponseType $responseType
+     * @param $responseType
+     * @return void
      */
-    public function setResponseType(AuthorizationResponseType $responseType) {
+    public function setResponseType($responseType) {
         if ($responseType === null) {
             throw new \InvalidArgumentException('No response type was specified.');
+        }
+        if (!in_array($scope, AuthorizationResponseType::getValues())) {
+            throw new \InvalidArgumentException('Invalid response type: ' . $responseType);
         }
         $this->responseType = $responseType;
     }
@@ -194,6 +201,7 @@ class AuthorizationRequest {
     /**
      * 
      * @param string $state
+     * @return void
      */
     public function setState($state) {
         if ($state === null) {
