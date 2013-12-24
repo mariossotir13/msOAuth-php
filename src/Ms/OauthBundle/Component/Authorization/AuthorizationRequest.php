@@ -20,7 +20,7 @@ class AuthorizationRequest {
     private static $REDIRECTION_URI = 'redirect_uri';
     private static $RESPONSE_TYPE = 'response_type';
     private static $SCOPE = 'scope';
-    private static $SERVER_URI = 'http://msoauthphp.local/web/app_dev.php/authorization';
+    private static $SERVER_URI = 'http://msoauthphp.local/app_dev.php/authorization';
     private static $STATE = 'state';
     /**#@-*/
     
@@ -45,15 +45,15 @@ class AuthorizationRequest {
     
     /**
      *
-     * @var AuthorizationResponseType
+     * @var string
      */
     private $responseType;
     
     /**
      *
-     * @var AuthorizationCodeScope[]
+     * @var string[]
      */
-    private $scopes;
+    private $scopes = array();
     
     /**
      *
@@ -69,15 +69,12 @@ class AuthorizationRequest {
      * @return AuthorizationRequest
      */
     public static function fromRequest(Request $request) {
-        $authorizationRequest = new AuthorizationRequest($request->request->get(static::$SERVER_URI));
-        $authorizationRequest->setClientId($request->request->get(static::$CLIENT_ID));
-        $authorizationRequest->setResponseType($request->request->get(static::$RESPONSE_TYPE));
-        $authorizationRequest->setState($request->request->get(static::$STATE));
-        
-        $scopes = $this->extractScopes($request);
-        foreach ($scopes as $scope) {
-            $authorizationRequest->addScope($scope);
-        }
+        $authorizationRequest = new AuthorizationRequest(static::$SERVER_URI);
+        $authorizationRequest->setClientId($request->query->get(static::$CLIENT_ID));
+        $authorizationRequest->setRedirectionUri($request->query->get(static::$REDIRECTION_URI));
+        $authorizationRequest->setResponseType($request->query->get(static::$RESPONSE_TYPE));
+        $authorizationRequest->setScopes($request->query->get(static::$SCOPE));
+        $authorizationRequest->setState($request->query->get(static::$STATE));
         
         return $authorizationRequest;
     }
@@ -113,7 +110,7 @@ class AuthorizationRequest {
     
     /**
      * 
-     * @return AuthorizationCodeScope[]
+     * @return string[]
      */
     public function getScopes() {
         return $this->scopes;
@@ -185,17 +182,31 @@ class AuthorizationRequest {
 
     /**
      * 
-     * @param $responseType
+     * @param string $responseType
      * @return void
      */
     public function setResponseType($responseType) {
         if ($responseType === null) {
             throw new \InvalidArgumentException('No response type was specified.');
         }
-        if (!in_array($scope, AuthorizationResponseType::getValues())) {
+        if (!in_array($responseType, AuthorizationResponseType::getValues())) {
             throw new \InvalidArgumentException('Invalid response type: ' . $responseType);
         }
         $this->responseType = $responseType;
+    }
+    
+    /**
+     * Θέτει όλα τα Πεδία Τεκμηρίου Πρόσβασης από μία συμβολοσειρά διαχωριζόμενη
+     * με κενά (U+0020).
+     * 
+     * @param string $scopesString
+     * @return void
+     */
+    public function setScopes($scopesString) {
+        $scopes = $this->extractScopes($scopesString);
+        foreach ($scopes as $scope) {
+            $this->addScope($scope);
+        }
     }
 
     /**
@@ -211,6 +222,20 @@ class AuthorizationRequest {
     }
     
     /**
+     * @return string[]
+     */
+    public function toArray() {
+        $result = array();
+        $result[static::$CLIENT_ID] = $this->getClientId();
+        $result[static::$REDIRECTION_URI] = $this->getRedirectionUri();
+        $result[static::$RESPONSE_TYPE] = $this->getResponseType();
+        $result[static::$SCOPE] = $this->formatScopes();
+        $result[static::$STATE] = $this->getState();
+        
+        return $result;
+    }
+    
+    /**
      * @return string
      */
     public function toUri() {
@@ -219,26 +244,27 @@ class AuthorizationRequest {
         $uri .= $this->redirectionUri ? '&' . static::$REDIRECTION_URI . '=' . $this->redirectionUri : '';
         $uri .= $this->responseType ? '&' . static::$RESPONSE_TYPE . '=' . $this->responseType : '';
         $uri .= $this->state ? '&' . static::$STATE . '=' . $this->state : '';
-        $uri .= $this->scope ? '&' . static::$SCOPE . '=' . $this->formatScopes() : '';
+        $uri .= $this->scopes ? '&' . static::$SCOPE . '=' . $this->formatScopes() : '';
         
         return urlencode($uri);
     }
     
     /**
      * 
-     * @param Request $request
+     * @param string $scopesString
      * @return array
      */
-    private function extractScopes(Request $request) {
-        $scopes = $request->request->get(static::$SCOPE);
-        
-        return split(' ', $scopes);
+    private function extractScopes($scopesString) {
+        return split(' ', $scopesString);
     }
     
     /**
+     * 
      * @return string
      */
     private function formatScopes() {
-        return implode(' ', $this->scopes);
+        $scopes = $this->scopes ?: array();
+        
+        return implode(' ', $scopes);
     }
 }
