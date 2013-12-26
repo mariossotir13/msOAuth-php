@@ -22,7 +22,7 @@ class AuthorizationErrorResponse {
      *
      * @var string
      */
-    private $error = '';
+    private $error;
     
     /**
      *
@@ -49,10 +49,12 @@ class AuthorizationErrorResponse {
     private $state = '';
     
     /**
-     * 
+     * @param string $error
+     * @throws \InvalidArgumentException εάν το όρισμα `$error` είτε είναι `null`
+     * είτε έχει τιμή η οποία δεν έχει δηλωθεί στην κλάση `AuthorizationError`.
      */
-    function __construct() {
-        
+    function __construct($error) {
+        $this->setError($error);
     }
     
     /**
@@ -95,23 +97,6 @@ class AuthorizationErrorResponse {
     function isRedirected() {
         return $this->redirected;
     }
-    
-    /**
-     * 
-     * @param string $error
-     * @return void
-     * @throws \InvalidArgumentException εάν το όρισμα `$error` είτε είναι `null`
-     * είτε έχει τιμή η οποία δεν έχει δηλωθεί στην κλάση `AuthorizationError`.
-     */
-    public function setError($error) {
-        if ($error === null) {
-            throw new \InvalidArgumentException('No error was specified.');
-        }
-        if (!in_array($error, AuthorizationError::getValues())) {
-            throw new \InvalidArgumentException('Invalid error: ' . $error);
-        }
-        $this->error = $error;
-    }
 
     /**
      * 
@@ -140,19 +125,6 @@ class AuthorizationErrorResponse {
 
     /**
      * 
-     * @param boolean $redirected
-     * @throws \InvalidArgumentException εάν το όρισμα `$errorUri` δεν είναι τύπου
-     * `boolean`.
-     */
-    public function setRedirected($redirected) {
-        if (!is_bool($redirected)) {
-            throw new \InvalidArgumentException('The value specified is not boolean');
-        }
-        $this->redirected = $redirected;
-    }
-
-    /**
-     * 
      * @param string $state
      * @throws \InvalidArgumentException εάν το όρισμα `$state` είναι `null`.
      */
@@ -166,13 +138,50 @@ class AuthorizationErrorResponse {
     /**
      * @return string
      */
-    public function toUri() {
-        $uri = '';
-        $uri .= $this->error ? static::$ERROR . '=' . $this->error : '';
-        $uri .= $this->errorDescription ? '&' . static::$ERROR_DESCRIPTION . '=' . $this->errorDescription : '';
-        $uri .= $this->errorUri ? '&' . static::$ERROR_URI . '=' . $this->errorUri : '';
-        $uri .= $this->state ? '&' . static::$STATE . '=' . $this->state : '';
+    public function toQueryString() {
+        $queryStringArr = array(static::$ERROR => $this->error);
+        if (!empty($this->errorDescription)) {
+            $queryStringArr[static::$ERROR_DESCRIPTION] = $this->errorDescription;
+        }
+        if (!empty($this->errorUri)) {
+            $queryStringArr[static::$ERROR_URI] = $this->errorUri;
+        }
+        if (!empty($this->state)) {
+            $queryStringArr[static::$STATE] = $this->state;
+        }
         
-        return $uri;
+        return http_build_query($queryStringArr, '', '&');
+    }
+    
+    /**
+     * 
+     * @param string $error
+     * @return void
+     * @throws \InvalidArgumentException εάν το όρισμα `$error` είτε είναι `null`
+     * είτε έχει τιμή η οποία δεν έχει δηλωθεί στην κλάση `AuthorizationError`.
+     */
+    protected function setError($error) {
+        if ($error === null) {
+            throw new \InvalidArgumentException('No error was specified.');
+        }
+        if (!in_array($error, AuthorizationError::getValues())) {
+            throw new \InvalidArgumentException('Invalid error: ' . $error);
+        }
+        $this->error = $error;
+        
+        $this->setRedirected($this->error !== AuthorizationError::REDIRECTION_URI);
+    }
+
+    /**
+     * 
+     * @param boolean $redirected
+     * @throws \InvalidArgumentException εάν το όρισμα `$redirected` δεν είναι τύπου
+     * `boolean`.
+     */
+    protected function setRedirected($redirected) {
+        if (!is_bool($redirected)) {
+            throw new \InvalidArgumentException('The value specified is not boolean');
+        }
+        $this->redirected = $redirected;
     }
 }

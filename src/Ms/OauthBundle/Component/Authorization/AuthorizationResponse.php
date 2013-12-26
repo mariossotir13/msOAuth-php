@@ -89,13 +89,28 @@ class AuthorizationResponse {
     }
 
     /**
+     * Επιστρέφει μία αναπαράσταση του παρόντος αντικειμένου κατάλληλη για προσθήκη
+     * σε ένα [Query String][1].
      * 
+     * 
+     * [1]: http://en.wikipedia.org/wiki/Query_string
+     *      "Query String στη Wikipedia"
+     * 
+     * @return string Η URI αναπαράσταση του παρόντος αντικειμένου.
+     */
+    public function toQueryString() {
+        $queryStringArr = array(static::$OAUTH_CODE => $this->oauthCode);
+        if (!empty($this->state)) {
+            $queryStringArr[static::$STATE] = $this->state;
+        }
+        
+        return http_build_query($queryStringArr, '', '&');
+    }
+    
+    /**
      * @return string
      */
     public function toUri() {
-        $uri = static::$OAUTH_CODE . '=' . $this->oauthCode;
-        $uri .= $this->state ? '&' . static::$STATE . '=' . $this->state : '';
-        
-        return $uri;
+        return $this->redirectionUri . '?' . $this->toQueryString();
     }
 }

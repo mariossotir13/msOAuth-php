@@ -33,7 +33,7 @@ class AuthorizationRequest {
      *
      * @var string
      */
-    private $clientId;
+    private $clientId = '';
     
     /**
      * Η διεύθυνση URI του εξυπηρετητή εξουσιοδοτήσεων.
@@ -46,13 +46,13 @@ class AuthorizationRequest {
      *
      * @var string
      */
-    private $redirectionUri;
+    private $redirectionUri = '';
     
     /**
      *
      * @var string
      */
-    private $responseType;
+    private $responseType = '';
     
     /**
      *
@@ -64,7 +64,7 @@ class AuthorizationRequest {
      *
      * @var string
      */
-    private $state;
+    private $state = '';
     
     /**
      * Δημιουργεί ένα νέο στιγμιότυπο της κλάσης AuthorizationRequest αντλώντας
@@ -264,18 +264,33 @@ class AuthorizationRequest {
     }
     
     /**
+     * 
      * @return string
      */
-    public function toUri() {
-        $uri = '';
-        $uri .= $this->clientId ? '&' . static::$CLIENT_ID . '=' . $this->clientId : '';
-        $uri .= $this->redirectionUri ? '&' . static::$REDIRECTION_URI . '=' . $this->redirectionUri : '';
-        $uri .= $this->responseType ? '&' . static::$RESPONSE_TYPE . '=' . $this->responseType : '';
-        $uri .= $this->state ? '&' . static::$STATE . '=' . $this->state : '';
-        $uri .= $this->scopes ? '&' . static::$SCOPE . '=' . $this->formatScopes() : '';
+    public function toQueryStringParameterValue() {
+        $param = '';
+        $param .= $this->clientId ? static::$CLIENT_ID . '=' . $this->clientId : '';
+        $param .= $this->redirectionUri ? '&' . static::$REDIRECTION_URI . '=' . $this->redirectionUri : '';
+        $param .= $this->responseType ? '&' . static::$RESPONSE_TYPE . '=' . $this->responseType : '';
+        $param .= $this->state ? '&' . static::$STATE . '=' . $this->state : '';
+        $param .= $this->scopes ? '&' . static::$SCOPE . '=' . $this->formatScopes() : '';
         
-        return $uri;
+        return $param;
     }
+    
+    /**
+     * @return string
+     */
+//    public function toUri() {
+//        $uri = '';
+//        $uri .= $this->clientId ? '&' . static::$CLIENT_ID . '=' . $this->clientId : '';
+//        $uri .= $this->redirectionUri ? '&' . static::$REDIRECTION_URI . '=' . $this->redirectionUri : '';
+//        $uri .= $this->responseType ? '&' . static::$RESPONSE_TYPE . '=' . $this->responseType : '';
+//        $uri .= $this->state ? '&' . static::$STATE . '=' . $this->state : '';
+//        $uri .= $this->scopes ? '&' . static::$SCOPE . '=' . $this->formatScopes() : '';
+//        
+//        return $uri;
+//    }
     
     /**
      * 
@@ -285,7 +300,7 @@ class AuthorizationRequest {
      * @throws \InvalidArgumentException εάν το `$uri` δεν περιέχει την παράμετρο
      * `$paramName`.
      */
-    private static function extractParameterFromUri($uri, $paramName) {
+    protected static function extractParameterFromUri($uri, $paramName) {
         $pattern = '#' . $paramName . '=([^&]+)#';
         $matches = array();
         $matched = preg_match($pattern, $uri, $matches);
@@ -301,15 +316,15 @@ class AuthorizationRequest {
      * @param string $scopesString
      * @return array
      */
-    private function extractScopes($scopesString) {
-        return split(' ', $scopesString);
+    protected function extractScopes($scopesString) {
+        return preg_split('/\s/', $scopesString);
     }
     
     /**
      * 
      * @return string
      */
-    private function formatScopes() {
+    protected function formatScopes() {
         $scopes = $this->scopes ?: array();
         
         return implode(' ', $scopes);

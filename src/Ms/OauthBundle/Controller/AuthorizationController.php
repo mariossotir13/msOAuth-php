@@ -13,6 +13,7 @@ use Ms\OauthBundle\Component\Authorization\AuthorizationErrorResponse;
 use Ms\OauthBundle\Component\Authorization\AuthorizationError;
 use Ms\OauthBundle\Component\Authorization\AuthorizationServiceInterface;
 use Ms\OauthBundle\Entity\AuthorizationCodeProfile;
+use Ms\OauthBundle\Component\Authorization\AuthorizationResponse;
 
 /**
  * Description of AuthorizationController
@@ -32,15 +33,11 @@ class AuthorizationController extends Controller {
      * @return Response
      */
     public function accessDeniedAction(Request $request) {
-        $authResponse = new AuthorizationErrorResponse();
-        $authResponse->setError(AuthorizationError::ACCESS_DENIED);
+        $authResponse = new AuthorizationErrorResponse(AuthorizationError::ACCESS_DENIED);
         $authResponse->setErrorDescription('The owner denied access to her resources.');
-        
-        $authRequest = $this->createAuthorizationRequestFrom($request);
+        $authRequest = $this->createAuthorizationRequest($request);
         $authResponse->setState($authRequest->getState());
-        
-        $redirectionUri = $authRequest->getRedirectionUri();
-        $url = $redirectionUri . '?' . $authResponse->toUri();
+        $url = $authRequest->getRedirectionUri() . '?' . $authResponse->toQueryString();
         
         return $this->redirect($url);
     }
@@ -49,33 +46,30 @@ class AuthorizationController extends Controller {
      * 
      * @param Request $request
      * @return Response
-     * TODO: Να αλλαχθεί ο τρόπος ελέγχου αυθεντικοποίησης του ιδιοκτήτη πόρου μόλις ολοκληρωθεί η Π.Χ. *Αυθεντικοποίηση Ιδιοκτήτη Πόρου*.
+     * TODO: Να αλλαχθεί ο τρόπος ελέγχου αυθεντικοποίησης του ιδιοκτήτη πόρου μόλις ολοκληρωθεί
+     *       η Π.Χ. *Αυθεντικοποίηση Ιδιοκτήτη Πόρου*.
      */
     public function authorizationCodeAction(Request $request) {
-        $authRequest = $this->createAuthorizationRequestFrom($request);
+        $authRequest = $this->createAuthorizationRequest($request);
         if (!AuthenticationController::isUserAuthenticated($request)) {
             return $this->redirect($this->generateUrl(
                 'ms_oauth_authentication_resource_owner', 
-                array(AuthorizationRequest::QUERY_PARAM => $authRequest->toUri())
+                array(AuthorizationRequest::QUERY_PARAM => $authRequest->toQueryStringParameterValue())
             ));
         }
         
         if (!$this->isAuthorizationRequestAccepted($request)) {
             return $this->redirect($this->generateUrl(
                 'ms_oauth_authorization_acceptance', 
-                array(AuthorizationRequest::QUERY_PARAM => $authRequest->toUri())
+                array(AuthorizationRequest::QUERY_PARAM => $authRequest->toQueryStringParameterValue())
             ));
         }
         
-        /* @var $authService AuthorizationServiceInterface */
-        $authService = $this->get('ms_oauthbundle_authorization');
-        $authCode = $authService->createAuthorizationCode();
-        $authCodeProfile = $this->createAuthorizationCodeProfileFrom($authCode, $authRequest);
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($authCodeProfile);
-        $em->flush();
+        $authCode = $this->createAuthorizationCode($authRequest);
+        $authResponse = new AuthorizationResponse($authRequest->getRedirectionUri(), $authCode);
+        $authResponse->setState($authRequest->getState());
         
-        return new Response('Code: ' . $authCode);
+        return $this->redirect($authResponse->toUri());
     }
     
     /**
@@ -84,12 +78,12 @@ class AuthorizationController extends Controller {
      * @return Response
      */
     public function resourceOwnerAcceptanceAction(Request $request) {
-        $authRequest = $this->createAuthorizationRequestFrom($request);
+        $authRequest = $this->createAuthorizationRequest($request);
         
         return $this->render(
             'MsOauthBundle:Authorization:request_acceptance_page.html.twig',
             array(
-                AuthorizationRequest::QUERY_PARAM => $authRequest->toUri(),
+                AuthorizationRequest::QUERY_PARAM => $authRequest->toQueryStringParameterValue(),
                 'client' => $this->getClientFromRequest($authRequest),
                 'scopes' => $this->getScopesFromRequest($authRequest)
             )
@@ -98,21 +92,42 @@ class AuthorizationController extends Controller {
     
     /**
      * 
+     * @param AuthorizationRequest $authRequest
+     * @return string Τον Κωδικό Εξουσιοδότησης ο οποίος δημιουργήθηκε για την
+     * `$authorizationRequest`.
+     */
+    protected function createAuthorizationCode(AuthorizationRequest $authRequest) {
+        /* @var $authService AuthorizationServiceInterface */
+        $authService = $this->get('ms_oauthbundle_authorization');
+        $authCode = $authService->createAuthorizationCode();
+        $authCodeProfile = $this->createAuthorizationCodeProfile(
+            $authCode, 
+            $authRequest
+        );
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($authCodeProfile);
+        $em->flush();
+        
+        return $authCode;
+    }
+    
+    /**
+     * 
      * @param string $authorizationCode
-     * @param AuthorizationRequest $request
+     * @param AuthorizationRequest $authRequest
      * @return AuthorizationCodeProfile
      */
-    protected function createAuthorizationCodeProfileFrom($authorizationCode,
-            AuthorizationRequest $request) {
+    protected function createAuthorizationCodeProfile($authorizationCode,
+            AuthorizationRequest $authRequest) {
         $profile = new AuthorizationCodeProfile();
         
         $profile->setAuthorizationCode($authorizationCode);
-        $profile->setClient($this->getClientFromRequest($request));
-        $profile->setRedirectionUri($request->getRedirectionUri());
-        $profile->setResponseType($request->getResponseType());
-        $profile->setState($request->getState());
+        $profile->setClient($this->getClientFromRequest($authRequest));
+        $profile->setRedirectionUri($authRequest->getRedirectionUri());
+        $profile->setResponseType($authRequest->getResponseType());
+        $profile->setState($authRequest->getState());
         
-        $scopes = $this->getScopesFromRequest($request);
+        $scopes = $this->getScopesFromRequest($authRequest);
         foreach ($scopes as $scope) {
             $profile->addScope($scope);
         }
@@ -188,7 +203,7 @@ class AuthorizationController extends Controller {
      * @param Request $request
      * @return AuthorizationRequest
      */
-    protected function createAuthorizationRequestFrom(Request $request) {
+    protected function createAuthorizationRequest(Request $request) {
         $requestParameter = $request->query->get(AuthorizationRequest::QUERY_PARAM);
         if ($requestParameter !== null) {
             return AuthorizationRequest::fromUri($requestParameter);
@@ -199,11 +214,11 @@ class AuthorizationController extends Controller {
     
     /**
      * 
-     * @param AuthorizationRequest $request
+     * @param AuthorizationRequest $authRequest
      * @return Client
      */
-    protected function getClientFromRequest(AuthorizationRequest $request) {
-        $clientId = $request->getClientId();
+    protected function getClientFromRequest(AuthorizationRequest $authRequest) {
+        $clientId = $authRequest->getClientId();
         $clientRepo = $this->getDoctrine()->getRepository('Ms\OauthBundle\Entity\Client');
 
         return $clientRepo->find($clientId);
@@ -211,12 +226,12 @@ class AuthorizationController extends Controller {
     
     /**
      * 
-     * @param AuthorizationRequest $request
-     * @return AuthorizationCodeScope
+     * @param AuthorizationRequest $authRequest
+     * @return AuthorizationCodeScope[]
      */
-    protected function getScopesFromRequest(AuthorizationRequest $request) {
+    protected function getScopesFromRequest(AuthorizationRequest $authRequest) {
         $scopeRepo = $this->getDoctrine()->getRepository('Ms\OauthBundle\Entity\AuthorizationCodeScope');
-        $scopesTitles = $request->getScopes();
+        $scopesTitles = $authRequest->getScopes();
         $scopes = array();
         foreach ($scopesTitles as $title) {
             $scopes[] = $scopeRepo->findOneByTitle($title);
