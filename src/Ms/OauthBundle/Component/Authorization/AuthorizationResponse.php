@@ -20,13 +20,13 @@ class AuthorizationResponse {
      *
      * @var string
      */
-    private $oauthCode = '';
+    private $oauthCode;
     
     /**
      *
      * @var string
      */
-    private $redirectionUri = '';
+    private $redirectionUri;
     
     /**
      *
@@ -36,14 +36,19 @@ class AuthorizationResponse {
     
     /**
      * 
+     * @param string $redirectionUri Το URI Ανακατεύθυνσης.
      * @param string $authorizationCode Ο κωδικός εξουσιοδότησης.
-     * @throws \InvalidArgumentException εάν η παράμετρος `$authorizationCode`
+     * @throws \InvalidArgumentException εάν οποιαδήποτε από τις παραμέτρους
      * είναι *null*.
      */
-    public function __construct($authorizationCode) {
+    public function __construct($redirectionUri, $authorizationCode) {
+        if ($redirectionUri === null) {
+            throw new \InvalidArgumentException('No redirection URI was specified.');
+        }
         if ($authorizationCode === null) {
             throw new \InvalidArgumentException('No authorization code was specified.');
         }
+        $this->redirectionUri = $redirectionUri;
         $this->oauthCode = $authorizationCode;
     }
     
@@ -73,18 +78,6 @@ class AuthorizationResponse {
 
     /**
      * 
-     * @param string $redirectionUri
-     * @throws \InvalidArgumentException
-     */
-    public function setRedirectionUri($redirectionUri) {
-        if ($redirectionUri === null) {
-            throw new \InvalidArgumentException('No redirection URI was specified.');
-        }
-        $this->redirectionUri = $redirectionUri;
-    }
-
-    /**
-     * 
      * @param string $state
      * @throws \InvalidArgumentException
      */
@@ -103,6 +96,6 @@ class AuthorizationResponse {
         $uri = static::$OAUTH_CODE . '=' . $this->oauthCode;
         $uri .= $this->state ? '&' . static::$STATE . '=' . $this->state : '';
         
-        return urlencode($uri);
+        return $uri;
     }
 }
