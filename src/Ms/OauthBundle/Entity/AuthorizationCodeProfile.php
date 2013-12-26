@@ -68,7 +68,7 @@ class AuthorizationCodeProfile {
      * @param AuthorizationCodeScope $scopes
      * @return AuthorizationCodeProfile
      */
-    public function addScope(\Ms\OauthBundle\Entity\AuthorizationCodeScope $scopes) {
+    public function addScope(AuthorizationCodeScope $scopes) {
         $this->scopes[] = $scopes;
 
         return $this;
