@@ -1,0 +1,13 @@
+## YAML Template.
+---
+
+Ms\OauthBundle\Entity\Client:
+    properties:
+        redirectionUri:
+            - NotBlank: ~
+            - Ms\OauthBundle\Validator\Constraints\RedirectionUriConstraint: ~
+
+Ms\OauthBundle\Component\Authorization\AuthorizationRequest:
+    properties:
+        clientId:
+            - NotBlank: ~

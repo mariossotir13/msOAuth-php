@@ -10,7 +10,7 @@ use Ms\OauthBundle\Component\Authentication\AuthenticationServiceInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * 
+ * @author Marios
  */
 class RegistrationController extends Controller {
 
