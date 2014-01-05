@@ -18,7 +18,7 @@ class ClientType extends UserType {
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder->add('appTitle', 'text', array('max_length' => 120))
-                ->add('redirectionUri', 'text')
+                ->add('redirectionUri', 'url')
                 ->add('clientType',
                     'choice',
                     array(
