@@ -14,6 +14,7 @@ use Ms\OauthBundle\Component\Authorization\AuthorizationError;
 use Ms\OauthBundle\Component\Authorization\AuthorizationServiceInterface;
 use Ms\OauthBundle\Entity\AuthorizationCodeProfile;
 use Ms\OauthBundle\Component\Authorization\AuthorizationResponse;
+use Ms\OauthBundle\Component\Authorization\ValidationResponse;
 
 /**
  * Description of AuthorizationController
@@ -51,6 +52,11 @@ class AuthorizationController extends Controller {
      */
     public function authorizationCodeAction(Request $request) {
         $authRequest = $this->createAuthorizationRequest($request);
+        $validationResponse = $this->validateAuthorizationRequest($authRequest);
+        if (!$validationResponse->isValid()) {
+            return $this->invalidAuthorizationRequestAction($validationResponse, $authRequest);
+        }
+        
         if (!AuthenticationController::isUserAuthenticated($request)) {
             return $this->redirect($this->generateUrl(
                 'ms_oauth_authentication_resource_owner', 
@@ -94,7 +100,7 @@ class AuthorizationController extends Controller {
      * 
      * @param AuthorizationRequest $authRequest
      * @return string Τον Κωδικό Εξουσιοδότησης ο οποίος δημιουργήθηκε για την
-     * `$authorizationRequest`.
+     * `$authRequest`.
      */
     protected function createAuthorizationCode(AuthorizationRequest $authRequest) {
         /* @var $authService AuthorizationServiceInterface */
@@ -242,6 +248,30 @@ class AuthorizationController extends Controller {
     
     /**
      * 
+     * @param ValidationResponse $validationResponse
+     * @param AuthorizationRequest $authRequest
+     * @return Response
+     */
+    protected function invalidAuthorizationRequestAction(ValidationResponse $validationResponse,
+            AuthorizationRequest $authRequest) {
+        $response = new AuthorizationErrorResponse($validationResponse->getError());
+        $response->setErrorDescription($validationResponse->getErrorMessage());
+        $response->setState($authRequest->getState());
+        
+        if (!$response->isRedirected()) {
+            return $this->render(
+                'MsOauthBundle:Authorization:invalid_request_page.html.twig',
+                array('errorDescription' => $response->getErrorDescription())
+            );
+        }
+        
+        $url = $authRequest->getRedirectionUri() . '?' . $response->toQueryString();
+        
+        return $this->redirect($url);
+    }
+    
+    /**
+     * 
      * @param Request $request
      * @return boolean
      */
@@ -249,5 +279,19 @@ class AuthorizationController extends Controller {
         $accepted = (int) $request->query->get(static::PARAM_AUTHORIZATION_REQUEST_ACCEPT, 0);
         
         return $accepted === 1;
+    }
+    
+    /**
+     * 
+     * @param AuthorizationRequest $authRequest
+     * @return ValidationResponse
+     */
+    protected function validateAuthorizationRequest(AuthorizationRequest $authRequest) {
+        /* @var $validator \Symfony\Component\Validator\Validator */
+        $validator = $this->get('validator');
+        /* @var $violationsList \Symfony\Component\Validator\ConstraintViolationListInterface */
+        $violationsList = $validator->validate($authRequest);
+        
+        return new ValidationResponse($violationsList);
     }
 }

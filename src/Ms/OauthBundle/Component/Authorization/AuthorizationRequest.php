@@ -3,12 +3,19 @@
 namespace Ms\OauthBundle\Component\Authorization;
 
 use Symfony\Component\HttpFoundation\Request;
-use Ms\OauthBundle\Entity\AuthorizationCodeScope;
+//use Ms\OauthBundle\Entity\AuthorizationCodeScope;
 
 /**
  * Αποθηκεύει τις πληροφορίες για μία αίτηση για κωδικό εξουσιοδότησης.
+ * 
+ * ### Προϋποθέσεις ###
+ * 
+ * Αυτή η κλάση υποθέτει ότι τα δεδομένα τα οποία της παρέχονται επικυρώνται μέσω
+ * της Υπηρεσίας Επικύρωσης.
  *
  * @author Marios
+ * 
+ * TODO: Remove commented out code from the class once its validation process is complete.
  */
 class AuthorizationRequest {
     
@@ -125,12 +132,12 @@ class AuthorizationRequest {
      * ή δεν είναι έγκυρη η τιμή της.
      */
     function addScope($scope) {
-        if ($scope === null) {
-            throw new \InvalidArgumentException('No scope was specified.');
-        }
-        if (!in_array($scope, AuthorizationCodeScope::getValues())) {
-            throw new \InvalidArgumentException('Invalid scope: ' . $scope);
-        }
+//        if ($scope === null) {
+//            throw new \InvalidArgumentException('No scope was specified.');
+//        }
+//        if (!in_array($scope, AuthorizationCodeScope::getValues())) {
+//            throw new \InvalidArgumentException('Invalid scope: ' . $scope);
+//        }
         if (!in_array($scope, $this->scopes)) {
             $this->scopes[] = $scope;
         }
@@ -190,9 +197,9 @@ class AuthorizationRequest {
      * @return void
      */
     public function setClientId($clientId) {
-        if ($clientId === null) {
-            throw new \InvalidArgumentException('No client id was specified.');
-        }
+//        if ($clientId === null) {
+//            throw new \InvalidArgumentException('No client id was specified.');
+//        }
         $this->clientId = $clientId;
     }
     
@@ -202,9 +209,9 @@ class AuthorizationRequest {
      * @return void
      */
     public function setRedirectionUri($redirectionUri) {
-        if ($redirectionUri === null) {
-            throw new \InvalidArgumentException('No redirection URI was specified.');
-        }
+//        if ($redirectionUri === null) {
+//            throw new \InvalidArgumentException('No redirection URI was specified.');
+//        }
         $this->redirectionUri = $redirectionUri;
     }
 
@@ -214,12 +221,12 @@ class AuthorizationRequest {
      * @return void
      */
     public function setResponseType($responseType) {
-        if ($responseType === null) {
-            throw new \InvalidArgumentException('No response type was specified.');
-        }
-        if (!in_array($responseType, AuthorizationResponseType::getValues())) {
-            throw new \InvalidArgumentException('Invalid response type: ' . $responseType);
-        }
+//        if ($responseType === null) {
+//            throw new \InvalidArgumentException('No response type was specified.');
+//        }
+//        if (!in_array($responseType, AuthorizationResponseType::getValues())) {
+//            throw new \InvalidArgumentException('Invalid response type: ' . $responseType);
+//        }
         $this->responseType = $responseType;
     }
     
@@ -243,9 +250,9 @@ class AuthorizationRequest {
      * @return void
      */
     public function setState($state) {
-        if ($state === null) {
-            throw new \InvalidArgumentException('No state was specified.');
-        }
+//        if ($state === null) {
+//            throw new \InvalidArgumentException('No state was specified.');
+//        }
         $this->state = $state;
     }
     

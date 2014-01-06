@@ -8,6 +8,33 @@ Ms\OauthBundle\Entity\Client:
             - Ms\OauthBundle\Validator\Constraints\RedirectionUriConstraint: ~
 
 Ms\OauthBundle\Component\Authorization\AuthorizationRequest:
+    group_sequence:
+        - RedirectionUri
+        - AuthorizationRequest
     properties:
         clientId:
-            - NotBlank: ~
+            - NotBlank:
+                message: "Please, specify a client ID."
+        redirectionUri:
+            - NotBlank:
+                message: "Please, specify a redirection URI."
+                groups: [RedirectionUri]
+            - Ms\OauthBundle\Validator\Constraints\RedirectionUriConstraint:
+                groups: [RedirectionUri]
+        responseType:
+            - NotBlank:
+                message: "Please, specify a response type."
+            - Choice:
+                callback: [Ms\OauthBundle\Component\Authorization\AuthorizationResponseType, getValues]
+                message: "Invalid response type: {{ value }}."
+        scopes:
+            - Count:
+                min: 1
+                minMessage: "Please, specify at least one scope."
+            - Choice:
+                callback: [Ms\OauthBundle\Entity\AuthorizationCodeScope, getValues]
+                multiple: true
+                multipleMessage: "One or more scopes are invalid."
+        state:
+            - NotBlank:
+                message: "Please, specify a local state."

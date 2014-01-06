@@ -15,5 +15,5 @@ class RedirectionUriConstraint extends Url {
     /**
      * @inhderitdoc
      */
-    public $message = 'A redirection URI cannot contain a "fragment" portion.';
+    public $message = 'Please, remove the fragment portion from the redirection URI: {{ value }}.';
 }

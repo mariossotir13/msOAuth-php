@@ -101,6 +101,7 @@ class AuthorizationErrorResponse {
     /**
      * 
      * @param string $errorDescription
+     * @return void
      * @throws \InvalidArgumentException εάν το όρισμα `$errorDescription` είναι
      * `null`.
      */
@@ -114,6 +115,7 @@ class AuthorizationErrorResponse {
     /**
      * 
      * @param string $errorUri
+     * @return void
      * @throws \InvalidArgumentException εάν το όρισμα `$errorUri` είναι `null`.
      */
     public function setErrorUri($errorUri) {
@@ -124,14 +126,23 @@ class AuthorizationErrorResponse {
     }
 
     /**
+     * Θέτει την *Τοπική Κατάσταση* την οποία έστειλε ο *Πελάτης* με την *Αίτηση
+     * Εξουσιοδότησης*.
+     * 
+     * ### Προϋποθέσεις ###
+     * 
+     * Αξίζει να σημειωθεί ότι το όρισμα `$state` δεν ελέγχεται για `null`. Αυτό
+     * συμβαίνει επειδή το όρισμα αυτό αναμένεται να λάβει τιμή από την Αίτηση
+     * Εξουσιοδότησης. Η Αίτηση Εξουσιοδότησης επικυρώνεται από την Υπηρεσία
+     * Επικύρωσης. Το όρισμα `$state` ελέγχεται κατά τη διάρκεια αυτής της επικύρωσης.
      * 
      * @param string $state
-     * @throws \InvalidArgumentException εάν το όρισμα `$state` είναι `null`.
+     * @return void
      */
     public function setState($state) {
-        if ($state === null) {
-            throw new \InvalidArgumentException('No state was specified.');
-        }
+//        if ($state === null) {
+//            throw new \InvalidArgumentException('No state was specified.');
+//        }
         $this->state = $state;
     }
 
@@ -175,6 +186,7 @@ class AuthorizationErrorResponse {
     /**
      * 
      * @param boolean $redirected
+     * @return void
      * @throws \InvalidArgumentException εάν το όρισμα `$redirected` δεν είναι τύπου
      * `boolean`.
      */
