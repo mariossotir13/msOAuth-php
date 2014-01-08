@@ -212,10 +212,16 @@ class AuthorizationController extends Controller {
     protected function createAuthorizationRequest(Request $request) {
         $requestParameter = $request->query->get(AuthorizationRequest::QUERY_PARAM);
         if ($requestParameter !== null) {
-            return AuthorizationRequest::fromUri($requestParameter);
+            return AuthorizationRequest::fromUri(
+                $requestParameter,
+                $this->getDoctrine()->getRepository("MsOauthBundle:Client")
+            );
         }
         
-        return AuthorizationRequest::fromRequest($request);
+        return AuthorizationRequest::fromRequest(
+            $request,
+            $this->getDoctrine()->getRepository("MsOauthBundle:Client")
+        );
     }
     
     /**

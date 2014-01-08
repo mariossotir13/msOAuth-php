@@ -4,6 +4,7 @@ namespace Ms\OauthBundle\Component\Authorization;
 
 use Symfony\Component\HttpFoundation\Request;
 //use Ms\OauthBundle\Entity\AuthorizationCodeScope;
+use Doctrine\Common\Persistence\ObjectRepository;
 
 /**
  * Αποθηκεύει τις πληροφορίες για μία αίτηση για κωδικό εξουσιοδότησης.
@@ -43,6 +44,12 @@ class AuthorizationRequest {
     private $clientId = '';
     
     /**
+     *
+     * @var ObjectRepository
+     */
+    private $clientRepository;
+    
+    /**
      * Η διεύθυνση URI του εξυπηρετητή εξουσιοδοτήσεων.
      *
      * @var string
@@ -78,10 +85,11 @@ class AuthorizationRequest {
      * δεδομένα από ένα Request αντικείμενο.
      * 
      * @param Request $request
+     * @param ObjectRepository $clientRepository
      * @return AuthorizationRequest
      */
-    public static function fromRequest(Request $request) {
-        $authorizationRequest = new AuthorizationRequest(static::$SERVER_URI);
+    public static function fromRequest(Request $request, ObjectRepository $clientRepository) {
+        $authorizationRequest = new AuthorizationRequest(static::$SERVER_URI, $clientRepository);
         $authorizationRequest->setClientId($request->query->get(static::$CLIENT_ID));
         $authorizationRequest->setRedirectionUri($request->query->get(static::$REDIRECTION_URI));
         $authorizationRequest->setResponseType($request->query->get(static::$RESPONSE_TYPE));
@@ -96,15 +104,16 @@ class AuthorizationRequest {
      * δεδομένα από ένα URI.
      * 
      * @param string $uri
+     * @param ObjectRepository $clientRepository
      * @return AuthorizationRequest
      * @throws \InvalidArgumentException εάν το όρισμα `$uri` είναι `null`.
      */
-    public static function fromUri($uri) {
+    public static function fromUri($uri, ObjectRepository $clientRepository) {
         if ($uri === null) {
             throw new \InvalidArgumentException('No uri was provided.');
         }
         
-        $request = new AuthorizationRequest(static::$SERVER_URI);
+        $request = new AuthorizationRequest(static::$SERVER_URI, $clientRepository);
         $request->setClientId(static::extractParameterFromUri($uri, static::$CLIENT_ID));
         $request->setRedirectionUri(static::extractParameterFromUri($uri, static::$REDIRECTION_URI));
         $request->setResponseType(static::extractParameterFromUri($uri, static::$RESPONSE_TYPE));
@@ -117,11 +126,15 @@ class AuthorizationRequest {
     /**
      * @param string $oauthServerUri
      */
-    function __construct($oauthServerUri) {
+    function __construct($oauthServerUri, ObjectRepository $clientRepository) {
         if ($oauthServerUri === null) {
             throw new \InvalidArgumentException('No authorization server URI was specified.');
         }
+        if ($clientRepository === null) {
+            throw new \InvalidArgumentException('No client repository was specified.');
+        }
         $this->oauthServerUri = $oauthServerUri;
+        $this->clientRepository = $clientRepository;
     }
 
     /**
@@ -189,6 +202,20 @@ class AuthorizationRequest {
      */
     public function getState() {
         return $this->state;
+    }
+    
+    /**
+     * Ελέγχει εάν το *Αναγνωριστικό Πελάτη* του παρόντος αντικειμένου αντιστοιχεί
+     * σε εγγεγραμμένο *Πελάτη*.
+     * 
+     * Αυτή η μέθοδος χρησιμοποιείται από την *Υπηρεσία Επικύρωσης Δεδομένων* για
+     * την επικύρωση του *Αναγνωριστικού Πελάτη*.
+     * 
+     * @return bool `true` εάν το *Αναγνωριστικό Πελάτη* αντιστοιχεί σε εγγεγραμμένο
+     * *Πελάτη*, αλλιώς `false`.
+     */
+    public function isClientIdValid() {
+        return $this->clientRepository->find($this->clientId) !== null;
     }
 
     /**
