@@ -215,7 +215,8 @@ class AuthorizationRequest {
      * *Πελάτη*, αλλιώς `false`.
      */
     public function isClientIdValid() {
-        return $this->clientRepository->find($this->clientId) !== null;
+        return $this->clientId !== null
+            && $this->clientRepository->find($this->clientId) !== null;
     }
 
     /**
