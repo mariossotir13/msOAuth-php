@@ -7,6 +7,33 @@ Ms\OauthBundle\Entity\Client:
             - NotBlank: ~
             - Ms\OauthBundle\Validator\Constraints\RedirectionUriConstraint: ~
 
+Ms\OauthBundle\Component\Authorization\AccessTokenRequest:
+  group_sequence:
+        - RedirectionUri
+        - AccessTokenRequest
+  getters:
+        clientIdValid:
+            - "True": { message: "No client with the given Client ID is registered." }
+  properties:
+        clientId:
+            - NotBlank:
+                message: "Please, specify a client ID."
+        redirectionUri:
+            - NotBlank:
+                message: "Please, specify a redirection URI."
+                groups: [RedirectionUri]
+            - Ms\OauthBundle\Validator\Constraints\RedirectionUriConstraint:
+                groups: [RedirectionUri]
+        code:
+          - NotBlank:
+              message: "Please, specify the authorization code."
+        grantType:
+            - NotBlank:
+                message: "Please, specify a grant type."
+            - Choice:
+                callback: [Ms\OauthBundle\Component\Authorization\AuthorizationResponseType, getValues]
+                message: "Invalid grant type: {{ value }}."
+
 Ms\OauthBundle\Component\Authorization\AuthorizationRequest:
     group_sequence:
         - RedirectionUri

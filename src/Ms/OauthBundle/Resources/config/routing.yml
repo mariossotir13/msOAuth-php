@@ -32,6 +32,10 @@ ms_oauth_authentication_resource_owner:
     pattern: /authentication/resource_owner
     defaults: { _controller: MsOauthBundle:Authentication:resourceOwner }
     
+ms_oauth_authorization_access_token:
+    pattern: /authorization/access_token
+    defaults: { _controller: MsOauthBundle:Authorization:accessToken }
+    
 ms_oauth_client_demo1:
   pattern: /client-app/demo1
   defaults: { _controller: MsOauthBundle:Client:demo1 }
