@@ -2,6 +2,9 @@ ms_oauth_homepage:
     pattern:  /hello/{name}
     defaults: { _controller: MsOauthBundle:Default:index }
 
+###
+# OAuth Server
+##
 ms_oauth_clientregistration:
     pattern: /registration/client
     defaults: { _controller: MsOauthBundle:Registration:client }
@@ -11,10 +14,6 @@ ms_oauth_clientdetails:
     defaults: { _controller: MsOauthBundle:Registration:clientDetails }
     requirements:
         id: ".+"
-    
-ms_oauth_benchmark_auth:
-    pattern: /benchmark/authentication
-    defaults: { _controller: MsOauthBundle:Benchmark:authentication }
     
 ms_oauth_authorization:
     pattern: /authorization
@@ -35,7 +34,17 @@ ms_oauth_authentication_resource_owner:
 ms_oauth_authorization_access_token:
     pattern: /authorization/access_token
     defaults: { _controller: MsOauthBundle:Authorization:accessToken }
-    
+
+###
+# Demos
+##
 ms_oauth_client_demo1:
   pattern: /client-app/demo1
   defaults: { _controller: MsOauthBundle:Client:demo1 }
+
+###
+# Utilities
+##
+ms_oauth_benchmark_auth:
+    pattern: /benchmark/authentication
+    defaults: { _controller: MsOauthBundle:Benchmark:authentication }
