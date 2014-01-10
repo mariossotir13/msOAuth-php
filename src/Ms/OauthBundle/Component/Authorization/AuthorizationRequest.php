@@ -3,7 +3,6 @@
 namespace Ms\OauthBundle\Component\Authorization;
 
 use Symfony\Component\HttpFoundation\Request;
-//use Ms\OauthBundle\Entity\AuthorizationCodeScope;
 use Doctrine\Common\Persistence\ObjectRepository;
 
 /**
@@ -145,12 +144,6 @@ class AuthorizationRequest {
      * ή δεν είναι έγκυρη η τιμή της.
      */
     function addScope($scope) {
-//        if ($scope === null) {
-//            throw new \InvalidArgumentException('No scope was specified.');
-//        }
-//        if (!in_array($scope, AuthorizationCodeScope::getValues())) {
-//            throw new \InvalidArgumentException('Invalid scope: ' . $scope);
-//        }
         if (!in_array($scope, $this->scopes)) {
             $this->scopes[] = $scope;
         }
@@ -225,9 +218,6 @@ class AuthorizationRequest {
      * @return void
      */
     public function setClientId($clientId) {
-//        if ($clientId === null) {
-//            throw new \InvalidArgumentException('No client id was specified.');
-//        }
         $this->clientId = $clientId;
     }
     
@@ -237,9 +227,6 @@ class AuthorizationRequest {
      * @return void
      */
     public function setRedirectionUri($redirectionUri) {
-//        if ($redirectionUri === null) {
-//            throw new \InvalidArgumentException('No redirection URI was specified.');
-//        }
         $this->redirectionUri = $redirectionUri;
     }
 
@@ -249,12 +236,6 @@ class AuthorizationRequest {
      * @return void
      */
     public function setResponseType($responseType) {
-//        if ($responseType === null) {
-//            throw new \InvalidArgumentException('No response type was specified.');
-//        }
-//        if (!in_array($responseType, AuthorizationResponseType::getValues())) {
-//            throw new \InvalidArgumentException('Invalid response type: ' . $responseType);
-//        }
         $this->responseType = $responseType;
     }
     
@@ -278,9 +259,6 @@ class AuthorizationRequest {
      * @return void
      */
     public function setState($state) {
-//        if ($state === null) {
-//            throw new \InvalidArgumentException('No state was specified.');
-//        }
         $this->state = $state;
     }
     
@@ -305,12 +283,6 @@ class AuthorizationRequest {
      * τουλάχιστον μία από τις παραμέτρους μίας Αίτησης Εξουσιοδότησης.
      */
     public function toQueryStringParameterValue() {
-//        $param = '';
-//        $param .= $this->clientId ? static::$CLIENT_ID . '=' . $this->clientId : '';
-//        $param .= $this->redirectionUri ? '&' . static::$REDIRECTION_URI . '=' . $this->redirectionUri : '';
-//        $param .= $this->responseType ? '&' . static::$RESPONSE_TYPE . '=' . $this->responseType : '';
-//        $param .= $this->state ? '&' . static::$STATE . '=' . $this->state : '';
-//        $param .= $this->scopes ? '&' . static::$SCOPE . '=' . $this->formatScopes() : '';
         $queryStringParameters = $this->toArray();
         if (empty($queryStringParameters)) {
             throw new \BadMethodCallException('No parameters have been set to this request.');
