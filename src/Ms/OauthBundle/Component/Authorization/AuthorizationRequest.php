@@ -301,31 +301,44 @@ class AuthorizationRequest {
     /**
      * 
      * @return string
+     * @throws \BadMethodCallException εάν αυτή η μέθοδος κληθεί προτού τεθεί
+     * τουλάχιστον μία από τις παραμέτρους μίας Αίτησης Εξουσιοδότησης.
      */
     public function toQueryStringParameterValue() {
-        $param = '';
-        $param .= $this->clientId ? static::$CLIENT_ID . '=' . $this->clientId : '';
-        $param .= $this->redirectionUri ? '&' . static::$REDIRECTION_URI . '=' . $this->redirectionUri : '';
-        $param .= $this->responseType ? '&' . static::$RESPONSE_TYPE . '=' . $this->responseType : '';
-        $param .= $this->state ? '&' . static::$STATE . '=' . $this->state : '';
-        $param .= $this->scopes ? '&' . static::$SCOPE . '=' . $this->formatScopes() : '';
+//        $param = '';
+//        $param .= $this->clientId ? static::$CLIENT_ID . '=' . $this->clientId : '';
+//        $param .= $this->redirectionUri ? '&' . static::$REDIRECTION_URI . '=' . $this->redirectionUri : '';
+//        $param .= $this->responseType ? '&' . static::$RESPONSE_TYPE . '=' . $this->responseType : '';
+//        $param .= $this->state ? '&' . static::$STATE . '=' . $this->state : '';
+//        $param .= $this->scopes ? '&' . static::$SCOPE . '=' . $this->formatScopes() : '';
+        $queryStringParameters = $this->toArray();
+        if (empty($queryStringParameters)) {
+            throw new \BadMethodCallException('No parameters have been set to this request.');
+        }
         
-        return $param;
+        $param = '';
+        foreach ($queryStringParameters as $key => $value) {
+            $param .= $key . '=' . $value . '&';
+        }
+        
+        return substr($param, 0, -1);
     }
     
     /**
      * @return string
      */
-//    public function toUri() {
-//        $uri = '';
-//        $uri .= $this->clientId ? '&' . static::$CLIENT_ID . '=' . $this->clientId : '';
-//        $uri .= $this->redirectionUri ? '&' . static::$REDIRECTION_URI . '=' . $this->redirectionUri : '';
-//        $uri .= $this->responseType ? '&' . static::$RESPONSE_TYPE . '=' . $this->responseType : '';
-//        $uri .= $this->state ? '&' . static::$STATE . '=' . $this->state : '';
-//        $uri .= $this->scopes ? '&' . static::$SCOPE . '=' . $this->formatScopes() : '';
-//        
-//        return $uri;
-//    }
+    public function toUri() {        
+        $queryStringParameters = $this->toArray();
+        $queryString = '';
+        foreach ($queryStringParameters as $key => $value) {
+            $queryString .= $key . '=' . urlencode($value);
+        }
+        
+        $uri = $this->oauthServerUri;
+        $uri .= ($queryString !== '') ? '?' . $queryString : '';
+        
+        return $uri;
+    }
     
     /**
      * 
