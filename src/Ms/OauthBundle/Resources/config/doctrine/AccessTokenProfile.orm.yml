@@ -1,0 +1,40 @@
+Ms\OauthBundle\Entity\AccessTokenProfile:
+    type: entity
+    table: access_token_profile
+    id:
+        id:
+            type: integer
+            generator: { strategy: AUTO }
+    fields:
+        accessToken:
+            name: token
+            type: string
+            length: 128
+        accessTokenType:
+            name: token_type
+            type: string
+            length: 255
+        expirationDate:
+            name: expiration_date
+            type: datetimetz
+        grantType:
+            name: grant_type
+            type: string
+            length: 255    
+    manyToMany:
+        scopes:
+            targetEntity: AuthorizationCodeScope
+            joinTable:
+                name: access_token_profiles_to_scopes
+                joinColumns:
+                    token_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    scope_id:
+                        referencedColumnName: id
+    oneToOne:
+        authorizatonCodeProfile:
+          targetEntity: AuthorizationCodeProfile
+          joinColumn:
+            name: authorization_code_profile_id
+            referencedColumnName: id
