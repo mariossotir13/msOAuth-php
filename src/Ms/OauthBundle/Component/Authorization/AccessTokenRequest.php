@@ -17,9 +17,9 @@ class AccessTokenRequest {
      * @var string
      */
     private static $CLIENT_ID = 'client_id';
-    private static $REDIRECTION_URI = 'redirect_uri';
-    private static $GRANT_TYPE = 'grant_type';
     private static $CODE = 'code';
+    private static $GRANT_TYPE = 'grant_type';
+    private static $REDIRECTION_URI = 'redirect_uri';
     /**#@-*/
 
     /**
@@ -27,6 +27,12 @@ class AccessTokenRequest {
      * @var string
      */
     private $clientId;
+
+    /**
+     *
+     * @var ObjectRepository
+     */
+    private $clientRepository;
 
     /**
      *
@@ -39,18 +45,18 @@ class AccessTokenRequest {
      * @var string
      */
     private $grantType;
+    
+    /**
+     *
+     * @var string
+     */
+    private $oauthServerUri;
 
     /**
      *
      * @var string
      */
     private $redirectionUri;
-
-    /**
-     *
-     * @var ObjectRepository
-     */
-    private $clientRepository;
 
     /**
      * 
@@ -68,9 +74,13 @@ class AccessTokenRequest {
     }
 
     /**
-     * 
+     * @param string $oauthServerUri
      */
-    function __construct() {
+    function __construct($oauthServerUri) {
+        if ($oauthServerUri === null) {
+            throw new \InvalidArgumentException('No authorization server URI was specified.');
+        }
+        $this->oauthServerUri = $oauthServerUri;
     }
 
     /**
