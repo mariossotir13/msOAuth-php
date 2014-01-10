@@ -14,8 +14,6 @@ use Doctrine\Common\Persistence\ObjectRepository;
  * της Υπηρεσίας Επικύρωσης.
  *
  * @author Marios
- * 
- * TODO: Remove commented out code from the class once its validation process is complete.
  */
 class AuthorizationRequest {
     
@@ -49,7 +47,7 @@ class AuthorizationRequest {
     private $clientRepository;
     
     /**
-     * Η διεύθυνση URI του εξυπηρετητή εξουσιοδοτήσεων.
+     * Η διεύθυνση URI του Εξυπηρετητή Εξουσιοδοτήσεων.
      *
      * @var string
      */
@@ -84,11 +82,10 @@ class AuthorizationRequest {
      * δεδομένα από ένα Request αντικείμενο.
      * 
      * @param Request $request
-     * @param ObjectRepository $clientRepository
      * @return AuthorizationRequest
      */
-    public static function fromRequest(Request $request, ObjectRepository $clientRepository) {
-        $authorizationRequest = new AuthorizationRequest(static::$SERVER_URI, $clientRepository);
+    public static function fromRequest(Request $request) {
+        $authorizationRequest = new AuthorizationRequest(static::$SERVER_URI);
         $authorizationRequest->setClientId($request->query->get(static::$CLIENT_ID));
         $authorizationRequest->setRedirectionUri($request->query->get(static::$REDIRECTION_URI));
         $authorizationRequest->setResponseType($request->query->get(static::$RESPONSE_TYPE));
@@ -103,16 +100,15 @@ class AuthorizationRequest {
      * δεδομένα από ένα URI.
      * 
      * @param string $uri
-     * @param ObjectRepository $clientRepository
      * @return AuthorizationRequest
      * @throws \InvalidArgumentException εάν το όρισμα `$uri` είναι `null`.
      */
-    public static function fromUri($uri, ObjectRepository $clientRepository) {
+    public static function fromUri($uri) {
         if ($uri === null) {
             throw new \InvalidArgumentException('No uri was provided.');
         }
         
-        $request = new AuthorizationRequest(static::$SERVER_URI, $clientRepository);
+        $request = new AuthorizationRequest(static::$SERVER_URI);
         $request->setClientId(static::extractParameterFromUri($uri, static::$CLIENT_ID));
         $request->setRedirectionUri(static::extractParameterFromUri($uri, static::$REDIRECTION_URI));
         $request->setResponseType(static::extractParameterFromUri($uri, static::$RESPONSE_TYPE));
@@ -125,15 +121,11 @@ class AuthorizationRequest {
     /**
      * @param string $oauthServerUri
      */
-    function __construct($oauthServerUri, ObjectRepository $clientRepository) {
+    function __construct($oauthServerUri) {
         if ($oauthServerUri === null) {
             throw new \InvalidArgumentException('No authorization server URI was specified.');
         }
-        if ($clientRepository === null) {
-            throw new \InvalidArgumentException('No client repository was specified.');
-        }
         $this->oauthServerUri = $oauthServerUri;
-        $this->clientRepository = $clientRepository;
     }
 
     /**
@@ -219,6 +211,20 @@ class AuthorizationRequest {
      */
     public function setClientId($clientId) {
         $this->clientId = $clientId;
+    }
+    
+    /**
+     * 
+     * @param ObjectRepository $clientRepository
+     * @return void
+     * @throws \InvalidArgumentException εάν το όρισμα `$clientRepository` είναι
+     * `null`.
+     */
+    public function setClientRepository(ObjectRepository $clientRepository) {
+        if ($clientRepository === null) {
+            throw new \InvalidArgumentException('No client repository was specified.');
+        }
+        $this->clientRepository = $clientRepository;
     }
     
     /**

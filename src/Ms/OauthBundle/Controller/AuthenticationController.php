@@ -50,14 +50,12 @@ class AuthenticationController extends Controller {
             );
         }
         
-        $request = AuthorizationRequest::fromUri(
-            $request->query->get(AuthorizationRequest::QUERY_PARAM),
-            $this->getDoctrine()->getRepository('MsOauthBundle:Client')
-        );
+        $authRequest = AuthorizationRequest::fromUri($request->query->get(AuthorizationRequest::QUERY_PARAM));
+        $authRequest->setClientRepository($this->getDoctrine()->getRepository('MsOauthBundle:Client'));
         
         return $this->redirect($this->generateUrl(
             'ms_oauth_authorization', 
-            $request->toArray()
+            $authRequest->toArray()
         ));
     }
     

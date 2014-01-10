@@ -55,11 +55,10 @@ class AccessTokenRequest {
     /**
      * 
      * @param Request $request
-     * @param ObjectRepository $clientRepository
      * @return AccessTokenRequest
      */
-    public static function fromRequest(Request $request, ObjectRepository $clientRepository) {
-        $accessTokenRequest = new AccessTokenRequest($clientRepository);
+    public static function fromRequest(Request $request) {
+        $accessTokenRequest = new AccessTokenRequest();
         $accessTokenRequest->setClientId($request->query->get(static::$CLIENT_ID));
         $accessTokenRequest->setRedirectionUri($request->query->get(static::$REDIRECTION_URI));
         $accessTokenRequest->setGrantType($request->query->get(static::$GRANT_TYPE));
@@ -70,14 +69,8 @@ class AccessTokenRequest {
 
     /**
      * 
-     * @param ObjectRepository $clientRepository
-     * @throws \InvalidArgumentException
      */
-    function __construct(ObjectRepository $clientRepository) {
-        if ($clientRepository === null) {
-            throw new \InvalidArgumentException('No client repository was provided.');
-        }
-        $this->clientRepository = $clientRepository;
+    function __construct() {
     }
 
     /**
@@ -130,6 +123,20 @@ class AccessTokenRequest {
         $this->clientId = $clientId;
     }
 
+    /**
+     * 
+     * @param ObjectRepository $clientRepository
+     * @return void
+     * @throws \InvalidArgumentException εάν το όρισμα `$clientRepository` είναι
+     * `null`.
+     */
+    public function setClientRepository(ObjectRepository $clientRepository) {
+        if ($clientRepository === null) {
+            throw new \InvalidArgumentException('No client repository was specified.');
+        }
+        $this->clientRepository = $clientRepository;
+    }
+    
     /**
      * 
      * @param string $code

@@ -163,10 +163,10 @@ class AuthorizationController extends Controller {
      * @return AccessTokenRequest
      */
     protected function createAccessTokenRequest(Request $request) {
-        return AccessTokenRequest::fromRequest(
-            $request, 
-            $this->getDoctrine()->getRepository("MsOauthBundle:Client")
-        );
+        $authRequest = AccessTokenRequest::fromRequest($request);
+        $authRequest->setClientRepository($this->getDoctrine()->getRepository("MsOauthBundle:Client"));
+        
+        return $authRequest;
     }
 
     /**
@@ -239,17 +239,13 @@ class AuthorizationController extends Controller {
      */
     protected function createAuthorizationRequest(Request $request) {
         $requestParameter = $request->query->get(AuthorizationRequest::QUERY_PARAM);
-        if ($requestParameter !== null) {
-            return AuthorizationRequest::fromUri(
-                $requestParameter, 
-                $this->getDoctrine()->getRepository("MsOauthBundle:Client")
-            );
-        }
+        
+        $authRequest = ($requestParameter !== null)
+            ? AuthorizationRequest::fromUri($requestParameter)
+            : AuthorizationRequest::fromRequest($request);
+        $authRequest->setClientRepository($this->getDoctrine()->getRepository("MsOauthBundle:Client"));
 
-        return AuthorizationRequest::fromRequest(
-            $request,
-            $this->getDoctrine()->getRepository("MsOauthBundle:Client")
-        );
+        return $authRequest;
     }
 
     /**
