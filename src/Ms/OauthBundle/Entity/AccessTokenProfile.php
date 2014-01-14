@@ -12,6 +12,11 @@ use Ms\OauthBundle\Entity\AuthorizationCodeProfile;
  * @author Marios
  */
 class AccessTokenProfile {
+    
+    /**
+     * @var string
+     */
+    const ACCESS_TOKEN_TYPE_BEARER = 'bearer';
 
     /**
      *
@@ -32,8 +37,7 @@ class AccessTokenProfile {
     private $accessTokenType;
 
     /**
-     *
-     * @var AuthorizationCodeProfile 
+     * @var AuthorizationCodeProfile
      */
     private $authorizationCodeProfile;
 
@@ -49,6 +53,11 @@ class AccessTokenProfile {
     private $grantType;
 
     /**
+     * @var integer
+     */
+    private $id;
+
+    /**
      * @var Collection
      */
     private $scopes;
@@ -60,16 +69,6 @@ class AccessTokenProfile {
         $this->scopes = new ArrayCollection();
         $this->setExpirationDate();
     }
-
-    /**
-     * @var integer
-     */
-    private $id;
-
-    /**
-     * @var \Ms\OauthBundle\Entity\AuthorizationCodeProfile
-     */
-    private $authorizatonCodeProfile;
 
     /**
      * Get id
@@ -146,11 +145,11 @@ class AccessTokenProfile {
     /**
      * Set authorizatonCodeProfile
      *
-     * @param \Ms\OauthBundle\Entity\AuthorizationCodeProfile $authorizatonCodeProfile
+     * @param \Ms\OauthBundle\Entity\AuthorizationCodeProfile $authorizationCodeProfile
      * @return AccessTokenProfile
      */
-    public function setAuthorizatonCodeProfile(\Ms\OauthBundle\Entity\AuthorizationCodeProfile $authorizatonCodeProfile = null) {
-        $this->authorizatonCodeProfile = $authorizatonCodeProfile;
+    public function setAuthorizationCodeProfile(\Ms\OauthBundle\Entity\AuthorizationCodeProfile $authorizationCodeProfile = null) {
+        $this->authorizationCodeProfile = $authorizationCodeProfile;
 
         return $this;
     }
@@ -160,8 +159,8 @@ class AccessTokenProfile {
      *
      * @return \Ms\OauthBundle\Entity\AuthorizationCodeProfile 
      */
-    public function getAuthorizatonCodeProfile() {
-        return $this->authorizatonCodeProfile;
+    public function getAuthorizationCodeProfile() {
+        return $this->authorizationCodeProfile;
     }
 
     /**
@@ -198,8 +197,8 @@ class AccessTokenProfile {
      * 
      */
     protected function setExpirationDate() {
-        $now = new \DateTime('now', new \DateTimeZone(\DateTimeZone::UTC));
-        $this->expirationDate = $now->add(new DateInterval('PT' . static::$EXPIRATION_TIME . 'S'));
+        $now = new \DateTime('now', new \DateTimeZone("UTC"));
+        $this->expirationDate = $now->add(new \DateInterval('PT' . static::$EXPIRATION_TIME . 'S'));
     }
 
     /**

@@ -33,7 +33,7 @@ Ms\OauthBundle\Entity\AccessTokenProfile:
                     scope_id:
                         referencedColumnName: id
     oneToOne:
-        authorizatonCodeProfile:
+        authorizationCodeProfile:
           targetEntity: AuthorizationCodeProfile
           joinColumn:
             name: authorization_code_profile_id

@@ -31,11 +31,18 @@ class AuthorizationService implements AuthorizationServiceInterface {
     /**
      * @inheritdoc
      */
+    public function createAccessToken() {
+        return $this->createAuthorizationCode();
+    } 
+
+    /**
+     * @inheritdoc
+     */
     public function createAuthorizationCode() {
         $rnd = $this->randomStringGenerator->nextBytes(32);
         $rnd = base64_encode($rnd);
         
         return trim($rnd, '=');
-    }   
+    }  
 }
 

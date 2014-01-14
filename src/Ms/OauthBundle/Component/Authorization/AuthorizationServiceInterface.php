@@ -11,6 +11,11 @@ interface AuthorizationServiceInterface {
     /**
      * @return string
      */
+    public function createAccessToken();
+    
+    /**
+     * @return string
+     */
     public function createAuthorizationCode();
 }
 
