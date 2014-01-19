@@ -45,7 +45,16 @@ class AuthenticationController extends Controller {
      * @return Response
      */
     public function clientLoginAction(Request $request) {
-        return $this->loginAction($request);
+        $session = $request->getSession();
+        
+        return $this->render(
+            'MsOauthBundle:Authentication:login.html.twig', 
+            array(
+                'last_id' => $session->get(SecurityContext::LAST_USERNAME),
+                'error' => $this->validateForm($request),
+                'check_path' => $this->generateUrl('ms_oauth_authentication_client_login_check')
+            )
+        );
     }
     
     /**
@@ -61,21 +70,23 @@ class AuthenticationController extends Controller {
      * @return Response
      */
     public function loginAction(Request $request) {
+//        $session = $request->getSession();
+//        
+//        $error = null;
+//        if ($request->attributes->has(SecurityContext::AUTHENTICATION_ERROR)) {
+//            $error = $request->attributes->get(SecurityContext::AUTHENTICATION_ERROR);
+//        } else {
+//            $error = $session->get(SecurityContext::AUTHENTICATION_ERROR);
+//            $session->remove(SecurityContext::AUTHENTICATION_ERROR);
+//        }
         $session = $request->getSession();
-        
-        $error = null;
-        if ($request->attributes->has(SecurityContext::AUTHENTICATION_ERROR)) {
-            $error = $request->attributes->get(SecurityContext::AUTHENTICATION_ERROR);
-        } else {
-            $error = $session->get(SecurityContext::AUTHENTICATION_ERROR);
-            $session->remove(SecurityContext::AUTHENTICATION_ERROR);
-        }
         
         return $this->render(
             'MsOauthBundle:Authentication:login.html.twig', 
             array(
                 'last_id' => $session->get(SecurityContext::LAST_USERNAME),
-                'error' => $error
+                'error' => $this->validateForm($request),
+                'check_path' => $this->generateUrl('ms_oauth_authentication_user_login_check')
             )
         );
     }
@@ -104,6 +115,25 @@ class AuthenticationController extends Controller {
             'ms_oauth_authorization', 
             $authRequest->toArray()
         ));
+    }
+    
+    /**
+     * 
+     * @param Request $request
+     * @return string
+     */
+    protected function validateForm(Request $request) {
+        $session = $request->getSession();
+        
+        $error = null;
+        if ($request->attributes->has(SecurityContext::AUTHENTICATION_ERROR)) {
+            $error = $request->attributes->get(SecurityContext::AUTHENTICATION_ERROR);
+        } else {
+            $error = $session->get(SecurityContext::AUTHENTICATION_ERROR);
+            $session->remove(SecurityContext::AUTHENTICATION_ERROR);
+        }
+        
+        return $error;
     }
     
     /**

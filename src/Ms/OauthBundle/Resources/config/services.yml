@@ -19,6 +19,8 @@ services:
     ms_oauthbundle_authorization:
         class: Ms\OauthBundle\Component\Authorization\AuthorizationService
         arguments: [@ms_oauthbundle_randomStringGenerator]
+    ms_oauthbundle_authenticator_user:
+        class: Ms\OauthBundle\Component\Security\MsOauthUserAuthenticator
     ms_oauthbundle_authenticator_client:
         class: Ms\OauthBundle\Component\Security\MsOauthClientAuthenticator
         arguments: [@ms_oauthbundle_authentication, %secret%]

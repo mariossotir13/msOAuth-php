@@ -12,7 +12,7 @@
     <div>{{ error.message }}</div>
 {% endif %}
 
-<form action="{{ path('ms_oauth_authentication_client_login_check') }}" method="post">
+<form action="{{ check_path }}" method="post">
     <table style="text-align: left;">
         <tr>
             <th><label for="id">ID:</label></th>
@@ -27,5 +27,6 @@
     <button type="submit">Είσοδος</button>
     
     <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" />
+{#    <input type="hidden" name="user_type" value="{{ user_type:default(1) }}" />#}
 </form>
 {% endblock %}

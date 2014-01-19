@@ -10,9 +10,9 @@ security:
         ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
     providers:
-        chain_provider:
-            chain:
-                providers: [client, user]
+#        chain_provider:
+#            chain:
+#                providers: [client, user]
         client:
             entity:
                 class: Ms\OauthBundle\Entity\Client
@@ -32,21 +32,42 @@ security:
 #            security: false
 
         secured_area_client:
-            pattern:    ^/
+            pattern:    ^/oauth2/c
+            context: oauth2
+            provider: client
             simple_form:
                 authenticator: ms_oauthbundle_authenticator_client
                 check_path: ms_oauth_authentication_client_login_check
 #                csrf_provider: form.csrf_provider
-                failure_path: ms_oauthbundle_authentication_failure
+#                failure_path: ms_oauthbundle_authentication_failure
                 login_path: ms_oauth_authentication_client_login
                 username_parameter: _id
             logout:
-                path:   /authentication/logout
-                target: /registration/client
+                path:   /oauth2/c/authentication/logout
+                target: /oauth2/c/registration/client
+            anonymous: ~
+
+        secured_area_user:
+            pattern:    ^/oauth2/u
+            context: oauth2
+            provider: user
+#            simple_form:
+#                authenticator: ms_oauthbundle_authenticator_user
+            form_login:
+                check_path: ms_oauth_authentication_user_login_check
+#                csrf_provider: form.csrf_provider
+#                failure_path: ms_oauthbundle_authentication_failure
+                login_path: ms_oauth_authentication_user_login
+                username_parameter: _id
+            logout:
+                path:   /oauth2/u/authentication/logout
+                target: /oauth2/u/authentication/login
             anonymous: ~
 #            http_basic:
 #                realm: "Access Token Issuance Area"
 
     access_control:
-        - { path: ^/authorization/access_token, roles: ROLE_MS_OAUTH_BUNDLE_CLIENT }
-        - { path: ^/authentication/client/login, roles: IS_AUTHENTICATED_ANONYMOUSLY } 
+        - { path: ^/oauth2/c/authorization/access_token, roles: ROLE_MS_OAUTH_BUNDLE_CLIENT }
+        - { path: ^/oauth2/c/authentication/login, roles: IS_AUTHENTICATED_ANONYMOUSLY } 
+        - { path: ^/oauth2/u/authorization/accept, roles: ROLE_MS_OAUTH_BUNDLE_USER }
+        - { path: ^/oauth2/u/authentication/login, roles: IS_AUTHENTICATED_ANONYMOUSLY } 

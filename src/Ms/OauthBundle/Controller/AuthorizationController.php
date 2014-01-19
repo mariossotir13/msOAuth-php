@@ -77,14 +77,14 @@ class AuthorizationController extends Controller {
             return $this->invalidAuthorizationRequestAction($validationResponse, $authRequest);
         }
 
-        if (!AuthenticationController::isUserAuthenticated($request)) {
-            return $this->redirect(
-                $this->generateUrl(
-                    'ms_oauth_authentication_resource_owner',
-                    array(AuthorizationRequest::QUERY_PARAM => $authRequest->toQueryStringParameterValue())
-                )
-            );
-        }
+//        if (!AuthenticationController::isUserAuthenticated($request)) {
+//            return $this->redirect(
+//                $this->generateUrl(
+//                    'ms_oauth_authentication_resource_owner',
+//                    array(AuthorizationRequest::QUERY_PARAM => $authRequest->toQueryStringParameterValue())
+//                )
+//            );
+//        }
 
         if (!$this->isAuthorizationRequestAccepted($request)) {
             return $this->redirect(
