@@ -2,35 +2,30 @@
 
 namespace Ms\OauthBundle\Component\Security;
 
-use Symfony\Component\Security\Core\Authentication\SimpleFormAuthenticatorInterface;
+use Ms\OauthBundle\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Symfony\Component\HttpFoundation\Request;
-use Ms\OauthBundle\Component\Authentication\AuthenticationServiceInterface;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Util\StringUtils;
+use Ms\OauthBundle\Component\Authentication\AuthenticationServiceInterface;
 
 /**
- * Description of MsOauthAuthenticator
+ * Description of MsOauthClientAuthentication
  *
  * @author Marios
  */
-class MsOauthClientAuthenticator implements SimpleFormAuthenticatorInterface {
-
+class MsOauthClientAuthenticator extends MsOauthAuthenticator {
+    
     /**
      *
      * @var AuthenticationServiceInterface
      */
-    private $authenticationService;
+    protected $authenticationService;
     
     /**
      *
      * @var string
      */
-    private $encryptionKey;
-
+    protected $encryptionKey;
+    
     /**
      * 
      * @param AuthenticationServiceInterface $authenticationService
@@ -47,48 +42,17 @@ class MsOauthClientAuthenticator implements SimpleFormAuthenticatorInterface {
         $this->authenticationService = $authenticationService;
         $this->encryptionKey = $encryptionKey;
     }
-
+    
     /**
+     * 
      * @inheritdoc
      */
-    public function authenticateToken(TokenInterface $token, UserProviderInterface $userProvider, $providerKey) {
-        /* @var $user \Ms\OauthBundle\Entity\Client */
-        $user = null;
-        try {
-            $user = $userProvider->loadUserByUsername($token->getUsername());
-        } catch (UsernameNotFoundException $ex) {
-            throw new AuthenticationException('Invalid username or password.');
-        }
-        
+    protected function validateUser(User $user, TokenInterface $token) {
         $decryptedPassword = $this->authenticationService->decryptPassword(
             $user->getPassword(),
             $this->encryptionKey
         );
-        $passwordValid = StringUtils::equals($decryptedPassword, $token->getCredentials());
-        if (!$passwordValid) {
-            throw new AuthenticationException('Invalid username or password.');
-        }
         
-        return new UsernamePasswordToken(
-            $user->getId(), 
-            $user->getPassword(), 
-            $providerKey, 
-            $user->getRoles()
-        );
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function createToken(Request $request, $username, $password, $providerKey) {
-        return new UsernamePasswordToken($username, $password, $providerKey);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function supportsToken(TokenInterface $token, $providerKey) {
-        return $token instanceof UsernamePasswordToken
-            && $token->getProviderKey() === $providerKey;
+        return StringUtils::equals($decryptedPassword, $token->getCredentials());
     }
 }
