@@ -34,6 +34,16 @@ ms_oauth_authentication_resource_owner:
 ms_oauth_authorization_access_token:
     pattern: /authorization/access_token
     defaults: { _controller: MsOauthBundle:Authorization:accessToken }
+    
+ms_oauth_authentication_login:
+    pattern: /authentication/login
+    defaults: { _controller: MsOauthBundle:Authentication:login }
+    
+ms_oauth_authentication_login_check:
+    pattern: /authentication/login_check
+    
+ms_oauth_authentication_logout:
+    pattern: /authentication/logout
 
 ###
 # Demos

@@ -2,6 +2,9 @@
 
 namespace Ms\OauthBundle\Entity;
 
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\Role\Role;
+
 /**
  * Περιέχει κοινά στοιχεία και συμπεριφορές των χρηστών του συστήματος.
  * 
@@ -10,7 +13,12 @@ namespace Ms\OauthBundle\Entity;
  * @package Ms\OauthBundle\Entity
  * @author user
  */
-class User {
+class User implements UserInterface {
+    
+    /**
+     * @var string
+     */
+    const ROLE_USER = 'ROLE_MS_OAUTH_BUNDLE_USER';
 
     /**
      * To id του χρήστη.
@@ -41,15 +49,19 @@ class User {
     protected $salt;
 
     /**
-     * Set id
-     *
-     * @param string $id
-     * @return User
+     * @inheritdoc
      */
-    public function setId($id) {
-        $this->id = $id;
+    public function eraseCredentials() {
+        // TODO: Implement eraseCredentials.
+    }
 
-        return $this;
+    /**
+     * Get email
+     *
+     * @return string 
+     */
+    public function getEmail() {
+        return $this->email;
     }
 
     /**
@@ -59,6 +71,40 @@ class User {
      */
     public function getId() {
         return $this->id;
+    }
+
+    /**
+     * Get password
+     *
+     * @return string 
+     */
+    public function getPassword() {
+        return $this->password;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getRoles() {
+        return array(new Role(self::ROLE_USER));
+    }
+
+    /**
+     * Get salt
+     *
+     * @return string 
+     */
+    public function getSalt() {
+        return $this->salt;
+    }
+
+    /**
+     * 
+     * @return string
+     * @see #getId()
+     */
+    public function getUsername() {
+        return $this->getId();
     }
 
     /**
@@ -74,12 +120,15 @@ class User {
     }
 
     /**
-     * Get email
+     * Set id
      *
-     * @return string 
+     * @param string $id
+     * @return User
      */
-    public function getEmail() {
-        return $this->email;
+    public function setId($id) {
+        $this->id = $id;
+
+        return $this;
     }
 
     /**
@@ -95,15 +144,6 @@ class User {
     }
 
     /**
-     * Get password
-     *
-     * @return string 
-     */
-    public function getPassword() {
-        return $this->password;
-    }
-
-    /**
      * Set salt
      *
      * @param string $salt
@@ -114,14 +154,4 @@ class User {
 
         return $this;
     }
-
-    /**
-     * Get salt
-     *
-     * @return string 
-     */
-    public function getSalt() {
-        return $this->salt;
-    }
-
 }

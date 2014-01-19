@@ -1,39 +1,60 @@
 security:
     encoders:
-        Symfony\Component\Security\Core\User\User: plaintext
+        Ms\OauthBundle\Entity\User:
+            algorithm: sha512
+            iterations: 5000
+            encode_as_base64: true
 
     role_hierarchy:
         ROLE_ADMIN:       ROLE_USER
         ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
     providers:
-        in_memory:
-            memory:
-                users:
-                    user:  { password: userpass, roles: [ 'ROLE_USER' ] }
-                    admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
+#        in_memory:
+#            memory:
+#                users:
+#                    user:  { password: userpass, roles: [ 'ROLE_USER' ] }
+#                    admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
+#                    admin: { password: clientpass, roles: [ 'ROLE_CLIENT' ] }
+        chain_provider:
+            chain:
+                providers: [client, user]
+        client:
+            entity:
+                class: Ms\OauthBundle\Entity\Client
+                property: id
+        user:
+            entity:
+                class: Ms\OauthBundle\Entity\User
+                property: id
 
     firewalls:
-        dev:
-            pattern:  ^/(_(profiler|wdt)|css|images|js)/
-            security: false
-
-        login:
-            pattern:  ^/demo/secured/login$
-            security: false
+#        dev:
+#            pattern:  ^/(_(profiler|wdt)|css|images|js)/
+#            security: false
+#
+#        login:
+#            pattern:  ^/demo/secured/login$
+#            security: false
 
         secured_area:
-            pattern:    ^/demo/secured/
-            form_login:
-                check_path: _security_check
-                login_path: _demo_login
+#            pattern:    ^/demo/secured/
+            pattern:    ^/
+            simple_form:
+                authenticator: ms_oauthbundle_authenticator
+                check_path: ms_oauth_authentication_login_check
+#                csrf_provider: form.csrf_provider
+                login_path: ms_oauth_authentication_login
+                username_parameter: _id
             logout:
-                path:   _demo_logout
-                target: _demo
-            #anonymous: ~
-            #http_basic:
-            #    realm: "Secured Demo Area"
+                path:   /authentication/logout
+                target: /registration/client
+            anonymous: ~
+#            http_basic:
+#                realm: "Access Token Issuance Area"
 
     access_control:
-        - { path: ^/demo/secured/hello/admin/, roles: ROLE_ADMIN }
-        #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+#        - { path: ^/demo/secured/hello/admin/, roles: ROLE_ADMIN }
+        - { path: ^/authorization/access_token, roles: ROLE_MS_OAUTH_BUNDLE_CLIENT }
+#        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/authentication/login, roles: IS_AUTHENTICATED_ANONYMOUSLY } 

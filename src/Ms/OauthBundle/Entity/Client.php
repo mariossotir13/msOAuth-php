@@ -5,6 +5,7 @@ namespace Ms\OauthBundle\Entity;
 use Ms\OauthBundle\Entity\User;
 use Ms\OauthBundle\Entity\AuthorizationCodeProfile;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Security\Core\Role\Role;
 
 /**
  * Μία εφαρμογή η οποία κάνει αιτήσεις για προστατευμένο πόρο εκ μέρους του
@@ -13,6 +14,11 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @author user
  */
 class Client extends User {
+    
+    /**
+     * @var string
+     */
+    const ROLE_CLIENT = 'ROLE_MS_OAUTH_BUNDLE_CLIENT';
 
     /**
      * Ο τίτλος της εφαρμογής.
@@ -105,6 +111,13 @@ class Client extends User {
      */
     public function getRedirectionUri() {
         return $this->redirectionUri;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getRoles() {
+        return array(new Role(self::ROLE_CLIENT));
     }
 
     /**

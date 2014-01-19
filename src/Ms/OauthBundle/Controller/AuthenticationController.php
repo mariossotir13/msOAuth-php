@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Ms\OauthBundle\Component\Authorization\AuthorizationRequest;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\Security\Core\SecurityContext;
 
 /**
  * Description of AuthenticationController
@@ -19,6 +20,11 @@ class AuthenticationController extends Controller {
      * @var string
      */
     const AUTH_TOKEN = 'ro_auth_token';
+    
+    /**
+     * @var string
+     */
+//    const LAST_ID = '_last_id';
 
     /**
      * Αυτή η μέθοδος θα φύγει όταν ολοκληρωθεί η υλοποίηση της Π.Χ. *Αυθεντικοποίηση
@@ -31,6 +37,38 @@ class AuthenticationController extends Controller {
         $authToken = $request->cookies->get(static::AUTH_TOKEN);
 
         return $authToken !== null;
+    }
+    
+    /**
+     * Αυθεντικοποιεί ένα χρήστη του συστήματος.
+     * 
+     * Αυτή η μέθοδος εμφανίζει στο χρήστη τη Φορμα Πρόσβασης. Ο χρήστης
+     * χρειάζεται να συμπληρώσει τα εξής στοιχεία:
+     * 
+     *  - ID
+     *  - Κωδικό Πρόσβασης
+     * 
+     * @param Request $request
+     * @return Response
+     */
+    public function loginAction(Request $request) {
+        $session = $request->getSession();
+        
+        $error = null;
+        if ($request->attributes->has(SecurityContext::AUTHENTICATION_ERROR)) {
+            $error = $request->attributes->get(SecurityContext::AUTHENTICATION_ERROR);
+        } else {
+            $error = $session->get(SecurityContext::AUTHENTICATION_ERROR);
+            $session->remove(SecurityContext::AUTHENTICATION_ERROR);
+        }
+        
+        return $this->render(
+            'MsOauthBundle:Authentication:login.html.twig', 
+            array(
+                'last_id' => $session->get(SecurityContext::LAST_USERNAME),
+                'error' => $error
+            )
+        );
     }
 
     /**

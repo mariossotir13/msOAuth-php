@@ -1,0 +1,31 @@
+{# The template of the Login Page. #}
+{%extends "::base.html.twig" %}
+
+{% block title %}Αυθεντικοποίηση Χρήστη | MsOAuth{% endblock %}
+
+{% block body %}
+
+<h2>Πρόσβαση</h2>
+<p>Παρακαλούμε, συμπληρώστε την παρακάτω φόρμα για να εισέλθετε στο σύστημα.</p>
+
+{% if error %}
+    <div>{{ error.message }}</div>
+{% endif %}
+
+<form action="{{ path('ms_oauth_authentication_login_check') }}" method="post">
+    <table style="text-align: left;">
+        <tr>
+            <th><label for="id">ID:</label></th>
+            <td><input type="text" id="id" name="_id" value="{{ last_id }}" /></td>
+        </tr>
+        <tr>
+            <th><label for="password">Κωδικός Πρόσβασης:</label></th>
+            <th><input type="password" id="password" name="_password" /></th>
+        </tr>
+    </table>
+    
+    <button type="submit">Είσοδος</button>
+    
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" />
+</form>
+{% endblock %}
