@@ -45,6 +45,14 @@ ms_oauth_authentication_client_login_check:
 ms_oauth_authentication_client_logout:
     pattern: /oauth2/c/authentication/logout
     
+ms_oauth_registration_user:
+    pattern: /oauth2/u/registration/
+    defaults: { _controller: MsOauthBundle:Registration:user }
+    
+ms_oauth_user_details:
+    pattern: /oauth2/u/user/{id}
+    defaults: { _controller: MsOauthBundle:Registration:userDetails }
+    
 ms_oauth_authentication_user_login:
     pattern: /oauth2/u/authentication/login
     defaults: { _controller: MsOauthBundle:Authentication:login }

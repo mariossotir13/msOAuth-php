@@ -1,0 +1,16 @@
+{# Σελίδα Στοιχείων Πελάτη #}
+{% extends "::base.html.twig" %}
+
+{% block title %}Στοιχεία Ιδιοκτήτη Πόρου | MsOAuth{% endblock %}
+
+{% block body %}
+<h2>Στοιχεία Ιδιοκτήτη Πόρου</h2>
+
+<table>
+    <tbody style="text-align: left">
+        <tr><th>ID:</th><td>{{ user.id }}</td></tr>
+        <tr><th>e-mail:</th><td>{{ user.email }}</td></tr>
+    </tbody>
+</table>
+
+{% endblock %}
