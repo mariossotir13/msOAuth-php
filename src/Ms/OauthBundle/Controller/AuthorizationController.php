@@ -17,6 +17,7 @@ use Ms\OauthBundle\Component\Authorization\AuthorizationResponse;
 use Ms\OauthBundle\Component\Authorization\ValidationResponse;
 use Ms\OauthBundle\Component\Authorization\AccessTokenRequest;
 use Ms\OauthBundle\Entity\AccessTokenProfile;
+use Ms\OauthBundle\Component\Authorization\AccessTokenErrorResponse;
 
 /**
  * Description of AuthorizationController
@@ -24,10 +25,10 @@ use Ms\OauthBundle\Entity\AccessTokenProfile;
  * @author Marios
  */
 class AuthorizationController extends Controller {
+
     /**
      * @var string
      */
-
     const PARAM_AUTHORIZATION_REQUEST_ACCEPT = 'authz_rq_accept';
 
     /**
@@ -54,7 +55,7 @@ class AuthorizationController extends Controller {
         $accessTokenRequest = $this->createAccessTokenRequest($request);
         $validationResponse = $this->validateAccessTokenRequest($accessTokenRequest);
         if (!$validationResponse->isValid()) {
-            return new Response($validationResponse->getErrorMessage());
+            return $this->invalidAccessTokenRequestAction($validationResponse, $accessTokenRequest);
         }
 
         $accessToken = $this->createAccessToken($accessTokenRequest);
@@ -78,17 +79,19 @@ class AuthorizationController extends Controller {
 
         if (!AuthenticationController::isUserAuthenticated($request)) {
             return $this->redirect(
-                            $this->generateUrl(
-                                    'ms_oauth_authentication_resource_owner', array(AuthorizationRequest::QUERY_PARAM => $authRequest->toQueryStringParameterValue())
-                            )
+                $this->generateUrl(
+                    'ms_oauth_authentication_resource_owner',
+                    array(AuthorizationRequest::QUERY_PARAM => $authRequest->toQueryStringParameterValue())
+                )
             );
         }
 
         if (!$this->isAuthorizationRequestAccepted($request)) {
             return $this->redirect(
-                            $this->generateUrl(
-                                    'ms_oauth_authorization_acceptance', array(AuthorizationRequest::QUERY_PARAM => $authRequest->toQueryStringParameterValue())
-                            )
+                $this->generateUrl(
+                    'ms_oauth_authorization_acceptance', 
+                    array(AuthorizationRequest::QUERY_PARAM => $authRequest->toQueryStringParameterValue())
+                )
             );
         }
 
@@ -108,11 +111,12 @@ class AuthorizationController extends Controller {
         $authRequest = $this->createAuthorizationRequest($request);
 
         return $this->render(
-                        'MsOauthBundle:Authorization:request_acceptance_page.html.twig', array(
-                    AuthorizationRequest::QUERY_PARAM => $authRequest->toQueryStringParameterValue(),
-                    'client' => $this->getClientFromRequest($authRequest),
-                    'scopes' => $this->getScopesFromRequest($authRequest)
-                        )
+            'MsOauthBundle:Authorization:request_acceptance_page.html.twig', 
+            array(
+                AuthorizationRequest::QUERY_PARAM => $authRequest->toQueryStringParameterValue(),
+                'client' => $this->getClientFromRequest($authRequest),
+                'scopes' => $this->getScopesFromRequest($authRequest)
+            )
         );
     }
 
@@ -181,7 +185,7 @@ class AuthorizationController extends Controller {
      * @param AuthorizationRequest $request
      * @return AccessTokenProfile
      */
-        protected function createAccessTokenProfile($accessToken, AccessTokenRequest $request) {
+    protected function createAccessTokenProfile($accessToken, AccessTokenRequest $request) {
         $profile = new AccessTokenProfile();
         $authorizationCodeProfile = $this->findAuthorizationCodeProfile($request);
 
@@ -197,7 +201,7 @@ class AuthorizationController extends Controller {
 
         return $profile;
     }
-    
+
     /**
      * 
      * @param Request $request
@@ -281,7 +285,9 @@ class AuthorizationController extends Controller {
     protected function createAuthorizationRequest(Request $request) {
         $requestParameter = $request->query->get(AuthorizationRequest::QUERY_PARAM);
 
-        $authRequest = ($requestParameter !== null) ? AuthorizationRequest::fromUri($requestParameter) : AuthorizationRequest::fromRequest($request);
+        $authRequest = ($requestParameter !== null) 
+            ? AuthorizationRequest::fromUri($requestParameter) 
+            : AuthorizationRequest::fromRequest($request);
         $authRequest->setClientRepository($this->getDoctrine()->getRepository("MsOauthBundle:Client"));
 
         return $authRequest;
@@ -296,7 +302,7 @@ class AuthorizationController extends Controller {
         $clientId = $request->getClientId();
         $redirectionUri = $request->getRedirectionUri();
         $repository = $this->getDoctrine()->getRepository('MsOauthBundle:AuthorizationCodeProfile');
-        
+
         return $repository->findOneByAuthorizationCode($request->getCode());
     }
 
@@ -331,6 +337,19 @@ class AuthorizationController extends Controller {
     /**
      * 
      * @param ValidationResponse $validationResponse
+     * @param AuthorizationRequest $request
+     * @return Response
+     */
+    protected function invalidAccessTokenRequestAction(ValidationResponse $validationResponse, AccessTokenRequest $request) {
+        $response = new AccessTokenErrorResponse($validationResponse->getError());
+        $response->setErrorDescription($validationResponse->getErrorMessage());
+        
+        return $response->setUpAsJson();
+    }
+
+    /**
+     * 
+     * @param ValidationResponse $validationResponse
      * @param AuthorizationRequest $authRequest
      * @return Response
      */
@@ -341,7 +360,8 @@ class AuthorizationController extends Controller {
 
         if (!$response->isRedirected()) {
             return $this->render(
-                            'MsOauthBundle:Authorization:invalid_request_page.html.twig', array('errorDescription' => $response->getErrorDescription())
+                'MsOauthBundle:Authorization:invalid_request_page.html.twig', 
+                array('errorDescription' => $response->getErrorDescription())
             );
         }
 

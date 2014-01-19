@@ -17,7 +17,7 @@ use Symfony\Component\Security\Core\Util\StringUtils;
  *
  * @author Marios
  */
-class MsOauthAuthenticator implements SimpleFormAuthenticatorInterface {
+class MsOauthClientAuthenticator implements SimpleFormAuthenticatorInterface {
 
     /**
      *

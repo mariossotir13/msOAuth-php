@@ -19,7 +19,8 @@ class ValidationResponse {
     protected static $propertyPathToErrorMap = array(
         'redirectionUri' => AuthorizationError::REDIRECTION_URI,
         'responseType' => AuthorizationError::UNSUPPORTED_RESPONSE_TYPE,
-        'scopes' => AuthorizationError::INVALID_SCOPE
+        'scopes' => AuthorizationError::INVALID_SCOPE,
+        'grantType' => AuthorizationError::UNSUPPORTED_GRANT_TYPE
     );
     
     /**

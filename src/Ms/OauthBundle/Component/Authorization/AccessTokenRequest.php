@@ -12,6 +12,11 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class AccessTokenRequest {
     
+    /**
+     * @var string
+     */
+    const SERVER_URI = 'http://msoauthphp.local/app_dev.php/authorization/access_token';
+    
     /**#@+
      * 
      * @var string
@@ -19,7 +24,6 @@ class AccessTokenRequest {
     private static $CLIENT_ID = 'client_id';
     private static $CODE = 'code';
     private static $GRANT_TYPE = 'grant_type';
-    private static $SERVER_URI = 'http://msoauthphp.local/app_dev.php/authorization';
     private static $REDIRECTION_URI = 'redirect_uri';
     /**#@-*/
 
@@ -65,7 +69,7 @@ class AccessTokenRequest {
      * @return AccessTokenRequest
      */
     public static function fromRequest(Request $request) {
-        $accessTokenRequest = new AccessTokenRequest(static::$SERVER_URI);
+        $accessTokenRequest = new AccessTokenRequest(self::SERVER_URI);
         $accessTokenRequest->setClientId($request->query->get(static::$CLIENT_ID));
         $accessTokenRequest->setRedirectionUri($request->query->get(static::$REDIRECTION_URI));
         $accessTokenRequest->setGrantType($request->query->get(static::$GRANT_TYPE));

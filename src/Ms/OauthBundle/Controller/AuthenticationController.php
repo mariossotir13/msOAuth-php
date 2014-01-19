@@ -40,6 +40,15 @@ class AuthenticationController extends Controller {
     }
     
     /**
+     * 
+     * @param Request $request
+     * @return Response
+     */
+    public function clientLoginAction(Request $request) {
+        return $this->loginAction($request);
+    }
+    
+    /**
      * Αυθεντικοποιεί ένα χρήστη του συστήματος.
      * 
      * Αυτή η μέθοδος εμφανίζει στο χρήστη τη Φορμα Πρόσβασης. Ο χρήστης

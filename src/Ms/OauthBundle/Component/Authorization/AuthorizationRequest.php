@@ -20,6 +20,11 @@ class AuthorizationRequest {
     /**
      * @var string
      */
+    const SERVER_URI = 'http://msoauthphp.local/app_dev.php/authorization';
+    
+    /**
+     * @var string
+     */
     const QUERY_PARAM = 'authz_rq';
     
     /**#@+
@@ -30,7 +35,6 @@ class AuthorizationRequest {
     private static $REDIRECTION_URI = 'redirect_uri';
     private static $RESPONSE_TYPE = 'response_type';
     private static $SCOPE = 'scope';
-    private static $SERVER_URI = 'http://msoauthphp.local/app_dev.php/authorization';
     private static $STATE = 'state';
     /**#@-*/
     
@@ -85,7 +89,7 @@ class AuthorizationRequest {
      * @return AuthorizationRequest
      */
     public static function fromRequest(Request $request) {
-        $authorizationRequest = new AuthorizationRequest(static::$SERVER_URI);
+        $authorizationRequest = new AuthorizationRequest(self::SERVER_URI);
         $authorizationRequest->setClientId($request->query->get(static::$CLIENT_ID));
         $authorizationRequest->setRedirectionUri($request->query->get(static::$REDIRECTION_URI));
         $authorizationRequest->setResponseType($request->query->get(static::$RESPONSE_TYPE));
@@ -108,7 +112,7 @@ class AuthorizationRequest {
             throw new \InvalidArgumentException('No uri was provided.');
         }
         
-        $request = new AuthorizationRequest(static::$SERVER_URI);
+        $request = new AuthorizationRequest(self::SERVER_URI);
         $request->setClientId(static::extractParameterFromUri($uri, static::$CLIENT_ID));
         $request->setRedirectionUri(static::extractParameterFromUri($uri, static::$REDIRECTION_URI));
         $request->setResponseType(static::extractParameterFromUri($uri, static::$RESPONSE_TYPE));

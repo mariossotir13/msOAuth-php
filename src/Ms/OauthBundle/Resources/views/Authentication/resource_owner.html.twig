@@ -1,7 +1,7 @@
 {# empty Twig template #}
 {% extends "::base.html.twig" %}
 
-{% block title %}Αυθεντικοποίηση Ιδιοκτήτη Πόρου{% endblock %}
+{% block title %}Αυθεντικοποίηση Ιδιοκτήτη Πόρου | MsOAuth{% endblock %}
 
 {% block body %}
 <a href="{{ path('ms_oauth_authentication_resource_owner',  { 'authz_rq': authz_rq }) }}">Είσοδος</a>

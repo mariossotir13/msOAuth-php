@@ -16,6 +16,7 @@ class AuthorizationError {
     const INVALID_REQUEST = 'invalid_request';
     const INVALID_SCOPE = 'invalid_scope';
     const REDIRECTION_URI = 'redirect_uri';
+    const UNSUPPORTED_GRANT_TYPE = 'unsupported_grant_type';
     const UNSUPPORTED_RESPONSE_TYPE = 'unsupported_response_type';
     /**#@-*/
     
@@ -29,6 +30,7 @@ class AuthorizationError {
             static::INVALID_REQUEST,
             static::INVALID_SCOPE,
             static::REDIRECTION_URI,
+            static::UNSUPPORTED_GRANT_TYPE,
             static::UNSUPPORTED_RESPONSE_TYPE
         );
     }

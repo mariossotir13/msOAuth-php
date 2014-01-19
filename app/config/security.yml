@@ -10,12 +10,6 @@ security:
         ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
     providers:
-#        in_memory:
-#            memory:
-#                users:
-#                    user:  { password: userpass, roles: [ 'ROLE_USER' ] }
-#                    admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
-#                    admin: { password: clientpass, roles: [ 'ROLE_CLIENT' ] }
         chain_provider:
             chain:
                 providers: [client, user]
@@ -29,22 +23,22 @@ security:
                 property: id
 
     firewalls:
-#        dev:
-#            pattern:  ^/(_(profiler|wdt)|css|images|js)/
-#            security: false
-#
+        dev:
+            pattern:  ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
 #        login:
 #            pattern:  ^/demo/secured/login$
 #            security: false
 
-        secured_area:
-#            pattern:    ^/demo/secured/
+        secured_area_client:
             pattern:    ^/
             simple_form:
-                authenticator: ms_oauthbundle_authenticator
-                check_path: ms_oauth_authentication_login_check
+                authenticator: ms_oauthbundle_authenticator_client
+                check_path: ms_oauth_authentication_client_login_check
 #                csrf_provider: form.csrf_provider
-                login_path: ms_oauth_authentication_login
+                failure_path: ms_oauthbundle_authentication_failure
+                login_path: ms_oauth_authentication_client_login
                 username_parameter: _id
             logout:
                 path:   /authentication/logout
@@ -54,7 +48,5 @@ security:
 #                realm: "Access Token Issuance Area"
 
     access_control:
-#        - { path: ^/demo/secured/hello/admin/, roles: ROLE_ADMIN }
         - { path: ^/authorization/access_token, roles: ROLE_MS_OAUTH_BUNDLE_CLIENT }
-#        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
-        - { path: ^/authentication/login, roles: IS_AUTHENTICATED_ANONYMOUSLY } 
+        - { path: ^/authentication/client/login, roles: IS_AUTHENTICATED_ANONYMOUSLY } 
