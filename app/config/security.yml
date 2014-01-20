@@ -25,8 +25,8 @@ security:
             security: false
 
         secured_area_client:
-            pattern:    ^/oauth2/c
-            context: oauth2
+            pattern: ^/oauth2/c
+#            context: oauth2
             provider: client
             simple_form:
                 authenticator: ms_oauthbundle_authenticator_client
@@ -40,8 +40,8 @@ security:
             anonymous: ~
 
         secured_area_user:
-            pattern:    ^/oauth2/u
-            context: oauth2
+            pattern: ^/oauth2/u
+#            context: oauth2
             provider: user
             form_login:
                 check_path: ms_oauth_authentication_user_login_check
