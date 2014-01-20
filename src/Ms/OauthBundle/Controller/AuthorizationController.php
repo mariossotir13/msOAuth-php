@@ -6,7 +6,6 @@ use Ms\OauthBundle\Component\Authorization\AuthorizationRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Ms\OauthBundle\Controller\AuthenticationController;
 use Ms\OauthBundle\Entity\Client;
 use Ms\OauthBundle\Entity\AuthorizationCodeScope;
 use Ms\OauthBundle\Component\Authorization\AuthorizationErrorResponse;
@@ -76,15 +75,6 @@ class AuthorizationController extends Controller {
         if (!$validationResponse->isValid()) {
             return $this->invalidAuthorizationRequestAction($validationResponse, $authRequest);
         }
-
-//        if (!AuthenticationController::isUserAuthenticated($request)) {
-//            return $this->redirect(
-//                $this->generateUrl(
-//                    'ms_oauth_authentication_resource_owner',
-//                    array(AuthorizationRequest::QUERY_PARAM => $authRequest->toQueryStringParameterValue())
-//                )
-//            );
-//        }
 
         if (!$this->isAuthorizationRequestAccepted($request)) {
             return $this->redirect(
