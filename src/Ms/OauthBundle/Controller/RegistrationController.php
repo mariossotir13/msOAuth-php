@@ -94,15 +94,10 @@ class RegistrationController extends Controller {
 
         if ($form->isValid()) {
             /* @var $authService AuthenticationServiceInterface */
-//            $authService = $this->get('ms_oauthbundle_authentication');
-//            $id = $authService->createClientId($user);
-//            $secret = $authService->createPassword();
-//            $encryptionKey = $this->container->getParameter('secret');
-//            $encryptedSecret = $authService->encryptPassword($secret, $encryptionKey);
-//            
-//            $user->setId($id)
-//                ->setSalt('')
-//                ->setPassword($encryptedSecret);
+            $authService = $this->get('ms_oauthbundle_authentication');
+            $salt = $authService->createPasswordSalt();
+            $user->setSalt($salt);
+
             /* @var $factory \Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface */
             $factory = $this->get('security.encoder_factory');
             $encoder = $factory->getEncoder($user);
