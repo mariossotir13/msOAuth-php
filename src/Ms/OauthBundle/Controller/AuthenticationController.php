@@ -5,9 +5,8 @@ namespace Ms\OauthBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Ms\OauthBundle\Component\Authorization\AuthorizationRequest;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\Security\Core\SecurityContext;
+use Ms\OauthBundle\Component\Authorization\AccessTokenRequest;
 
 /**
  * Description of AuthenticationController
@@ -24,21 +23,13 @@ class AuthenticationController extends Controller {
     /**
      * @var string
      */
+    const AUTH_ERROR = 'error';
+    
+    /**
+     * @var string
+     */
 //    const LAST_ID = '_last_id';
 
-    /**
-     * Αυτή η μέθοδος θα φύγει όταν ολοκληρωθεί η υλοποίηση της Π.Χ. *Αυθεντικοποίηση
-     * Ιδιοκτήτη Πόρου*.
-     * 
-     * @param Request $request
-     * @return bool
-     */
-    public static function isUserAuthenticated(Request $request) {
-        $authToken = $request->cookies->get(static::AUTH_TOKEN);
-
-        return $authToken !== null;
-    }
-    
     /**
      * 
      * @param Request $request
@@ -58,6 +49,33 @@ class AuthenticationController extends Controller {
     }
     
     /**
+     * 
+     * @param Request $request
+     * @return Response
+     */
+    public function clientLoginFailAction(Request $request) {
+        $providerKey = $this->container->getParameter('security_provider_key_client');
+        $session = $request->getSession();
+        $targetPath = $session->get('_security.' . $providerKey . '.target_path');
+        $error = $this->validateForm($request);
+        
+        $authzLoginAttempt = preg_match('#oauth2/c/authorization/access_token#', $targetPath);
+        if ($authzLoginAttempt) {
+            return $this->redirect(
+                $this->generateUrl(
+                    'ms_oauth_authorization_invalid_client', 
+                    array(
+                        AccessTokenRequest::QUERY_PARAM => $targetPath,
+                        self::AUTH_ERROR => $error
+                    )
+                )
+            );
+        }
+        
+        return $this->clientLoginAction($request);
+    }
+    
+    /**
      * Αυθεντικοποιεί ένα χρήστη του συστήματος.
      * 
      * Αυτή η μέθοδος εμφανίζει στο χρήστη τη Φορμα Πρόσβασης. Ο χρήστης
@@ -70,15 +88,6 @@ class AuthenticationController extends Controller {
      * @return Response
      */
     public function loginAction(Request $request) {
-//        $session = $request->getSession();
-//        
-//        $error = null;
-//        if ($request->attributes->has(SecurityContext::AUTHENTICATION_ERROR)) {
-//            $error = $request->attributes->get(SecurityContext::AUTHENTICATION_ERROR);
-//        } else {
-//            $error = $session->get(SecurityContext::AUTHENTICATION_ERROR);
-//            $session->remove(SecurityContext::AUTHENTICATION_ERROR);
-//        }
         $session = $request->getSession();
         
         return $this->render(
@@ -91,32 +100,6 @@ class AuthenticationController extends Controller {
         );
     }
 
-    /**
-     * 
-     * @param Request $request
-     * @return Response
-     */
-    public function resourceOwnerAction(Request $request) {
-        // TODO: Authenticate the Resource Owner.
-        $authenticated = static::isUserAuthenticated($request);
-        if (!$authenticated) {
-            $this->authenticateUser();
-            
-            return $this->render(
-                'MsOauthBundle:Authentication:resource_owner.html.twig', 
-                array(AuthorizationRequest::QUERY_PARAM => $request->query->get(AuthorizationRequest::QUERY_PARAM))
-            );
-        }
-        
-        $authRequest = AuthorizationRequest::fromUri($request->query->get(AuthorizationRequest::QUERY_PARAM));
-        $authRequest->setClientRepository($this->getDoctrine()->getRepository('MsOauthBundle:Client'));
-        
-        return $this->redirect($this->generateUrl(
-            'ms_oauth_authorization', 
-            $authRequest->toArray()
-        ));
-    }
-    
     /**
      * 
      * @param Request $request
@@ -134,15 +117,5 @@ class AuthenticationController extends Controller {
         }
         
         return $error;
-    }
-    
-    /**
-     * Παρόμοια με τη μέθοδο *isUserAuthenticated*.
-     */
-    private function authenticateUser() {
-        $authCookie = new Cookie(static::AUTH_TOKEN, 'authenticated');
-        $response = new Response();
-        $response->headers->setCookie($authCookie);
-        $response->sendHeaders();
     }
 }

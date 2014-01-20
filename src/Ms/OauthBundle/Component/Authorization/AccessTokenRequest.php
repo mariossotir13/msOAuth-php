@@ -17,6 +17,11 @@ class AccessTokenRequest {
      */
     const SERVER_URI = 'http://msoauthphp.local/app_dev.php/authorization/access_token';
     
+    /**
+     * @var string
+     */
+    const QUERY_PARAM = 'accTkn_rq';
+    
     /**#@+
      * 
      * @var string
@@ -76,6 +81,47 @@ class AccessTokenRequest {
         $accessTokenRequest->setCode($request->query->get(static::$CODE));
 
         return $accessTokenRequest;
+    }
+    
+    /**
+     * Δημιουργεί ένα νέο στιγμιότυπο της κλάσης AccessTokenRequest αντλώντας
+     * δεδομένα από ένα URI.
+     * 
+     * @param string $uri
+     * @return AccessTokenRequest
+     * @throws \InvalidArgumentException εάν το όρισμα `$uri` είναι `null`.
+     */
+    public static function fromUri($uri) {
+        if ($uri === null) {
+            throw new \InvalidArgumentException('No uri was provided.');
+        }
+        
+        $request = new AccessTokenRequest(self::SERVER_URI);
+        $request->setClientId(static::extractParameterFromUri($uri, static::$CLIENT_ID));
+        $request->setRedirectionUri(static::extractParameterFromUri($uri, static::$REDIRECTION_URI));
+        $request->setCode(static::extractParameterFromUri($uri, static::$CODE));
+        $request->setGrantType(static::extractParameterFromUri($uri, static::$GRANT_TYPE));
+        
+        return $request;
+    }
+    
+    /**
+     * 
+     * @param string $uri
+     * @param string $paramName
+     * @return string
+     * @throws \InvalidArgumentException εάν το `$uri` δεν περιέχει την παράμετρο
+     * `$paramName`.
+     */
+    protected static function extractParameterFromUri($uri, $paramName) {
+        $pattern = '#' . $paramName . '=([^&]+)#';
+        $matches = array();
+        $matched = preg_match($pattern, $uri, $matches);
+        if ($matched !== 1) {
+            throw new \InvalidArgumentException('Missing parameter "' . $paramName . '" from URI: '. $uri);
+        }
+        
+        return $matches[1];
     }
 
     /**

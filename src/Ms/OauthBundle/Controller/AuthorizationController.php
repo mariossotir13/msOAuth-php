@@ -91,6 +91,29 @@ class AuthorizationController extends Controller {
 
         return $this->redirect($authResponse->toUri());
     }
+    
+    /**
+     * 
+     * @param Request $request
+     * @return Response
+     */
+    public function invalidClientAction(Request $request) {
+        $accessTokenRequest = $this->createAccessTokenRequest($request);
+        
+        $violations = array(
+            array(
+                'message' => 'Invalid username or password.',
+                'messageTemplate' => 'Invalid username or password.',
+                'messageParameters' => array(),
+                'root' => '',
+                'propertyPath' => 'clientId',
+                'invalidValue' => ''
+            )
+        );
+        $validationResponse = ValidationResponse::fromArray($violations);
+        
+        return $this->invalidAccessTokenRequestAction($validationResponse, $accessTokenRequest);
+    }
 
     /**
      * 
@@ -198,10 +221,18 @@ class AuthorizationController extends Controller {
      * @return AccessTokenRequest
      */
     protected function createAccessTokenRequest(Request $request) {
-        $authRequest = AccessTokenRequest::fromRequest($request);
-        $authRequest->setClientRepository($this->getDoctrine()->getRepository("MsOauthBundle:Client"));
+//        $authRequest = AccessTokenRequest::fromRequest($request);
+//        $authRequest->setClientRepository($this->getDoctrine()->getRepository("MsOauthBundle:Client"));
+//
+//        return $authRequest;
+        $requestParameter = $request->query->get(AccessTokenRequest::QUERY_PARAM);
 
-        return $authRequest;
+        $accessTokenRequest = ($requestParameter !== null) 
+            ? AccessTokenRequest::fromUri($requestParameter) 
+            : AccessTokenRequest::fromRequest($request);
+        $accessTokenRequest->setClientRepository($this->getDoctrine()->getRepository("MsOauthBundle:Client"));
+
+        return $accessTokenRequest;
     }
 
     /**
@@ -331,6 +362,7 @@ class AuthorizationController extends Controller {
      * @return Response
      */
     protected function invalidAccessTokenRequestAction(ValidationResponse $validationResponse, AccessTokenRequest $request) {
+        $redirectionUri = $request->getRedirectionUri();
         $response = new AccessTokenErrorResponse($validationResponse->getError());
         $response->setErrorDescription($validationResponse->getErrorMessage());
         

@@ -35,6 +35,10 @@ ms_oauth_authorization_access_token:
     pattern: /oauth2/c/authorization/access_token
     defaults: { _controller: MsOauthBundle:Authorization:accessToken }
     
+ms_oauth_authorization_invalid_client:
+    pattern: /oauth2/c/authorization/invalid_client
+    defaults: { _controller: MsOauthBundle:Authorization:invalidClient }
+    
 ms_oauth_authentication_client_login:
     pattern: /oauth2/c/authentication/login
     defaults: { _controller: MsOauthBundle:Authentication:clientLogin }
@@ -45,6 +49,10 @@ ms_oauth_authentication_client_login_check:
 ms_oauth_authentication_client_logout:
     pattern: /oauth2/c/authentication/logout
     
+ms_oauth_authentication_client_login_failure:
+    pattern: /oauth2/c/authentication/fail
+    defaults: { _controller: MsOauthBundle:Authentication:clientLoginFail }
+
 ms_oauth_registration_user:
     pattern: /oauth2/u/registration/
     defaults: { _controller: MsOauthBundle:Registration:user }

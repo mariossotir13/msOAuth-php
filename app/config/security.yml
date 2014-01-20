@@ -5,9 +5,9 @@ security:
             iterations: 5000
             encode_as_base64: true
 
-    role_hierarchy:
-        ROLE_ADMIN:       ROLE_USER
-        ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+#    role_hierarchy:
+#        ROLE_ADMIN:       ROLE_USER
+#        ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
     providers:
         client:
@@ -32,6 +32,7 @@ security:
                 authenticator: ms_oauthbundle_authenticator_client
                 check_path: ms_oauth_authentication_client_login_check
 #                csrf_provider: form.csrf_provider
+                failure_path: ms_oauth_authentication_client_login_failure
                 login_path: ms_oauth_authentication_client_login
                 username_parameter: _id
             logout:

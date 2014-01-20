@@ -4,6 +4,8 @@ namespace Ms\OauthBundle\Component\Authorization;
 
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Ms\OauthBundle\Component\Authorization\AuthorizationError;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\ConstraintViolation;
 
 /**
  * Description of ValidationResponse
@@ -17,6 +19,7 @@ class ValidationResponse {
      * @var string[]
      */
     protected static $propertyPathToErrorMap = array(
+        'clientId' => AuthorizationError::INVALID_CLIENT,
         'redirectionUri' => AuthorizationError::REDIRECTION_URI,
         'responseType' => AuthorizationError::UNSUPPORTED_RESPONSE_TYPE,
         'scopes' => AuthorizationError::INVALID_SCOPE,
@@ -46,6 +49,38 @@ class ValidationResponse {
      * @var ConstraintViolationListInterface
      */
     private $violationsList;
+    
+    /**
+     * 
+     * @param array $violations
+     * @return ValidationResponse
+     */
+    public static function fromArray(array $violations) {
+        $violationsList = static::createViolationsListFromArray($violations);
+        
+        return new ValidationResponse($violationsList);
+    }
+    
+    /**
+     * 
+     * @param array $violations
+     * @return ConstraintViolationList
+     */
+    protected static function createViolationsListFromArray(array $violations) {
+        $violationsList = new ConstraintViolationList();
+        foreach ($violations as $violationArray) {
+            $violationsList->add(new ConstraintViolation(
+                $violationArray['message'],
+                $violationArray['messageTemplate'],
+                $violationArray['messageParameters'],
+                $violationArray['root'],
+                $violationArray['propertyPath'],
+                $violationArray['invalidValue']
+            ));
+        }
+        
+        return $violationsList;
+    }
     
     /**
      * 
