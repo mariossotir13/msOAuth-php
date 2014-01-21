@@ -17,6 +17,7 @@ use Ms\OauthBundle\Component\Authorization\ValidationResponse;
 use Ms\OauthBundle\Component\Authorization\AccessTokenRequest;
 use Ms\OauthBundle\Entity\AccessTokenProfile;
 use Ms\OauthBundle\Component\Authorization\AccessTokenErrorResponse;
+use Ms\OauthBundle\Component\Authorization\AccessTokenResponse;
 
 /**
  * Description of AuthorizationController
@@ -58,9 +59,14 @@ class AuthorizationController extends Controller {
             return $this->invalidAccessTokenRequestAction($validationResponse);
         }
 
-        $accessToken = $this->createAccessToken($accessTokenRequest);
+        $accessTokenProfile = $this->createAccessToken($accessTokenRequest);
 
-        return new Response('Authorization granted w/ token: ' . $accessToken);
+        return new AccessTokenResponse(
+            $this->container->getParameter('access_token_expires_in'),
+            $accessTokenProfile->getScopes(),
+            $accessTokenProfile->getAccessToken(),
+            $accessTokenProfile->getAccessTokenType()
+        );
     }
 
     /**
@@ -184,7 +190,7 @@ class AuthorizationController extends Controller {
     /**
      * 
      * @param AccessTokenRequest $request
-     * @return string Το *τεκμήριο πρόσβασης*.
+     * @return AccessTokenProfile
      */
     protected function createAccessToken(AccessTokenRequest $request) {
         /* @var $authService AuthorizationServiceInterface */
@@ -196,7 +202,7 @@ class AuthorizationController extends Controller {
         $em->persist($profile);
         $em->flush();
 
-        return $accessToken;
+        return $profile;
     }
 
     /**
