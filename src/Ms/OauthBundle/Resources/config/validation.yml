@@ -32,7 +32,7 @@ Ms\OauthBundle\Component\Authorization\AccessTokenRequest:
                 message: "Please, specify a grant type."
             - Choice:
                 callback: [Ms\OauthBundle\Component\Authorization\AuthorizationGrantType, getValues]
-                message: "Invalid grant type: {{ value }}."
+                message: "Unsupported grant type: {{ value }}."
 
 Ms\OauthBundle\Component\Authorization\AuthorizationRequest:
     group_sequence:
