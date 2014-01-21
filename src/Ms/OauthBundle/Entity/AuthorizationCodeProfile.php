@@ -183,7 +183,6 @@ class AuthorizationCodeProfile {
         $this->scopes->removeElement($scopes);
     }
 
-
     /**
      * Set accessTokenProfile
      *

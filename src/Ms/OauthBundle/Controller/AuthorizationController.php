@@ -246,6 +246,7 @@ class AuthorizationController extends Controller {
         $accessTokenRequest->setAuthorizationCodeRepository(
             $this->getDoctrine()->getRepository("MsOauthBundle:AuthorizationCodeProfile")
         );
+        $accessTokenRequest->setDoctrineRegistry($this->getDoctrine());
 
         return $accessTokenRequest;
     }

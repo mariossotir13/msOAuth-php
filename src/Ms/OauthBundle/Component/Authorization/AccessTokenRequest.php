@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ObjectRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\ExecutionContextInterface;
 use Ms\OauthBundle\Entity\AuthorizationCodeProfile;
+use Doctrine\Bundle\DoctrineBundle\Registry;
 
 /**
  * Description of AccessTokenRequest
@@ -36,12 +37,6 @@ class AccessTokenRequest {
 
     /**
      *
-     * @var string
-     */
-    private $clientId;
-
-    /**
-     *
      * @var ObjectRepository
      */
     private $authorizationCodeRepo;
@@ -50,7 +45,19 @@ class AccessTokenRequest {
      *
      * @var string
      */
+    private $clientId;
+
+    /**
+     *
+     * @var string
+     */
     private $code;
+    
+    /**
+     *
+     * @var Registry
+     */
+    private $doctrineRegistry;
 
     /**
      *
@@ -128,6 +135,7 @@ class AccessTokenRequest {
 
     /**
      * @param string $oauthServerUri
+     * @throws \InvalidArgumentException εάν κάποιο όρισμα είναι `null`.
      */
     function __construct($oauthServerUri) {
         if ($oauthServerUri === null) {
@@ -151,7 +159,7 @@ class AccessTokenRequest {
     public function getCode() {
         return $this->code;
     }
-
+    
     /**
      * 
      * @return string
@@ -199,7 +207,20 @@ class AccessTokenRequest {
     public function setCode($code) {
         $this->code = $code;
     }
-
+    
+    /**
+     * 
+     * @param Registry $registry
+     * @return void
+     * @throws \InvalidArgumentException
+     */
+    public function setDoctrineRegistry(Registry $registry) {
+        if ($registry === null) {
+            throw new \InvalidArgumentException('No registry was specified.');
+        }
+        $this->doctrineRegistry = $registry;
+    }
+    
     /**
      * 
      * @param string $grantType
@@ -227,14 +248,27 @@ class AccessTokenRequest {
         if ($this->authorizationCodeRepo === null) {
             throw new \BadMethodCallException('No repository for AuthorizationCodeProfile has been specified.');
         }
+        if ($this->doctrineRegistry === null) {
+            throw new \BadMethodCallException('No Doctrine registry has been specified.');
+        }
         
         $codeProfile = $this->authorizationCodeRepo->findOneByAuthorizationCode($this->code);
         if ($codeProfile === null) {
             return $this->addCodeViolation($context, 'Invalid authorization code.');
         }
-        
-        if ($this->hasCodeExpired($codeProfile)) {
+        if ($this->isCodeExpired($codeProfile)) {
             return $this->addCodeViolation($context, 'The authorization code has expired.');
+        }
+        if (!$this->isCodeAuthored($codeProfile, $this->clientId, $this->redirectionUri)) {
+            return $this->addCodeViolation(
+                $context, 
+                'No authorization code has been issued for this combination of client ID and redirection URI.'
+            );
+        }
+        if ($this->isCodeExchanged($codeProfile)) {
+            $this->revokeCode($codeProfile);
+            
+            return $this->addCodeViolation($context, 'Authorization code already exchanged.');
         }
     }
     
@@ -251,12 +285,63 @@ class AccessTokenRequest {
     /**
      * 
      * @param AuthorizationCodeProfile $profile
+     * @param string $clientId
+     * @param string $redirectionUri
+     * @return boolean
+     */
+    private function isCodeAuthored(AuthorizationCodeProfile $profile, $clientId, $redirectionUri) {
+        if (empty($clientId)
+                || (empty($redirectionUri))) {
+            return false;
+        }
+        
+        $redirectionUri = $profile->getRedirectionUri();
+        if ($redirectionUri !== $redirectionUri) {
+            return false;
+        }
+        
+        $client = $profile->getClient();
+        if ($client === null
+                || $clientId !== $client->getId()) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * 
+     * @param AuthorizationCodeProfile $profile
+     * @return boolean
+     */
+    private function isCodeExchanged(AuthorizationCodeProfile $profile) {
+        $tokenProfile = $profile->getAccessTokenProfile();
+        
+        return $tokenProfile !== null;
+    }
+    
+    /**
+     * 
+     * @param AuthorizationCodeProfile $profile
      * @return bool
      */
-    private function hasCodeExpired(AuthorizationCodeProfile $profile) {
+    private function isCodeExpired(AuthorizationCodeProfile $profile) {
         $expirationDate = $profile->getExpirationDate();
         $now = new \DateTime('now', new \DateTimeZone('UTC'));
         
         return $expirationDate <= $now;
+    }
+    
+    /**
+     * @param AuthorizationCodeProfile $profile
+     * @return void
+     */
+    private function revokeCode(AuthorizationCodeProfile $profile) {
+        $tokenProfile = $profile->getAccessTokenProfile();
+        
+        $em = $this->doctrineRegistry->getManager();
+        $em->remove($tokenProfile);
+        $em->remove($profile);
+        $em->flush();
     }
 }

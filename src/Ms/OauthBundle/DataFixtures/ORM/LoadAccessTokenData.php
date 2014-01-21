@@ -23,7 +23,7 @@ class LoadAccessTokenData extends AbstractFixture implements OrderedFixtureInter
      *
      * @var int
      */
-    private static $EXPIRES_IN = 600;
+    private static $EXPIRES_IN = 3600;
     
     /**
      * @inheritdoc

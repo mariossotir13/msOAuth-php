@@ -25,7 +25,7 @@ class LoadAuthorizationCodeData extends AbstractFixture implements OrderedFixtur
      *
      * @var int
      */
-    private static $EXPIRES_IN = 600;
+    private static $EXPIRES_IN = 3600;
 
     /**
      * @inheritdoc

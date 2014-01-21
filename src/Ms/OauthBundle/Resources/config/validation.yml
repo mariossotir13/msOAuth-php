@@ -11,6 +11,7 @@ Ms\OauthBundle\Component\Authorization\AccessTokenRequest:
   group_sequence:
         - RedirectionUri
         - AccessTokenRequest
+        - Code
   constraints:
     - Callback: [validateCode]
   properties:
@@ -26,6 +27,7 @@ Ms\OauthBundle\Component\Authorization\AccessTokenRequest:
         code:
           - NotBlank:
               message: "Please, specify the authorization code."
+              groups: [Code]
         grantType:
             - NotBlank:
                 message: "Please, specify a grant type."
