@@ -54,7 +54,8 @@ class AuthorizationController extends Controller {
         $accessTokenRequest = $this->createAccessTokenRequest($request);
         $validationResponse = $this->validateAccessTokenRequest($accessTokenRequest);
         if (!$validationResponse->isValid()) {
-            return $this->invalidAccessTokenRequestAction($validationResponse, $accessTokenRequest);
+//            return $this->invalidAccessTokenRequestAction($validationResponse, $accessTokenRequest);
+            return $this->invalidAccessTokenRequestAction($validationResponse);
         }
 
         $accessToken = $this->createAccessToken($accessTokenRequest);
@@ -98,7 +99,7 @@ class AuthorizationController extends Controller {
      * @return Response
      */
     public function invalidClientAction(Request $request) {
-        $accessTokenRequest = $this->createAccessTokenRequest($request);
+//        $accessTokenRequest = $this->createAccessTokenRequest($request);
         
         $violations = array(
             array(
@@ -112,7 +113,8 @@ class AuthorizationController extends Controller {
         );
         $validationResponse = ValidationResponse::fromArray($violations);
         
-        return $this->invalidAccessTokenRequestAction($validationResponse, $accessTokenRequest);
+//        return $this->invalidAccessTokenRequestAction($validationResponse, $accessTokenRequest);
+        return $this->invalidAccessTokenRequestAction($validationResponse);
     }
 
     /**
@@ -361,10 +363,16 @@ class AuthorizationController extends Controller {
      * @param AuthorizationRequest $request
      * @return Response
      */
-    protected function invalidAccessTokenRequestAction(ValidationResponse $validationResponse, AccessTokenRequest $request) {
-        $redirectionUri = $request->getRedirectionUri();
-        $response = new AccessTokenErrorResponse($validationResponse->getError());
-        $response->setErrorDescription($validationResponse->getErrorMessage());
+    protected function invalidAccessTokenRequestAction(ValidationResponse $validationResponse) {
+//            ValidationResponse $validationResponse, 
+//            AccessTokenRequest $request) {
+//        $redirectionUri = $request->getRedirectionUri();
+        $error = $validationResponse->getError();
+        $errorMsg = $validationResponse->getErrorMessage();
+        
+//        $response = new AccessTokenErrorResponse($error, $redirectionUri);
+        $response = new AccessTokenErrorResponse($error);
+        $response->setErrorDescription($errorMsg);
         
         return $response->setUpAsJson();
     }
