@@ -295,8 +295,7 @@ class AccessTokenRequest {
             return false;
         }
         
-        $redirectionUri = $profile->getRedirectionUri();
-        if ($redirectionUri !== $redirectionUri) {
+        if ($redirectionUri !== $profile->getRedirectionUri()) {
             return false;
         }
         

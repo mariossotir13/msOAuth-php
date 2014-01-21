@@ -10,14 +10,16 @@ Ms\OauthBundle\Entity\Client:
 Ms\OauthBundle\Component\Authorization\AccessTokenRequest:
   group_sequence:
         - RedirectionUri
-        - AccessTokenRequest
+        - NonCode
         - Code
+        - AccessTokenRequest
   constraints:
     - Callback: [validateCode]
   properties:
         clientId:
             - NotBlank:
                 message: "Please, specify a client ID."
+                groups: [NonCode]
         redirectionUri:
             - NotBlank:
                 message: "Please, specify a redirection URI."
@@ -31,9 +33,11 @@ Ms\OauthBundle\Component\Authorization\AccessTokenRequest:
         grantType:
             - NotBlank:
                 message: "Please, specify a grant type."
+                groups: [NonCode]
             - Choice:
                 callback: [Ms\OauthBundle\Component\Authorization\AuthorizationGrantType, getValues]
                 message: "Unsupported grant type: {{ value }}."
+                groups: [NonCode]
 
 Ms\OauthBundle\Component\Authorization\AuthorizationRequest:
     group_sequence:

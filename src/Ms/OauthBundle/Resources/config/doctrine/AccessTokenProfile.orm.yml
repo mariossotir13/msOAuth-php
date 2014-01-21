@@ -1,6 +1,6 @@
 Ms\OauthBundle\Entity\AccessTokenProfile:
     type: entity
-    table: access_token_profile
+    table: access_token_profiles
     id:
         id:
             type: integer
