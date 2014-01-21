@@ -5,6 +5,7 @@ namespace Ms\OauthBundle\Entity;
 use Ms\OauthBundle\Component\Authorization\AuthorizationResponseType;
 use Ms\OauthBundle\Entity\AuthorizationCodeScope;
 use Ms\OauthBundle\Entity\Client;
+use Ms\OauthBundle\Entity\AccessTokenProfile;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -17,6 +18,17 @@ class AuthorizationCodeProfile {
 
     /**
      *
+     * @var int 
+     */
+    private static $EXPIRATION_TIME = 600;
+    
+    /**
+     * @var AccessTokenProfile
+     */
+    private $accessTokenProfile;
+
+    /**
+     *
      * @var string 
      */
     private $authorizationCode;
@@ -26,6 +38,11 @@ class AuthorizationCodeProfile {
      * @var Client 
      */
     private $client;
+    
+    /**
+     * @var \DateTime
+     */
+    private $expirationDate;
 
     /**
      * @var integer
@@ -60,6 +77,7 @@ class AuthorizationCodeProfile {
      */
     public function __construct() {
         $this->scopes = new ArrayCollection();
+        $this->setExpirationDate();
     }
 
     /**
@@ -72,6 +90,15 @@ class AuthorizationCodeProfile {
         $this->scopes[] = $scopes;
 
         return $this;
+    }
+
+    /**
+     * Get accessTokenProfile
+     *
+     * @return AccessTokenProfile 
+     */
+    public function getAccessTokenProfile() {
+        return $this->accessTokenProfile;
     }
 
     /**
@@ -90,6 +117,15 @@ class AuthorizationCodeProfile {
      */
     public function getClient() {
         return $this->client;
+    }
+
+    /**
+     * Get expirationDate
+     *
+     * @return \DateTime 
+     */
+    public function getExpirationDate() {
+        return $this->expirationDate;
     }
 
     /**
@@ -145,6 +181,19 @@ class AuthorizationCodeProfile {
      */
     public function removeScope(AuthorizationCodeScope $scopes) {
         $this->scopes->removeElement($scopes);
+    }
+
+
+    /**
+     * Set accessTokenProfile
+     *
+     * @param AccessTokenProfile $accessTokenProfile
+     * @return AuthorizationCodeProfile
+     */
+    public function setAccessTokenProfile(AccessTokenProfile $accessTokenProfile = null) {
+        $this->accessTokenProfile = $accessTokenProfile;
+    
+        return $this;
     }
 
     /**
@@ -210,5 +259,13 @@ class AuthorizationCodeProfile {
         $this->state = $state;
 
         return $this;
+    }
+
+    /**
+     * @return void
+     */
+    protected function setExpirationDate() {
+        $now = new \DateTime('now', new \DateTimeZone("UTC"));
+        $this->expirationDate = $now->add(new \DateInterval('PT' . static::$EXPIRATION_TIME . 'S'));
     }
 }

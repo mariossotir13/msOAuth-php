@@ -11,9 +11,8 @@ Ms\OauthBundle\Component\Authorization\AccessTokenRequest:
   group_sequence:
         - RedirectionUri
         - AccessTokenRequest
-  getters:
-        clientIdValid:
-            - "True": { message: "No client with the given Client ID is registered." }
+  constraints:
+    - Callback: [validateCode]
   properties:
         clientId:
             - NotBlank:

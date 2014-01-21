@@ -12,6 +12,9 @@ Ms\OauthBundle\Entity\AuthorizationCodeProfile:
             name: code
             type: string
             length: 128
+        expirationDate:
+            name: expiration_date
+            type: datetimetz
         redirectionUri:
             type: text
         responseType:
@@ -37,3 +40,7 @@ Ms\OauthBundle\Entity\AuthorizationCodeProfile:
                 inverseJoinColumns:
                     scope_id:
                         referencedColumnName: id
+    oneToOne:
+        accessTokenProfile:
+            targetEntity: AccessTokenProfile
+            mappedBy: authorizationCodeProfile

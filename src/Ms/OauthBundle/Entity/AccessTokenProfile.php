@@ -194,7 +194,7 @@ class AccessTokenProfile {
     }
 
     /**
-     * 
+     * @return void
      */
     protected function setExpirationDate() {
         $now = new \DateTime('now', new \DateTimeZone("UTC"));

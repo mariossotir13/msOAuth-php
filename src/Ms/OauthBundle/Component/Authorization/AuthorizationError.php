@@ -14,6 +14,7 @@ class AuthorizationError {
      */
     const ACCESS_DENIED = 'access_denied';
     const INVALID_CLIENT = 'invalid_client';
+    const INVALID_GRANT = 'invalid_grant';
     const INVALID_REQUEST = 'invalid_request';
     const INVALID_SCOPE = 'invalid_scope';
     const REDIRECTION_URI = 'redirect_uri';
@@ -29,6 +30,7 @@ class AuthorizationError {
         return array(
             static::ACCESS_DENIED,
             static::INVALID_CLIENT,
+            static::INVALID_GRANT,
             static::INVALID_REQUEST,
             static::INVALID_SCOPE,
             static::REDIRECTION_URI,

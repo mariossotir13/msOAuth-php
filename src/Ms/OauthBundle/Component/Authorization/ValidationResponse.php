@@ -19,6 +19,7 @@ class ValidationResponse {
      * @var string[]
      */
     protected static $propertyPathToErrorMap = array(
+        'code' => AuthorizationError::INVALID_GRANT,
         'clientId' => AuthorizationError::INVALID_CLIENT,
         'redirectionUri' => AuthorizationError::REDIRECTION_URI,
         'responseType' => AuthorizationError::UNSUPPORTED_RESPONSE_TYPE,

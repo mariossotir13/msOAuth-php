@@ -4,6 +4,8 @@ namespace Ms\OauthBundle\Component\Authorization;
 
 use Doctrine\Common\Persistence\ObjectRepository;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\ExecutionContextInterface;
+use Ms\OauthBundle\Entity\AuthorizationCodeProfile;
 
 /**
  * Description of AccessTokenRequest
@@ -42,7 +44,7 @@ class AccessTokenRequest {
      *
      * @var ObjectRepository
      */
-    private $clientRepository;
+    private $authorizationCodeRepo;
 
     /**
      *
@@ -168,15 +170,6 @@ class AccessTokenRequest {
 
     /**
      * 
-     * @return boolean
-     */
-    public function isClientIdValid() {
-        return $this->clientId !== null
-            && $this->clientRepository->find($this->clientId) !== null;
-    }
-
-    /**
-     * 
      * @param string $clientId
      * @return void
      */
@@ -186,16 +179,16 @@ class AccessTokenRequest {
 
     /**
      * 
-     * @param ObjectRepository $clientRepository
+     * @param ObjectRepository $authorizationCodeRepo
      * @return void
-     * @throws \InvalidArgumentException εάν το όρισμα `$clientRepository` είναι
-     * `null`.
+     * @throws \InvalidArgumentException εάν το όρισμα `$authorizationCodeRepo`
+     * είναι `null`.
      */
-    public function setClientRepository(ObjectRepository $clientRepository) {
-        if ($clientRepository === null) {
+    public function setAuthorizationCodeRepository(ObjectRepository $authorizationCodeRepo) {
+        if ($authorizationCodeRepo === null) {
             throw new \InvalidArgumentException('No client repository was specified.');
         }
-        $this->clientRepository = $clientRepository;
+        $this->authorizationCodeRepo = $authorizationCodeRepo;
     }
     
     /**
@@ -223,5 +216,47 @@ class AccessTokenRequest {
      */
     public function setRedirectionUri($redirectionUri) {
         $this->redirectionUri = $redirectionUri;
+    }
+    
+    /**
+     * 
+     * @param ExecutionContextInterface $context
+     * @return void
+     */
+    public function validateCode(ExecutionContextInterface $context) {
+        if ($this->authorizationCodeRepo === null) {
+            throw new \BadMethodCallException('No repository for AuthorizationCodeProfile has been specified.');
+        }
+        
+        $codeProfile = $this->authorizationCodeRepo->findOneByAuthorizationCode($this->code);
+        if ($codeProfile === null) {
+            return $this->addCodeViolation($context, 'Invalid authorization code.');
+        }
+        
+        if ($this->hasCodeExpired($codeProfile)) {
+            return $this->addCodeViolation($context, 'The authorization code has expired.');
+        }
+    }
+    
+    /**
+     * 
+     * @param ExecutionContextInterface $context
+     * @param string $errorMessage
+     * @return void
+     */
+    protected function addCodeViolation(ExecutionContextInterface $context, $errorMessage) {
+        $context->addViolationAt('code', $errorMessage);
+    }
+    
+    /**
+     * 
+     * @param AuthorizationCodeProfile $profile
+     * @return bool
+     */
+    private function hasCodeExpired(AuthorizationCodeProfile $profile) {
+        $expirationDate = $profile->getExpirationDate();
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
+        
+        return $expirationDate <= $now;
     }
 }

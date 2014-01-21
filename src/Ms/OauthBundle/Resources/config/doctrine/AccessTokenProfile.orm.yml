@@ -35,6 +35,7 @@ Ms\OauthBundle\Entity\AccessTokenProfile:
     oneToOne:
         authorizationCodeProfile:
           targetEntity: AuthorizationCodeProfile
+          inversedBy: accessTokenProfile
           joinColumn:
             name: authorization_code_profile_id
             referencedColumnName: id

@@ -232,7 +232,9 @@ class AuthorizationController extends Controller {
         $accessTokenRequest = ($requestParameter !== null) 
             ? AccessTokenRequest::fromUri($requestParameter) 
             : AccessTokenRequest::fromRequest($request);
-        $accessTokenRequest->setClientRepository($this->getDoctrine()->getRepository("MsOauthBundle:Client"));
+        $accessTokenRequest->setAuthorizationCodeRepository(
+            $this->getDoctrine()->getRepository("MsOauthBundle:AuthorizationCodeProfile")
+        );
 
         return $accessTokenRequest;
     }
