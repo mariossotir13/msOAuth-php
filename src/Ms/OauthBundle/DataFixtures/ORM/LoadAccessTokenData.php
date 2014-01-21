@@ -20,6 +20,12 @@ class LoadAccessTokenData extends AbstractFixture implements OrderedFixtureInter
     const REF_TOKEN = 'access_token_profile';
     
     /**
+     *
+     * @var int
+     */
+    private static $EXPIRES_IN = 600;
+    
+    /**
      * @inheritdoc
      */
     public function getOrder() {
@@ -46,10 +52,14 @@ class LoadAccessTokenData extends AbstractFixture implements OrderedFixtureInter
         /* @var $authzCode \Ms\OauthBundle\Entity\AuthorizationCodeProfile */
         $authzCode = $this->getReference(LoadAuthorizationCodeData::REF_AUTHZ_CODE);
         
+        $expirationDate = new \DateTime('now', new \DateTimeZone('UTC'));
+        $expirationDate->add(new \DateInterval('PT' . static::$EXPIRES_IN . 'S'));
+        
         $profile = new AccessTokenProfile();
         $profile->setAccessToken('1wRAhqWY+WWy8RhlfIOjP9JCTy3ibrWMhaJ6DzjD9BU')
             ->setAccessTokenType('bearer')
             ->setAuthorizationCodeProfile($authzCode)
+            ->setExpirationDate($expirationDate)
             ->setGrantType('authorization_code');
         
         foreach ($authzCode->getScopes() as $scope) {

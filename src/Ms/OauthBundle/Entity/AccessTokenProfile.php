@@ -67,7 +67,7 @@ class AccessTokenProfile {
      */
     function __construct() {
         $this->scopes = new ArrayCollection();
-        $this->setExpirationDate();
+//        $this->setExpirationDate();
     }
 
     /**
@@ -194,11 +194,21 @@ class AccessTokenProfile {
     }
 
     /**
-     * @return void
+     * 
+     * @param \DateTime $expirationDate
+     * @return AccessTokenProfile
+     * @throws \InvalidArgumentException εάν το όρισμα `$expirationDate` καταδεικνύει
+     * μία ημερομηνία στο παρελθόν
      */
-    protected function setExpirationDate() {
+    public function setExpirationDate(\DateTime $expirationDate) {
         $now = new \DateTime('now', new \DateTimeZone("UTC"));
-        $this->expirationDate = $now->add(new \DateInterval('PT' . static::$EXPIRATION_TIME . 'S'));
+//        $this->expirationDate = $now->add(new \DateInterval('PT' . static::$EXPIRATION_TIME . 'S'));
+        if ($now > $expirationDate) {
+            throw new \InvalidArgumentException('Expiration date cannot be a time into the past.');
+        }
+        $this->expirationDate = $expirationDate;
+        
+        return $this;
     }
 
     /**

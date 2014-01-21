@@ -77,7 +77,7 @@ class AuthorizationCodeProfile {
      */
     public function __construct() {
         $this->scopes = new ArrayCollection();
-        $this->setExpirationDate();
+//        $this->setExpirationDate();
     }
 
     /**
@@ -221,6 +221,24 @@ class AuthorizationCodeProfile {
     }
 
     /**
+     * 
+     * @param \DateTime $expirationDate
+     * @return AuthorizationCodeProfile
+     * @throws \InvalidArgumentException εάν το όρισμα `$expirationDate` καταδεικνύει
+     * μία ημερομηνία στο παρελθόν
+     */
+    public function setExpirationDate(\DateTime $expirationDate) {
+        $now = new \DateTime('now', new \DateTimeZone("UTC"));
+//        $this->expirationDate = $now->add(new \DateInterval('PT' . static::$EXPIRATION_TIME . 'S'));
+        if ($now > $expirationDate) {
+            throw new \InvalidArgumentException('Expiration date cannot be a time into the past.');
+        }
+        $this->expirationDate = $expirationDate;
+        
+        return $this;
+    }
+
+    /**
      * Set redirectionUri
      *
      * @param string $redirectionUri
@@ -259,13 +277,5 @@ class AuthorizationCodeProfile {
         $this->state = $state;
 
         return $this;
-    }
-
-    /**
-     * @return void
-     */
-    protected function setExpirationDate() {
-        $now = new \DateTime('now', new \DateTimeZone("UTC"));
-        $this->expirationDate = $now->add(new \DateInterval('PT' . static::$EXPIRATION_TIME . 'S'));
     }
 }

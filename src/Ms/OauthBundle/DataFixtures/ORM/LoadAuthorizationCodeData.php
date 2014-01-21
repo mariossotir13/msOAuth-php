@@ -20,6 +20,12 @@ class LoadAuthorizationCodeData extends AbstractFixture implements OrderedFixtur
      * @var string
      */
     const REF_AUTHZ_CODE = 'authorization_code_profile';
+    
+    /**
+     *
+     * @var int
+     */
+    private static $EXPIRES_IN = 600;
 
     /**
      * @inheritdoc
@@ -48,9 +54,13 @@ class LoadAuthorizationCodeData extends AbstractFixture implements OrderedFixtur
         /* @var $client \Ms\OauthBundle\Entity\Client */
         $client = $this->getReference(LoadUserData::REF_CLIENT);
         
+        $expirationDate = new \DateTime('now', new \DateTimeZone('UTC'));
+        $expirationDate->add(new \DateInterval('PT' . static::$EXPIRES_IN . 'S'));
+        
         $profile = new AuthorizationCodeProfile();
         $profile->setAuthorizationCode('ECVkbAobtKSh9IN98WBcpAV4k3s6HXHh/bibF80MKus')
             ->setClient($client)
+            ->setExpirationDate($expirationDate)
             ->setRedirectionUri($client->getRedirectionUri())
             ->setResponseType('code')
             ->setState('RdoTKJnaUxdRfE7QBTZX')

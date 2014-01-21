@@ -161,12 +161,17 @@ class AuthorizationController extends Controller {
      */
     protected function createAuthorizationCodeProfile($authorizationCode, AuthorizationRequest $authRequest) {
         $profile = new AuthorizationCodeProfile();
+        
+        $expiresIn = $this->container->getParameter('code_grant_expires_in');
+        $now = new \DateTime('now', new \DateTimeZone("UTC"));
+        $expirationDate = $now->add(new \DateInterval('PT' . $expiresIn . 'S'));
 
-        $profile->setAuthorizationCode($authorizationCode);
-        $profile->setClient($this->getClientFromRequest($authRequest));
-        $profile->setRedirectionUri($authRequest->getRedirectionUri());
-        $profile->setResponseType($authRequest->getResponseType());
-        $profile->setState($authRequest->getState());
+        $profile->setAuthorizationCode($authorizationCode)
+            ->setClient($this->getClientFromRequest($authRequest))
+            ->setExpirationDate($expirationDate)
+            ->setRedirectionUri($authRequest->getRedirectionUri())
+            ->setResponseType($authRequest->getResponseType())
+            ->setState($authRequest->getState());
 
         $scopes = $this->getScopesFromRequest($authRequest);
         foreach ($scopes as $scope) {
@@ -202,12 +207,18 @@ class AuthorizationController extends Controller {
      */
     protected function createAccessTokenProfile($accessToken, AccessTokenRequest $request) {
         $profile = new AccessTokenProfile();
+        
+        $expiresIn = $this->container->getParameter('access_token_expires_in');
+        $now = new \DateTime('now', new \DateTimeZone("UTC"));
+        $expirationDate = $now->add(new \DateInterval('PT' . $expiresIn . 'S'));
+        
         $authorizationCodeProfile = $this->findAuthorizationCodeProfile($request);
 
-        $profile->setAccessToken($accessToken);
-        $profile->setAuthorizationCodeProfile($authorizationCodeProfile);
-        $profile->setAccessTokenType(AccessTokenProfile::ACCESS_TOKEN_TYPE_BEARER);
-        $profile->setGrantType($request->getGrantType());
+        $profile->setAccessToken($accessToken)
+            ->setAuthorizationCodeProfile($authorizationCodeProfile)
+            ->setAccessTokenType(AccessTokenProfile::ACCESS_TOKEN_TYPE_BEARER)
+            ->setExpirationDate($expirationDate)
+            ->setGrantType($request->getGrantType());
 
         $scopes = $authorizationCodeProfile->getScopes();
         foreach ($scopes as $scope) {
