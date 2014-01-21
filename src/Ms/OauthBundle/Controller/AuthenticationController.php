@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\SecurityContext;
 use Ms\OauthBundle\Component\Authorization\AccessTokenRequest;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 /**
  * Description of AuthenticationController
@@ -65,8 +66,8 @@ class AuthenticationController extends Controller {
                 $this->generateUrl(
                     'ms_oauth_authorization_invalid_client', 
                     array(
-                        AccessTokenRequest::QUERY_PARAM => $targetPath,
-                        self::AUTH_ERROR => $error
+//                        AccessTokenRequest::QUERY_PARAM => $targetPath,
+                        self::AUTH_ERROR => $error->getMessage()
                     )
                 )
             );
@@ -103,7 +104,7 @@ class AuthenticationController extends Controller {
     /**
      * 
      * @param Request $request
-     * @return string
+     * @return AuthenticationException
      */
     protected function validateForm(Request $request) {
         $session = $request->getSession();

@@ -103,7 +103,7 @@ class AuthorizationController extends Controller {
         
         $violations = array(
             array(
-                'message' => 'Invalid username or password.',
+                'message' => $request->query->get(AuthenticationController::AUTH_ERROR),
                 'messageTemplate' => 'Invalid username or password.',
                 'messageParameters' => array(),
                 'root' => '',
