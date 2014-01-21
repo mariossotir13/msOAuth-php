@@ -2,18 +2,32 @@
 
 namespace Ms\OauthBundle\DataFixtures\ORM;
 
-use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use \Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\DataFixtures\AbstractFixture;
 use Ms\OauthBundle\Entity\Client;
 use Ms\OauthBundle\Entity\User;
+use Ms\OauthBundle\Entity\ClientType;
 
 /**
  * Description of LoadUserData
  *
  * @author Marios
  */
-class LoadUserData implements FixtureInterface {
+class LoadUserData extends AbstractFixture implements OrderedFixtureInterface {
 
+    /**
+     * @var string
+     */
+    const REF_CLIENT = 'client';
+
+    /**
+     * @inheritdoc
+     */
+    public function getOrder() {
+        return 1;
+    }
+    
     /**
      * @inheritdoc
      */
@@ -25,6 +39,8 @@ class LoadUserData implements FixtureInterface {
         $manager->persist($user);
         
         $manager->flush();
+        
+        $this->addReference(self::REF_CLIENT, $client);
     }
     
     /**
@@ -34,6 +50,7 @@ class LoadUserData implements FixtureInterface {
     private function createClient() {
         $client = new Client();
         $client->setAppTitle('Demo 1')
+            ->setClientType(ClientType::TYPE_CONFIDENTIAL)
             ->setRedirectionUri('http://msoauthphp.local/app_dev.php/client-app/demo1')
             ->setId('zMuobKhbnvJUTYc+EnXfRwiiHP4/OpmM5CLrdpkIsm4')
             ->setEmail('demo1@client.com')

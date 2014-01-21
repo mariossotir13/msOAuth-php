@@ -2,8 +2,9 @@
 
 namespace Ms\OauthBundle\DataFixtures\ORM;
 
-use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\DataFixtures\AbstractFixture;
 use Ms\OauthBundle\Entity\AuthorizationCodeScope;
 
 /**
@@ -11,21 +12,42 @@ use Ms\OauthBundle\Entity\AuthorizationCodeScope;
  *
  * @author Marios
  */
-class LoadAuthorizationCodeScopeData implements FixtureInterface {
+class LoadAuthorizationCodeScopeData extends AbstractFixture implements OrderedFixtureInterface {
+
+    /**@#+
+     * 
+     * @var string
+     */
+    const REF_BASIC = 'basic';
+    const REF_FULL = 'full';
+    /**@#-*/
+
+    /**
+     * @inheritdoc
+     */
+    public function getOrder() {
+        return 2;
+    }
 
     /**
      * @inheritdoc
      */
     public function load(ObjectManager $manager) {
-        $manager->persist($this->createScope(
+        $basic = $this->createScope(
             AuthorizationCodeScope::BASIC,
             'Το βασικό σύνολο πληροφοριών.'
-        ));
-        $manager->persist($this->createScope(
+        );
+        $full = $this->createScope(
             AuthorizationCodeScope::FULL,
             'Ολόκληρο το σύνολο πληροφοριών.'
-        ));
+        );
+        
+        $manager->persist($basic);
+        $manager->persist($full);
         $manager->flush();
+        
+        $this->addReference(self::REF_BASIC, $basic);
+        $this->addReference(self::REF_FULL, $full);
     }
 
     /**
@@ -41,5 +63,4 @@ class LoadAuthorizationCodeScopeData implements FixtureInterface {
 
         return $scope;
     }
-
 }
