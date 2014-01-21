@@ -46,11 +46,11 @@ class AccessTokenErrorResponse extends Response {
     /**
      * 
      * @param string $error
-     * @throws \InvalidArgumentException εάν το όρισμα `$error` είναι `null`.
+     * @throws \InvalidArgumentException εάν το όρισμα `$error` είναι *κενό*.
      * @inheritdoc
      */
     function __construct($error) {
-        if ($error === null) {
+        if (empty($error)) {
             throw new \InvalidArgumentException('Error cannot be empty.');
         }
         parent::__construct();
