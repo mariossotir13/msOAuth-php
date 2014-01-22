@@ -20,7 +20,7 @@ class AuthorizationRequest {
     /**
      * @var string
      */
-    const SERVER_URI = 'http://msoauthphp.local/app_dev.php/authorization';
+    const SERVER_URI = 'http://msoauthphp.local/app_dev.php/oauth2/c/authorization';
     
     /**
      * @var string
@@ -311,13 +311,18 @@ class AuthorizationRequest {
      */
     public function toUri() {        
         $queryStringParameters = $this->toArray();
-        $queryString = '';
+//        $queryString = '';
+        $queryString = array();
         foreach ($queryStringParameters as $key => $value) {
-            $queryString .= $key . '=' . urlencode($value);
+//            $queryString .= $key . '=' . urlencode($value);
+            $queryString[] = $key . '=' . urlencode($value);
         }
         
         $uri = $this->oauthServerUri;
-        $uri .= ($queryString !== '') ? '?' . $queryString : '';
+//        $uri .= ($queryString !== '') ? '?' . $queryString : '';
+        $uri .= !empty($queryString) 
+            ? '?' . implode('&', $queryString) 
+            : '';
         
         return $uri;
     }

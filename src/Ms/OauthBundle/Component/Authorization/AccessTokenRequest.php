@@ -18,7 +18,7 @@ class AccessTokenRequest {
     /**
      * @var string
      */
-    const SERVER_URI = 'http://msoauthphp.local/app_dev.php/authorization/access_token';
+    const SERVER_URI = 'http://msoauthphp.local/app_dev.php/oauth2/c/authorization/access_token';
     
     /**
      * @var string
@@ -237,6 +237,34 @@ class AccessTokenRequest {
      */
     public function setRedirectionUri($redirectionUri) {
         $this->redirectionUri = $redirectionUri;
+    }
+    
+    /**
+     * 
+     * @return string[]
+     */
+    public function toArray() {
+        return array(
+            static::$CLIENT_ID => $this->getClientId(),
+            static::$CODE => $this->getCode(),
+            static::$GRANT_TYPE => $this->getGrantType(),
+            static::$REDIRECTION_URI => $this->getRedirectionUri()
+        );
+    }
+    
+    /**
+     * @var string
+     */
+    public function toUri($serverUriIncluded = false) {
+        $uri = static::$CLIENT_ID . '=' . urlencode($this->getClientId()) . '&'
+            . static::$CODE . '=' . urlencode($this->getCode()) . '&'
+            . static::$GRANT_TYPE . '=' . urlencode($this->getGrantType()) . '&'
+            . static::$REDIRECTION_URI . '=' . urlencode($this->getRedirectionUri());
+        if ($serverUriIncluded) {
+            $uri = self::SERVER_URI . '?' . $uri;
+        }
+        
+        return $uri;
     }
     
     /**
