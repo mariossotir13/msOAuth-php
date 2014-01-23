@@ -54,7 +54,7 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface {
             ->setRedirectionUri('http://msoauthphp.local/app_dev.php/client-app/demo1')
             ->setId('zMuobKhbnvJUTYc+EnXfRwiiHP4/OpmM5CLrdpkIsm4')
             ->setEmail('demo1@client.com')
-            ->setPassword('jLCLq/YjRtQK9S1yMDBqS8i0fryF9YkUZJQVh1zlZrsrBpgE6orCQa2bNTlwJiIr');
+            ->setPassword('T+QI3ETKu6hC7v3IsVr0A1YPRoyT7bH9eafG8Brh6neTNkuANR2VLfLw96J8MXUO');
         
         return $client;
     }
