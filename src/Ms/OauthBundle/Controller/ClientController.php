@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Ms\OauthBundle\Component\Authorization\AccessTokenRequest;
 use Buzz\Message\MessageInterface;
-use Ms\OauthBundle\Component\Authentication\AuthenticationRequest;
 
 /**
  * Description of ClientController
