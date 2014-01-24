@@ -84,10 +84,10 @@ class AccessTokenRequest {
      */
     public static function fromRequest(Request $request) {
         $accessTokenRequest = new AccessTokenRequest(self::SERVER_URI);
-        $accessTokenRequest->setClientId($request->query->get(static::$CLIENT_ID));
-        $accessTokenRequest->setRedirectionUri($request->query->get(static::$REDIRECTION_URI));
-        $accessTokenRequest->setGrantType($request->query->get(static::$GRANT_TYPE));
-        $accessTokenRequest->setCode($request->query->get(static::$CODE));
+        $accessTokenRequest->setClientId($request->request->get(static::$CLIENT_ID));
+        $accessTokenRequest->setRedirectionUri($request->request->get(static::$REDIRECTION_URI));
+        $accessTokenRequest->setGrantType($request->request->get(static::$GRANT_TYPE));
+        $accessTokenRequest->setCode($request->request->get(static::$CODE));
 
         return $accessTokenRequest;
     }

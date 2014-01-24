@@ -24,3 +24,6 @@ services:
     ms_oauthbundle_authenticator_client:
         class: Ms\OauthBundle\Component\Security\MsOauthClientAuthenticator
         arguments: [@ms_oauthbundle_authentication, %secret%]
+    ms_oauthbundle_security_encoder_client:
+        class: Ms\OauthBundle\Component\Security\Encoder\ClientPasswordEncoder
+        arguments: [@ms_oauthbundle_authentication, %secret%]

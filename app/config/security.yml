@@ -1,5 +1,7 @@
 security:
     encoders:
+        Ms\OauthBundle\Entity\Client:
+            id: ms_oauthbundle_security_encoder_client
         Ms\OauthBundle\Entity\User:
             algorithm: sha512
             iterations: 5000
@@ -28,13 +30,15 @@ security:
             pattern: ^/oauth2/c
 #            context: oauth2
             provider: client
-            simple_form:
-                authenticator: ms_oauthbundle_authenticator_client
-                check_path: ms_oauth_authentication_client_login_check
-#                csrf_provider: form.csrf_provider
-                failure_path: ms_oauth_authentication_client_login_failure
-                login_path: ms_oauth_authentication_client_login
-                username_parameter: _id
+            http_basic:
+                realm: "MsOauth"
+#            simple_form:
+#                authenticator: ms_oauthbundle_authenticator_client
+#                check_path: ms_oauth_authentication_client_login_check
+##                csrf_provider: form.csrf_provider
+#                failure_path: ms_oauth_authentication_client_login_failure
+#                login_path: ms_oauth_authentication_client_login
+#                username_parameter: _id
             logout:
                 path:   /oauth2/c/authentication/logout
                 target: /oauth2/c/registration/

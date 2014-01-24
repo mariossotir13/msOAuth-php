@@ -121,7 +121,7 @@ class AccessTokenResponse extends JsonResponse {
             static::$SCOPE => $this->formatScopesForQueryString($this->getScopes()),
             static::$TOKEN_TYPE => $this->getTokenType()
         );
-        $this->setData(json_encode($contentArr));
+        $this->setData($contentArr);
     }
     
     /**
