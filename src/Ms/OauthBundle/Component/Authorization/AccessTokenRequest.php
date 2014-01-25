@@ -84,10 +84,19 @@ class AccessTokenRequest {
      */
     public static function fromRequest(Request $request) {
         $accessTokenRequest = new AccessTokenRequest(self::SERVER_URI);
-        $accessTokenRequest->setClientId($request->request->get(static::$CLIENT_ID));
-        $accessTokenRequest->setRedirectionUri($request->request->get(static::$REDIRECTION_URI));
-        $accessTokenRequest->setGrantType($request->request->get(static::$GRANT_TYPE));
-        $accessTokenRequest->setCode($request->request->get(static::$CODE));
+        // TODO: Uncomment the following lines once the client demos are completed. These lines read the request
+        // parameters from the request entity-body, as they should.
+        // 
+        // The lines following are reading the parameters from the query string. This is just so that the NetBeans
+        // demos work. These should be removed.
+//        $accessTokenRequest->setClientId($request->request->get(static::$CLIENT_ID));
+//        $accessTokenRequest->setRedirectionUri($request->request->get(static::$REDIRECTION_URI));
+//        $accessTokenRequest->setGrantType($request->request->get(static::$GRANT_TYPE));
+//        $accessTokenRequest->setCode($request->request->get(static::$CODE));
+        $accessTokenRequest->setClientId($request->query->get(static::$CLIENT_ID));
+        $accessTokenRequest->setRedirectionUri($request->query->get(static::$REDIRECTION_URI));
+        $accessTokenRequest->setGrantType($request->query->get(static::$GRANT_TYPE));
+        $accessTokenRequest->setCode($request->query->get(static::$CODE));
 
         return $accessTokenRequest;
     }
