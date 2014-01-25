@@ -350,7 +350,7 @@ class AccessTokenRequest {
     /**
      * 
      * @param AuthorizationCodeProfile $profile
-     * @return bool
+     * @return boolean
      */
     private function isCodeExpired(AuthorizationCodeProfile $profile) {
         $expirationDate = $profile->getExpirationDate();
