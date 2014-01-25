@@ -41,6 +41,12 @@ class ValidationResponse {
     
     /**
      *
+     * @var string[string]
+     */
+    private $propertyToErrorMap = array();
+    
+    /**
+     *
      * @var boolean
      */
     private $valid = true;
@@ -86,8 +92,11 @@ class ValidationResponse {
     /**
      * 
      * @param ConstraintViolationListInterface $violationsList
+     * @param string[string] $propertyToErrorMap
      */
-    function __construct(ConstraintViolationListInterface $violationsList) {
+    function __construct(ConstraintViolationListInterface $violationsList,
+            array $propertyToErrorMap = array()) {
+        $this->propertyToErrorMap = $propertyToErrorMap;
         $this->setViolationsList($violationsList);
         $this->setError($violationsList);
     }
@@ -106,6 +115,14 @@ class ValidationResponse {
      */
     public function getErrorMessage() {
         return $this->errorMessage;
+    }
+
+    /**
+     * 
+     * @return string[string]
+     */
+    public function getPropertyToErrorMap() {
+        return $this->propertyToErrorMap;
     }
 
     /**
@@ -130,8 +147,8 @@ class ValidationResponse {
         $violation = $violationsList->get(0);
         $property = $violation->getPropertyPath();
         
-        $this->error = isset(static::$propertyPathToErrorMap[$property]) 
-            ? static::$propertyPathToErrorMap[$property]
+        $this->error = isset($this->propertyToErrorMap[$property]) 
+            ? $this->propertyToErrorMap[$property]
             : AuthorizationError::INVALID_REQUEST;
         $this->errorMessage = $violation->getMessage();
         $this->valid = false;
