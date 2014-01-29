@@ -24,7 +24,7 @@ class ClientController extends Controller {
      */
     private static $CLIENT_ID= 'zMuobKhbnvJUTYc+EnXfRwiiHP4/OpmM5CLrdpkIsm4';
     private static $REDIRECTION_URI = 'http://msoauthphp.local/app_dev.php/client-app/demo1';
-    private static $PASSWORD = 'cVuhgpxuVexdkYwSGUeuARL6+JQ=';
+    private static $PASSWORD = 'fmodKwVrRQOC2Io7TpWu0VDkTrA=';
     private static $STATE = 'RdoTKJnaUxdRfE7QBTZX';
     /**@#-*/
 
