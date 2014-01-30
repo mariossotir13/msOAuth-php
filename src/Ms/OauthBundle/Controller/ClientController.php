@@ -202,21 +202,7 @@ class ClientController extends Controller {
 //            array('url' => $request->toUri())
             array(
                 'errors' => $errors,
-                'url_access_token_expired_grant' => 
-                    $this->generateUrl('ms_oauth_client_demo1_token_request_expiredGrant'),
                 'url_access_token_full' => $this->requestGenerator->createAuthorizationRequest(true),
-                'url_access_token_invalid_redirection_uri' => 
-                    $this->generateUrl('ms_oauth_client_demo1_token_request_invalid_redUri'),
-                'url_access_token_missing_redirection_uri' => 
-                    $this->generateUrl('ms_oauth_client_demo1_token_request_m_redUri'),
-                'url_access_token_missing_required_parameter' => 
-                    $this->generateUrl('ms_oauth_client_demo1_token_request_mrp'),
-                'url_access_token_reused_grant' => 
-                    $this->generateUrl('ms_oauth_client_demo1_token_request_reused_grant'),
-                'url_access_token_unsupported_grant_type' => 
-                    $this->generateUrl('ms_oauth_client_demo1_token_request_unsupportedGrantType'),
-                'url_access_token_wrong_client_id' => 
-                    $this->generateUrl('ms_oauth_client_demo1_token_request_wrongClientId'),
                 'url_authorization_code_invalid_client_id' =>
                     $this->requestGenerator->createAuthorizationRequestWithInvalidClientId(true),
                 'url_authorization_code_invalid_redirection_uri' =>
