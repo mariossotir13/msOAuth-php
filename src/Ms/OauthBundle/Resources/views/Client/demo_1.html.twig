@@ -4,5 +4,30 @@
 {% block title %}Demo 1 | Πελάτης{% endblock %}
 
 {% block body %}
-<a href="{{ url }}">Εκκίνηση</a>
+
+    {% if errors %}
+        <h3>Λάθη</h3>
+        {% for error in errors %}
+            {{ error }}
+        {% endfor %}
+    {% endif %}
+
+    <ol>
+        <li><a href="{{ url_access_token_full }}">Έκδοση Τεκμηρίου Πρόσβασης - Πλήρης Διαδικασία</a></li>
+        <li><a href="{{ url_access_token_missing_required_parameter }}">
+                Έκδοση Τεκμηρίου Πρόσβασης - Παράλειψη Υποχρεωτικής Παραμέτρου</a></li>
+        <li><a href="{{ url_authorization_code_invalid_client_id }}">
+                Έκδοση Κωδικού Εξουσιοδότησης - Μη Έγκυρο Αναγνωριστικό Πελάτη</a></li>
+        <li><a href="{{ url_authorization_code_invalid_scope }}">
+                Έκδοση Κωδικού Εξουσιοδότησης - Μη Έγκυρο Πεδίο Τεκμηρίου Πρόσβασης</a></li>
+        <li><a href="{{ url_authorization_code_invalid_redirection_uri }}">
+                Έκδοση Κωδικού Εξουσιοδότησης - Μη Έγκυρο URL Ανακατεύθυνσης</a></li>
+        <li><a href="{{ url_authorization_code_unsupported_response_type }}">
+                Έκδοση Κωδικού Εξουσιοδότησης - Μη Υποστηριζόμενος Τύπος Απάντησης</a></li>
+        <li><a href="{{ url_authorization_code_missing_redirection_uri }}">
+                Έκδοση Κωδικού Εξουσιοδότησης - Παράλειψη URL Ανακατεύθυνσης</a></li>
+        <li><a href="{{ url_authorization_code_missing_required_parameter }}">
+                Έκδοση Κωδικού Εξουσιοδότησης - Παράλειψη Υποχρεωτικής Παραμέτρου</a></li>
+    </ol>
+
 {% endblock %}
