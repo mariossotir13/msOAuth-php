@@ -15,16 +15,23 @@ use Ms\OauthBundle\Tests\Fixtures\Component\Authentication\ClientA;
 class RegistrationControllerTest extends WebTestCase {
     
     /**
+     * 
      * @var string
      */
-    private static $QUERY_DELETE_USERS = 'DELETE FROM Ms\OauthBundle\Entity\Client';
+    private static $QUERY_DELETE_USER = 'DELETE FROM MsOauthBundle:Client c WHERE c.id = :id';
     
     /**
      * Το μονοπάτι της Σελίδας Εγγραφής Πελάτη.
      *
      * @var string
      */
-    private static $ROUTE_CLIENT_REGISTRATION = '/registration/client';
+    private static $ROUTE_CLIENT_REGISTRATION = '/oauth2/c/registration/';
+    
+    /**
+     *
+     * @var Client
+     */
+    private $client;
 
     /**
      * Ο WebClient ο οποίος χρησιμοποιείται για την πραγματοποίηση αιτήσεων προς
@@ -40,7 +47,7 @@ class RegistrationControllerTest extends WebTestCase {
      * 
      * Πραγματοποιούνται δύο έλεγχοι:
      * 
-     *  1. Ο τίτλος του εγγράφου περιέχει τη φράση "Client Registration".
+     *  1. Ο τίτλος του εγγράφου περιέχει τη φράση "Εγγραφή Πελάτη".
      *  2. Υπάρχει μέσα στο έγγραφο μία φόρμα της οποίας το πρώτο στοιχείο έχει
      *     *id* ms_oauthbundle_client.
      */
@@ -48,11 +55,11 @@ class RegistrationControllerTest extends WebTestCase {
         $crawler = $this->webClient->request('GET', static::$ROUTE_CLIENT_REGISTRATION);
         $this->assertCount(
             1,
-            $crawler->filter('head > title:contains("Client Registration")')
+            $crawler->filter('head > title:contains("Εγγραφή Πελάτη")')
         );
         $this->assertCount(
             1,
-            $crawler->filter('form > #ms_oauthbundle_client')
+            $crawler->filter('form[name="ms_oauthbundle_client"]')
         );
     }
     
@@ -69,18 +76,14 @@ class RegistrationControllerTest extends WebTestCase {
     public function testClientForFormSubmission() {
         $crawler = $this->webClient->request('GET', static::$ROUTE_CLIENT_REGISTRATION);
         $form = $crawler->selectButton('ms_oauthbundle_client[Submit]')->form();
-        $client = new ClientA();
+        $this->client = new ClientA();
         $form->setValues(array(
-            'ms_oauthbundle_client[appTitle]' => $client->getAppTitle(),
-            'ms_oauthbundle_client[redirectionUri]' => $client->getRedirectionUri(),
-            'ms_oauthbundle_client[clientType]' => $client->getClientType(),
-            'ms_oauthbundle_client[email]' => $client->getEmail(),
+            'ms_oauthbundle_client[appTitle]' => $this->client->getAppTitle(),
+            'ms_oauthbundle_client[redirectionUri]' => $this->client->getRedirectionUri(),
+            'ms_oauthbundle_client[clientType]' => $this->client->getClientType(),
+            'ms_oauthbundle_client[email]' => $this->client->getEmail(),
         ));
         $this->webClient->submit($form);
-        
-//        $route = '/client/' . urlencode($client->getId());
-//        $this->assertTrue($this->webClient->getResponse()->isRedirect($route));
-        $this->assertTrue($this->webClient->getResponse()->isRedirect());
         
         /* @var $repository \Doctrine\ORM\EntityRepository */
         $repository = $this->webClient->getContainer()
@@ -88,8 +91,8 @@ class RegistrationControllerTest extends WebTestCase {
             ->getManager()
             ->getRepository('Ms\OauthBundle\Entity\Client');
         /* @var $savedClient \Ms\OauthBundle\Entity\Client */
-        $savedClient = $repository->find($client->getId());
-        $this->assertEquals($client->getId(), $savedClient->getId());
+        $savedClient = $repository->find($this->client->getId());
+        $this->assertNotNull($savedClient);
     }
     
     /**
@@ -106,16 +109,24 @@ class RegistrationControllerTest extends WebTestCase {
      * @inhderitdoc
      */
     protected function tearDown() {
-        $this->deleteAllClients();
+        $this->deleteClient();
         parent::tearDown();
         $this->webClient = null;
     }
     
-    private function deleteAllClients() {
+    /**
+     * @return void
+     */
+    private function deleteClient() {
+        if ($this->client === null) {
+            return;
+        }
+        
         /* @var $em \Doctrine\ORM\EntityManager */
         $em = $this->webClient->getContainer()->get('doctrine')->getManager();
         /* @var $query \Doctrine\ORM\Query */
-        $query = $em->createQuery(static::$QUERY_DELETE_USERS);
+        $query = $em->createQuery(static::$QUERY_DELETE_USER)
+            ->setParameter('id', $this->client->getId());
         $query->execute();
     }
 }
