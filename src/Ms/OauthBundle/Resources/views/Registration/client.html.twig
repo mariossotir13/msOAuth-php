@@ -1,10 +1,25 @@
 {# Contains the Client Registration Form #}
 {% extends "MsOauthBundle:Registration:base.html.twig" %}
 
-{% block title %}
-    Εγγραφή Πελάτη | MsOAuth
-{% endblock %}
+{% block title %}Εγγραφή Πελάτη | MsOAuth{% endblock %}
 
 {% block form %}
-    {{ form(form) }}
+    {{ form_start(form) }}
+        {{ form_errors(form) }}
+
+        <table style="text-align: left">
+            <tr>
+                <th>{{ form_label(form.appTitle) }}:</th>
+                <td>{{ form_widget(form.appTitle) }} {{ form_errors(form.appTitle) }}</td></tr>
+            <tr>
+                <th>{{ form_label(form.redirectionUri) }}:</th>
+                <td>{{ form_widget(form.redirectionUri) }} {{ form_errors(form.redirectionUri) }}</td></tr>
+            <tr>
+                <th>{{ form_label(form.email) }}:</th>
+                <td>{{ form_widget(form.email) }} {{ form_errors(form.email) }}</td></tr>
+            <tr>
+                <th>{{ form_label(form.clientType) }}:</th>
+                <td>{{ form_widget(form.clientType) }} {{ form_errors(form.clientType) }}</td></tr>
+        </table>
+    {{ form_end(form) }}
 {% endblock %}

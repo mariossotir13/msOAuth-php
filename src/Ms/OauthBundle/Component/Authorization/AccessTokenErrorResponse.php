@@ -14,9 +14,9 @@ class AccessTokenErrorResponse extends Response {
     /**#@+
      * @var string
      */
-    protected static $ERROR = 'error';
-    protected static $ERROR_DESCRIPTION = 'error_description';
-    protected static $ERROR_URI = 'error_uri';
+    const ERROR = 'error';
+    const ERROR_DESCRIPTION = 'error_description';
+    const ERROR_URI = 'error_uri';
     /**#@-*/
     
     /**
@@ -129,13 +129,13 @@ class AccessTokenErrorResponse extends Response {
         $this->headers->set('Content-Type', 'application/json');
         
         $jsonArray = array(
-            static::$ERROR => $this->getError()
+            self::ERROR => $this->getError()
         );
         if ($this->errorDescription !== '') {
-            $jsonArray[static::$ERROR_DESCRIPTION] = $this->getErrorDescription();
+            $jsonArray[self::ERROR_DESCRIPTION] = $this->getErrorDescription();
         }
         if ($this->errorUri !== '') {
-            $jsonArray[static::$ERROR_URI] = $this->getErrorUri();
+            $jsonArray[self::ERROR_URI] = $this->getErrorUri();
         }
         
         $this->setContent(json_encode($jsonArray));

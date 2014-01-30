@@ -27,11 +27,6 @@ class AuthenticationController extends Controller {
     const AUTH_ERROR = 'error';
     
     /**
-     * @var string
-     */
-//    const LAST_ID = '_last_id';
-
-    /**
      * 
      * @param Request $request
      * @return Response

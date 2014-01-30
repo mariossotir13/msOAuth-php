@@ -440,8 +440,14 @@ class AuthorizationController extends Controller {
         $validator = $this->get('validator');
         /* @var $violationsList \Symfony\Component\Validator\ConstraintViolationListInterface */
         $violationsList = $validator->validate($authRequest);
+        $propertyToErrorMap = array(
+            'code' => AuthorizationError::INVALID_GRANT,
+            'clientId' => AuthorizationError::INVALID_CLIENT,
+            'scopes' => AuthorizationError::INVALID_SCOPE,
+            'grantType' => AuthorizationError::UNSUPPORTED_GRANT_TYPE
+        );
 
-        return new ValidationResponse($violationsList);
+        return new ValidationResponse($violationsList, $propertyToErrorMap);
     }
 
     /**
@@ -454,8 +460,14 @@ class AuthorizationController extends Controller {
         $validator = $this->get('validator');
         /* @var $violationsList \Symfony\Component\Validator\ConstraintViolationListInterface */
         $violationsList = $validator->validate($authRequest);
+        $propertyToErrorMap = array(
+            'clientId' => AuthorizationError::INVALID_CLIENT,
+            'redirectionUri' => AuthorizationError::REDIRECTION_URI,
+            'responseType' => AuthorizationError::UNSUPPORTED_RESPONSE_TYPE,
+            'scopes' => AuthorizationError::INVALID_SCOPE
+        );
 
-        return new ValidationResponse($violationsList);
+        return new ValidationResponse($violationsList, $propertyToErrorMap);
     }
 
 }

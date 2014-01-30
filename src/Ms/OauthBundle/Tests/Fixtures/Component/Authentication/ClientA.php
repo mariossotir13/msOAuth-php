@@ -19,6 +19,8 @@ class ClientA extends Client {
      * Δημιουργεί ένα νέο ClientA στιγμιότυπο.
      */
     function __construct() {
+        parent::__construct();
+        
         $this->appTitle = 'AppTitle A';
         $this->clientType = ClientType::TYPE_CONFIDENTIAL;
         $this->email = 'client_a@email.com';

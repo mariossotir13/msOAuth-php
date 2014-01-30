@@ -16,8 +16,8 @@ class UserType extends AbstractType {
      * @inheritdoc
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('email', 'email')
-                ->add('Submit', 'submit');
+        $builder->add('email', 'email', array('label' => 'e-mail'))
+                ->add('Submit', 'submit', array('label' => 'Εγγραφή'));
     }
 
     /**

@@ -17,17 +17,30 @@ class ClientType extends UserType {
      * @inheridoc
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('appTitle', 'text', array('max_length' => 120))
-                ->add('redirectionUri', 'url')
-                ->add('clientType',
-                    'choice',
-                    array(
-                        'choices' => array(
-                            '1' => 'Confidential', 
-                            '0' => 'Public'
-                        )
-                    )
-                );
+        $builder->add(
+            'appTitle', 
+            'text', 
+            array(
+                'label' => 'Τίτλος Εφαρμοργής',
+                'max_length' => 120
+            )
+        )->add(
+            'redirectionUri',
+            'url',
+            array(
+                'label' => 'URI Ανακατεύθυνσης'
+            )
+        )->add(
+            'clientType',
+            'choice',
+            array(
+                'choices' => array(
+                    '1' => 'Εμπιστευτικός', 
+                    '0' => 'Δημόσιος'
+                ),
+                'label' => 'Τύπος Πελάτη'
+            )
+        );
         parent::buildForm($builder, $options);
     }
 

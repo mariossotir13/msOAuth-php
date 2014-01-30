@@ -12,10 +12,10 @@ class AuthorizationErrorResponse {
     /**#@+
      * @var string
      */
-    private static $ERROR = 'error';
-    private static $ERROR_DESCRIPTION = 'error_description';
-    private static $ERROR_URI = 'error_uri';
-    private static $STATE = 'state';
+    const ERROR = 'error';
+    const ERROR_DESCRIPTION = 'error_description';
+    const ERROR_URI = 'error_uri';
+    const STATE = 'state';
     /**#@-*/
     
     /**
@@ -150,15 +150,15 @@ class AuthorizationErrorResponse {
      * @return string
      */
     public function toQueryString() {
-        $queryStringArr = array(static::$ERROR => $this->error);
+        $queryStringArr = array(self::ERROR => $this->error);
         if (!empty($this->errorDescription)) {
-            $queryStringArr[static::$ERROR_DESCRIPTION] = $this->errorDescription;
+            $queryStringArr[self::ERROR_DESCRIPTION] = $this->errorDescription;
         }
         if (!empty($this->errorUri)) {
-            $queryStringArr[static::$ERROR_URI] = $this->errorUri;
+            $queryStringArr[self::ERROR_URI] = $this->errorUri;
         }
         if (!empty($this->state)) {
-            $queryStringArr[static::$STATE] = $this->state;
+            $queryStringArr[self::STATE] = $this->state;
         }
         
         return http_build_query($queryStringArr, '', '&');

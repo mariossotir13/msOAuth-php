@@ -41,6 +41,7 @@ class LoadAuthorizationCodeData extends AbstractFixture implements OrderedFixtur
         $profile = $this->createAuthorizationCodeProfile();
         
         $manager->persist($profile);
+        $manager->persist( $this->createExpiredAuthorizationCodeProfile() );
         $manager->flush();
         
         $this->addReference(self::REF_AUTHZ_CODE, $profile);
@@ -59,6 +60,29 @@ class LoadAuthorizationCodeData extends AbstractFixture implements OrderedFixtur
         
         $profile = new AuthorizationCodeProfile();
         $profile->setAuthorizationCode('ECVkbAobtKSh9IN98WBcpAV4k3s6HXHh/bibF80MKus')
+            ->setClient($client)
+            ->setExpirationDate($expirationDate)
+            ->setRedirectionUri($client->getRedirectionUri())
+            ->setResponseType('code')
+            ->setState('RdoTKJnaUxdRfE7QBTZX')
+            ->addScope( $this->getReference(LoadAuthorizationCodeScopeData::REF_BASIC) );
+        
+        return $profile;
+    }
+    
+    /**
+     * 
+     * @return AuthorizationCodeProfile
+     */
+    private function createExpiredAuthorizationCodeProfile() {
+        /* @var $client \Ms\OauthBundle\Entity\Client */
+        $client = $this->getReference(LoadUserData::REF_CLIENT);
+        
+        $expirationDate = new \DateTime('now', new \DateTimeZone('UTC'));
+        $expirationDate->add(new \DateInterval('PT1S'));
+        
+        $profile = new AuthorizationCodeProfile();
+        $profile->setAuthorizationCode('2DJaB1A7VsbFmr1H3AkV/DLCR9s7rBPtHb5R/wqK9O4')
             ->setClient($client)
             ->setExpirationDate($expirationDate)
             ->setRedirectionUri($client->getRedirectionUri())
