@@ -78,9 +78,33 @@ ms_oauth_client_demo1:
   pattern: /client-app/demo1
   defaults: { _controller: MsOauthBundle:Client:demo1 }
   
+ms_oauth_client_demo1_token_request_expiredGrant:
+    pattern: /client-app/demo1/access_token/expiredGrant
+    defaults: { _controller: MsOauthBundle:Client:demo1AccessTokenExpiredGrant }
+  
+ms_oauth_client_demo1_token_request_invalid_redUri:
+    pattern: /client-app/demo1/access_token/invalid_redUri
+    defaults: { _controller: MsOauthBundle:Client:demo1AccessTokenInvalidRedirectionUri }
+  
 ms_oauth_client_demo1_token_request_mrp:
     pattern: /client-app/demo1/access_token/mrp
     defaults: { _controller: MsOauthBundle:Client:demo1AccessTokenMissingRequiredParameter }
+
+ms_oauth_client_demo1_token_request_m_redUri:
+    pattern: /client-app/demo1/access_token/m_redUri
+    defaults: { _controller: MsOauthBundle:Client:demo1AccessTokenMissingRedirectionUri }
+
+ms_oauth_client_demo1_token_request_reused_grant:
+    pattern: /client-app/demo1/access_token/reused_grant
+    defaults: { _controller: MsOauthBundle:Client:demo1AccessTokenReusedGrant }
+
+ms_oauth_client_demo1_token_request_unsupportedGrantType:
+    pattern: /client-app/demo1/access_token/uns_grantType
+    defaults: { _controller: MsOauthBundle:Client:demo1AccessTokenUnsupportedGrantType }
+
+ms_oauth_client_demo1_token_request_wrongClientId:
+    pattern: /client-app/demo1/access_token/wrongClientId
+    defaults: { _controller: MsOauthBundle:Client:demo1AccessTokenWrongClientId }
 
 ###
 # Utilities

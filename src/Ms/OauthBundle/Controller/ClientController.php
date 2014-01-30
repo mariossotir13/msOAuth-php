@@ -26,6 +26,9 @@ class ClientController extends Controller {
      * @var string
      */
     private static $AUTHORIZATION_CODE = 'some+authorization_code';
+    private static $AUTHORIZATION_CODE_EXPIRED = '2DJaB1A7VsbFmr1H3AkV/DLCR9s7rBPtHb5R/wqK9O4';
+    private static $AUTHORIZATION_CODE_REUSED = 'ECVkbAobtKSh9IN98WBcpAV4k3s6HXHh/bibF80MKus';
+    private static $AUTHORIZATION_CODE_WRONG_CLIENT_ID = 'ECVkbAobtKSh9IN98WBcpAV4k3s6HXHh/bibF80MKus';
     private static $CLIENT_ID= 'zMuobKhbnvJUTYc+EnXfRwiiHP4/OpmM5CLrdpkIsm4';
     private static $REDIRECTION_URI = 'http://msoauthphp.local/app_dev.php/client-app/demo1';
     private static $PASSWORD = 'fmodKwVrRQOC2Io7TpWu0VDkTrA=';
@@ -43,6 +46,88 @@ class ClientController extends Controller {
      */
     function __construct() {
        $this->requestGenerator = new RequestGenerator();
+    }
+    
+    /**
+     * 
+     * @return void
+     */
+    public function demo1AccessTokenExpiredGrantAction() {
+        $request = $this->requestGenerator->createAccessTokenRequest(
+            static::$AUTHORIZATION_CODE_EXPIRED
+        );
+        
+        return $this->handleAccessTokenInvalidRequest($request);
+    }
+    
+    /**
+     * 
+     * @return void
+     */
+    public function demo1AccessTokenInvalidRedirectionUriAction() {
+        $request = $this->requestGenerator->createAccessTokenRequestWithInvalidRedirectionUri(
+            static::$AUTHORIZATION_CODE
+        );
+        
+        return $this->handleAccessTokenInvalidRequest($request);
+    }
+    
+    /**
+     * 
+     * @return void
+     */
+    public function demo1AccessTokenMissingRedirectionUriAction() {
+        $request = $this->requestGenerator->createAccessTokenRequestWithMissingRedirectionUri(
+            static::$AUTHORIZATION_CODE
+        );
+        
+        return $this->handleAccessTokenInvalidRequest($request);
+    }
+    
+    /**
+     * 
+     * @return void
+     */
+    public function demo1AccessTokenMissingRequiredParameterAction() {
+        $request = $this->requestGenerator->createAccessTokenRequestWithMissingRequiredParameter(
+            static::$AUTHORIZATION_CODE
+        );
+        
+        return $this->handleAccessTokenInvalidRequest($request);
+    }
+    
+    /**
+     * 
+     * @return void
+     */
+    public function demo1AccessTokenReusedGrantAction() {
+        $request = $this->requestGenerator->createAccessTokenRequest(static::$AUTHORIZATION_CODE_REUSED);
+        
+        return $this->handleAccessTokenInvalidRequest($request);
+    }
+    
+    /**
+     * 
+     * @return void
+     */
+    public function demo1AccessTokenUnsupportedGrantTypeAction() {
+        $request = $this->requestGenerator->createAccessTokenRequestWithUnsupportedGrantType(
+            static::$AUTHORIZATION_CODE
+        );
+        
+        return $this->handleAccessTokenInvalidRequest($request);
+    }
+    
+    /**
+     * 
+     * @return void
+     */
+    public function demo1AccessTokenWrongClientIdAction() {
+        $request = $this->requestGenerator->createAccessTokenRequestWithWrongClientId(
+            static::$AUTHORIZATION_CODE_WRONG_CLIENT_ID
+        );
+        
+        return $this->handleAccessTokenInvalidRequest($request);
     }
 
     /**
@@ -72,23 +157,6 @@ class ClientController extends Controller {
 //        $request->setRedirectionUri(static::$REDIRECTION_URI);
 //        $request->setResponseType(AuthorizationResponseType::CODE);
 //        $request->setState(static::$STATE);
-        
-        return $this->buildTemplate();
-    }
-    
-    /**
-     * 
-     * @return void
-     */
-    public function demo1AccessTokenMissingRequiredParameterAction() {
-        $request = $this->requestGenerator->createAccessTokenRequestWithMissingRequiredParameter(
-            static::$AUTHORIZATION_CODE
-        );
-        
-        $response = $this->submitAccessTokenRequest($request);
-        if ($this->isAccessTokenErrorResponse($response)) {
-            return $this->displayAccessTokenErrorResponse($response);
-        }
         
         return $this->buildTemplate();
     }
@@ -134,9 +202,21 @@ class ClientController extends Controller {
 //            array('url' => $request->toUri())
             array(
                 'errors' => $errors,
+                'url_access_token_expired_grant' => 
+                    $this->generateUrl('ms_oauth_client_demo1_token_request_expiredGrant'),
                 'url_access_token_full' => $this->requestGenerator->createAuthorizationRequest(true),
+                'url_access_token_invalid_redirection_uri' => 
+                    $this->generateUrl('ms_oauth_client_demo1_token_request_invalid_redUri'),
+                'url_access_token_missing_redirection_uri' => 
+                    $this->generateUrl('ms_oauth_client_demo1_token_request_m_redUri'),
                 'url_access_token_missing_required_parameter' => 
                     $this->generateUrl('ms_oauth_client_demo1_token_request_mrp'),
+                'url_access_token_reused_grant' => 
+                    $this->generateUrl('ms_oauth_client_demo1_token_request_reused_grant'),
+                'url_access_token_unsupported_grant_type' => 
+                    $this->generateUrl('ms_oauth_client_demo1_token_request_unsupportedGrantType'),
+                'url_access_token_wrong_client_id' => 
+                    $this->generateUrl('ms_oauth_client_demo1_token_request_wrongClientId'),
                 'url_authorization_code_invalid_client_id' =>
                     $this->requestGenerator->createAuthorizationRequestWithInvalidClientId(true),
                 'url_authorization_code_invalid_redirection_uri' =>
@@ -160,7 +240,7 @@ class ClientController extends Controller {
      */
     private function displayAccessTokenErrorResponse(MessageInterface $response) {
         $jsonContent = $response->getContent();
-        $content = json_decode($jsonContent);
+        $content = json_decode($jsonContent, true);
         
         $error = $content[AccessTokenErrorResponse::ERROR];
         $error .= isset($content[AccessTokenErrorResponse::ERROR_DESCRIPTION])
@@ -202,6 +282,23 @@ class ClientController extends Controller {
     
     /**
      * 
+     * @param AccessTokenRequest $request
+     * @return Response
+     */
+    private function handleAccessTokenInvalidRequest(AccessTokenRequest $request) {
+        $response = $this->submitAccessTokenRequest($request);
+        if ($this->isUnauthorizedResponse($response)) {
+            $response = $this->sendAccessTokenRequestWithCredentials($request);
+        }
+        if ($this->isAccessTokenErrorResponse($response)) {
+            return $this->displayAccessTokenErrorResponse($response);
+        }
+        
+        return $this->buildTemplate();
+    }
+    
+    /**
+     * 
      * @param MessageInterface $response
      * @return string
      * @throws \BadMethodCallException
@@ -237,7 +334,7 @@ class ClientController extends Controller {
      */
     private function isAccessTokenErrorResponse(MessageInterface $response) {
         $jsonContent = $response->getContent();
-        $content = json_decode($jsonContent);
+        $content = json_decode($jsonContent, true);
         
         return isset($content[AccessTokenErrorResponse::ERROR]);
     }

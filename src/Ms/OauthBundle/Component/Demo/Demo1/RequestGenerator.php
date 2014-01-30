@@ -21,6 +21,8 @@ class RequestGenerator {
     private static $AUTHORIZATION_RESPONSE_TYPE_UNSUPPORTED = 'c';
     private static $CLIENT_ID = 'zMuobKhbnvJUTYc+EnXfRwiiHP4/OpmM5CLrdpkIsm4';
     private static $CLIENT_ID_INVALID = 'z';
+    private static $CLIENT_ID_WRONG = 'z';
+    private static $GRANT_TYPE_UNSUPPORTED = 'ac';
     private static $REDIRECTION_URI = 'http://msoauthphp.local/app_dev.php/client-app/demo1';
     private static $REDIRECTION_URI_INVALID = 'http://msoauthphp.local/app_dev.php/client-app/demo1#a';
     private static $PASSWORD = 'fmodKwVrRQOC2Io7TpWu0VDkTrA=';
@@ -50,11 +52,74 @@ class RequestGenerator {
      * @param boolean $asUri
      * @return AccessTokenRequest
      */
+    public function createAccessTokenRequestWithInvalidRedirectionUri($code, $asUri = false) {
+        $request = new AccessTokenRequest(AccessTokenRequest::SERVER_URI);
+        $request->setClientId(static::$CLIENT_ID);
+        $request->setCode($code);
+        $request->setGrantType('authorization_code');
+        $request->setRedirectionUri(static::$REDIRECTION_URI_INVALID);
+        
+        return $asUri ? $request->toUri(true) : $request;
+    }
+    
+    /**
+     * 
+     * @param string $code
+     * @param boolean $asUri
+     * @return AccessTokenRequest
+     */
     public function createAccessTokenRequestWithMissingRequiredParameter($code, $asUri = false) {
         $request = new AccessTokenRequest(AccessTokenRequest::SERVER_URI);
         $request->setClientId(static::$CLIENT_ID);
         $request->setCode($code);
         $request->setRedirectionUri(static::$REDIRECTION_URI);
+        
+        return $asUri ? $request->toUri(true) : $request;
+    }
+    
+    /**
+     * 
+     * @param string $code
+     * @param boolean $asUri
+     * @return AccessTokenRequest
+     */
+    public function createAccessTokenRequestWithUnsupportedGrantType($code, $asUri = false) {
+        $request = new AccessTokenRequest(AccessTokenRequest::SERVER_URI);
+        $request->setClientId(static::$CLIENT_ID);
+        $request->setCode($code);
+        $request->setGrantType(static::$GRANT_TYPE_UNSUPPORTED);
+        $request->setRedirectionUri(static::$REDIRECTION_URI);
+        
+        return $asUri ? $request->toUri(true) : $request;
+    }
+    
+    /**
+     * 
+     * @param string $code
+     * @param boolean $asUri
+     * @return AccessTokenRequest
+     */
+    public function createAccessTokenRequestWithWrongClientId($code, $asUri = false) {
+        $request = new AccessTokenRequest(AccessTokenRequest::SERVER_URI);
+        $request->setClientId(static::$CLIENT_ID_WRONG);
+        $request->setCode($code);
+        $request->setGrantType('authorization_code');
+        $request->setRedirectionUri(static::$REDIRECTION_URI);
+        
+        return $asUri ? $request->toUri(true) : $request;
+    }
+    
+    /**
+     * 
+     * @param string $code
+     * @param boolean $asUri
+     * @return AccessTokenRequest
+     */
+    public function createAccessTokenRequestWithMissingRedirectionUri($code, $asUri = false) {
+        $request = new AccessTokenRequest(AccessTokenRequest::SERVER_URI);
+        $request->setClientId(static::$CLIENT_ID);
+        $request->setCode($code);
+        $request->setGrantType('authorization_code');
         
         return $asUri ? $request->toUri(true) : $request;
     }
