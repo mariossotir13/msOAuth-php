@@ -1,0 +1,3 @@
+ms_demo_homepage:
+    pattern:  /demo
+    defaults: { _controller: MsDemoBundle:Client:demo1 }

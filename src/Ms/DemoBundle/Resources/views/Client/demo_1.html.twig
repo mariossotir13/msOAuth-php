@@ -1,0 +1,14 @@
+{# empty Twig template #}
+{% extends "::base.html.twig" %}
+
+{% block title %}Demo 1 | Πελάτης{% endblock %}
+
+{% block body %}
+
+        
+        <a href="{{ url_access_token_full }}">Έκδοση Τεκμηρίου Πρόσβασης - Πλήρης Διαδικασία</a>
+        
+        
+    <p><a href="{{ path('ms_oauth_authentication_user_logout') }}">Αποσύνδεση Ιδιοκτήτη Πόρων</a></p>
+
+{% endblock %}

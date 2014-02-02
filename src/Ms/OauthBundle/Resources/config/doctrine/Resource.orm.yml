@@ -1,0 +1,16 @@
+Ms\OauthBundle\Entity\Resource:
+    type: entity
+    table: resources
+    id:
+        id:
+            type: integer
+            generator: { strategy: AUTO }
+    fields:
+      title:
+        type: string
+        length: 255
+      mimeType:
+        type: string
+        length: 64
+      content:
+        type: text

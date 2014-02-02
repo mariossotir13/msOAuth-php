@@ -1,3 +1,7 @@
+ms_demo:
+    resource: "@MsDemoBundle/Resources/config/routing.yml"
+    prefix:   /
+
 ms_oauth:
     resource: "@MsOauthBundle/Resources/config/routing.yml"
     prefix:   /
