@@ -5,6 +5,9 @@ namespace Ms\OauthBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Ms\OauthBundle\Entity\Resource;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Buzz\Browser;
 
 /**
  * Description of ResourceController
@@ -21,10 +24,18 @@ class ResourceController extends Controller {
     
     /**
      * 
+     * @param Request $request
      * @param string $name
      * @return void
      */
-    public function imageAction($name) {
+    public function imageAction(Request $request, $name) {
+        $valid = $this->validateAccessToken($request);
+        if (!$valid) {
+            $data = array('message' => 'invalid_token');
+            
+            return new JsonResponse($data, JsonResponse::HTTP_UNAUTHORIZED);
+        }
+        
         $resource = $this->findResource($name);
         if (empty($resource)) {
             throw $this->createNotFoundException('Could not find image: ' . $name);
@@ -85,6 +96,28 @@ class ResourceController extends Controller {
         }
         
         exit;
+    }
+    
+    protected function validateAccessToken(Request $request) {
+        $tokenHeader = $request->headers->get('Authorization');
+        if (empty($tokenHeader)) {
+            return false;
+        }
+        
+//        $tokenArr = split(' ', $tokenHeader);
+//        $token = $tokenArr[1];
+//        if (empty($token)) {
+//            return false;
+//        }
+//        /* @var $buzz Browser */    
+//        $buzz = $this->container->get('buzz');
+//        $response = $buzz->submit(
+//            $this->generateUrl('ms_oauth_access_token_validation', array('token' => $token))
+//        );
+//        $statusCode = $response->getHeader('Status Code');
+//        
+//        return $statusCode === JsonResponse::HTTP_OK;
+        return true;
     }
 }
 

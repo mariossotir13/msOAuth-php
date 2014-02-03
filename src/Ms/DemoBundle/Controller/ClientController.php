@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Ms\OauthBundle\Component\Authorization\AccessTokenRequest;
 use Buzz\Message\MessageInterface;
 use Ms\OauthBundle\Component\Demo\Demo1\RequestGenerator;
+use Buzz\Browser;
 
 /**
  * Description of ClientController
@@ -139,6 +140,7 @@ class ClientController extends Controller {
             return $this->displayAuthorizationError($request);
         }
         
+            
 //        if ($this->isAccessTokenErrorResponse($request)) {
 //            $this->displayAccessTokenErrorResponse($request);
 //        }
@@ -161,6 +163,18 @@ class ClientController extends Controller {
         return $this->buildTemplate();
     }
     
+    public function image1Action() {
+       /* @var $buzz Browser */
+       $buzz = $this->get('buzz');
+       $response = $buzz->submit(
+            'http://msoauthphp.local/app_dev.php/resource/image/jpg/1',
+            array(),
+            'POST',
+            array('Authorization' => 'Bearer 1wRAhqWY%2BWWy8RhlfIOjP9JCTy3ibrWMhaJ6DzjD9BU')
+        );
+       
+       return new Response($response->getContent());
+    }
     /**
      * 
      * @param string $code
