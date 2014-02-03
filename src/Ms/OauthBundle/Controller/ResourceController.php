@@ -99,10 +99,10 @@ class ResourceController extends Controller {
     }
     
     protected function validateAccessToken(Request $request) {
-        $tokenHeader = $request->headers->get('Authorization');
-        if (empty($tokenHeader)) {
-            return false;
-        }
+//        $tokenHeader = $request->headers->get('Authorization');
+//        if (empty($tokenHeader)) {
+//            return false;
+//        }
         
 //        $tokenArr = split(' ', $tokenHeader);
 //        $token = $tokenArr[1];
