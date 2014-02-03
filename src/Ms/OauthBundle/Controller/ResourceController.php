@@ -27,10 +27,10 @@ class ResourceController extends Controller {
     public function imageAction($name) {
         $resource = $this->findResource($name);
         if (empty($resource)) {
-            return $this->createNotFoundException('Could not find image: ' . $name);
+            throw $this->createNotFoundException('Could not find image: ' . $name);
         }
         
-        return $this->loadFile($resource);
+        $this->loadFile($resource);
     }
 
     /**
@@ -79,7 +79,8 @@ class ResourceController extends Controller {
         
         $path = realpath(static::$WEB_ROOT . $resource->getContent());
         $fileInfo = new \SplFileInfo($path);
-        if ($fileInfo->isFile() && $fileInfo->isReadable()) {
+        if ($fileInfo->isFile() 
+                && $fileInfo->isReadable()) {
             readfile($fileInfo->getRealPath());
         }
         
