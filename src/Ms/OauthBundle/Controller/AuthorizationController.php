@@ -18,6 +18,7 @@ use Ms\OauthBundle\Component\Authorization\AccessTokenRequest;
 use Ms\OauthBundle\Entity\AccessTokenProfile;
 use Ms\OauthBundle\Component\Authorization\AccessTokenErrorResponse;
 use Ms\OauthBundle\Component\Authorization\AccessTokenResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Description of AuthorizationController
@@ -141,6 +142,34 @@ class AuthorizationController extends Controller {
         );
     }
 
+    /**
+     * 
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param string $token
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function validateTokenAction(Request $request, $token) {
+        $repository = $this->getDoctrine()->getRepository('MsOauthBundle:AccessTokenProfile');
+        /* @var $profile AccessTokenProfile */    
+        $profile = $repository->findOneByAccessToken($token);     
+        if ($profile ===null) {
+            return new JsonResponse(
+                'Indalid Token: ' . $token,
+                Response::HTTP_NOT_FOUND
+            );
+        }
+        
+        $expirationDate = $profile->getExpirationDate();
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
+        if ($expirationDate <= $now) {
+            return new JsonResponse(
+                'Expired Token: ' . $token,
+                Response::HTTP_NOT_FOUND
+            );
+        }
+        
+        return new JsonResponse();
+    }
     /**
      * 
      * @param AuthorizationRequest $authRequest
