@@ -167,18 +167,10 @@ class ClientController extends Controller {
      * 
      * @return Response
      */
-    public function image1Action() {
-        /* @var $buzz Browser */
-       $buzz = $this->get('buzz');
-       $response = $buzz->get(
-            'http://msoauthphp.local/app_dev.php/resource/image/jpg/1',
-            array('Authorization' => 'Bearer 1wRAhqWY+WWy8RhlfIOjP9JCTy3ibrWMhaJ6DzjD9BU')
-        );
-       
-       return new Response(
-           $response->getContent(),
-           Response::HTTP_OK,
-           array('Content-Type' => $response->getHeader('Content-Type'))
+    public function imageAction($name) {
+       return $this->requestResource(
+            'http://msoauthphp.local/app_dev.php/resource/image/jpg/' . $name, 
+            '1wRAhqWY+WWy8RhlfIOjP9JCTy3ibrWMhaJ6DzjD9BU'
         );
     }
     
@@ -358,6 +350,24 @@ class ClientController extends Controller {
      */
     private function isUnauthorizedResponse(MessageInterface $response) {
         return $response->getHeader('WWW-Authenticate') !== '';
+    }
+    
+    /**
+     * 
+     * @param string $url
+     * @param string $token
+     * @return Response
+     */
+    private function requestResource($url, $token) {
+        /* @var $buzz Browser */
+        $buzz = $this->get('buzz');
+        $response = $buzz->get($url, array('Authorization' => 'Bearer ' . $token));
+        
+        return new Response(
+           $response->getContent(),
+           Response::HTTP_OK,
+           array('Content-Type' => $response->getHeader('Content-Type'))
+        );
     }
     
     /**
