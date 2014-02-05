@@ -144,9 +144,9 @@ class AuthorizationController extends Controller {
 
     /**
      * 
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param Request $request
      * @param string $token
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return JsonResponse
      */
     public function validateTokenAction(Request $request, $token) {
         $repository = $this->getDoctrine()->getRepository('MsOauthBundle:AccessTokenProfile');
@@ -154,7 +154,7 @@ class AuthorizationController extends Controller {
         $profile = $repository->findOneByAccessToken($token);     
         if ($profile ===null) {
             return new JsonResponse(
-                'Indalid Token: ' . $token,
+                'Invalid Token: ' . $token,
                 Response::HTTP_NOT_FOUND
             );
         }
@@ -498,5 +498,4 @@ class AuthorizationController extends Controller {
 
         return new ValidationResponse($violationsList, $propertyToErrorMap);
     }
-
 }

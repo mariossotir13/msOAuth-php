@@ -7,7 +7,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Ms\OauthBundle\Entity\Resource;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Buzz\Browser;
 use Ms\OauthBundle\Component\Access\AccessRequest;
 use Ms\OauthBundle\Component\Authorization\ValidationResponse;
 
@@ -105,6 +104,11 @@ class ResourceController extends Controller {
         exit;
     }
     
+    /**
+     * 
+     * @param AccessRequest $request
+     * @return ValidationResponse
+     */
     protected function validateAccessRequest(AccessRequest $request) {
         /* @var $validator \Symfony\Component\Validator\Validator */
         $validator = $this->get('validator');
@@ -120,6 +124,12 @@ class ResourceController extends Controller {
         );
     }
     
+    /**
+     * 
+     * @param Request $request
+     * @return boolean
+     * @deprecated
+     */
     protected function validateAccessToken(Request $request) {
 //        $tokenHeader = $request->headers->get('Authorization');
 //        if (empty($tokenHeader)) {
