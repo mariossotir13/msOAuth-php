@@ -8,6 +8,8 @@ use Ms\OauthBundle\Entity\Resource;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Buzz\Browser;
+use Ms\OauthBundle\Component\Access\AccessRequest;
+use Ms\OauthBundle\Component\Authorization\ValidationResponse;
 
 /**
  * Description of ResourceController
@@ -29,11 +31,16 @@ class ResourceController extends Controller {
      * @return void
      */
     public function imageAction(Request $request, $name) {
-        $valid = $this->validateAccessToken($request);
-        if (!$valid) {
-            $data = array('message' => 'invalid_token');
-            
-            return new JsonResponse($data, JsonResponse::HTTP_UNAUTHORIZED);
+        $accessRequest = AccessRequest::fromRequest($request, $this->container->get('buzz'));
+        $validationResponse = $this->validateAccessRequest($accessRequest);
+        if (!$validationResponse->isValid()) {
+            return new JsonResponse(
+                array(
+                    'error' => $validationResponse->getError(),
+                    'error_message' => $validationResponse->getErrorMessage()
+                ),
+                JsonResponse::HTTP_UNAUTHORIZED
+            );
         }
         
         $resource = $this->findResource($name);
@@ -96,6 +103,21 @@ class ResourceController extends Controller {
         }
         
         exit;
+    }
+    
+    protected function validateAccessRequest(AccessRequest $request) {
+        /* @var $validator \Symfony\Component\Validator\Validator */
+        $validator = $this->get('validator');
+        /* @var $violations \Symfony\Component\Validator\ConstraintViolationListInterface */
+        $violations = $validator->validate($request);
+        
+        return new ValidationResponse(
+            $violations,
+            array(
+                'accessToken' => 'invalid_token',
+                'resourceName' => 'invalid_request'
+            )
+        );
     }
     
     protected function validateAccessToken(Request $request) {

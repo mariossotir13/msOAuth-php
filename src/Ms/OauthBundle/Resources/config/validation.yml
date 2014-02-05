@@ -73,3 +73,19 @@ Ms\OauthBundle\Component\Authorization\AuthorizationRequest:
         state:
             - NotBlank:
                 message: "Please, specify a local state."
+                
+Ms\OauthBundle\Component\Access\AccessRequest:
+    group_sequence:
+        - Main
+        - AccessRequest
+    constraints: 
+        - Callback: [validateAccessToken]
+    properties:
+        accessToken:
+            - NotBlank: 
+                message: "Please, specify an access token."
+                groups: [Main]
+        resourceName:
+            - NotBlank:
+                message: "Please, specify a resource name."
+                groups: [Main]
