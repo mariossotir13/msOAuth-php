@@ -7,6 +7,7 @@
         "psr-0": { "": "src/" }
     },
     "require-dev": {
+        "firephp/firephp-core": "dev-master",
         "phpunit/phpunit": "3.7.*",
         "sensio/buzz-bundle":"dev-master"
     },

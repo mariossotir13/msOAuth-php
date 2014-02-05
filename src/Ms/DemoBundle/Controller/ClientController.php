@@ -172,7 +172,7 @@ class ClientController extends Controller {
        $buzz = $this->get('buzz');
        $response = $buzz->get(
             'http://msoauthphp.local/app_dev.php/resource/image/jpg/1',
-            array('Authorization' => 'Bearer 1wRAhqWY%2BWWy8RhlfIOjP9JCTy3ibrWMhaJ6DzjD9BU')
+            array('Authorization' => 'Bearer 1wRAhqWY+WWy8RhlfIOjP9JCTy3ibrWMhaJ6DzjD9BU')
         );
        
        return new Response(
@@ -181,6 +181,7 @@ class ClientController extends Controller {
            array('Content-Type' => $response->getHeader('Content-Type'))
         );
     }
+    
     /**
      * 
      * @param string $code

@@ -107,12 +107,13 @@ class AccessRequest {
      */
     public function validateAccessToken(ExecutionContextInterface $context) {
         $tokenValidationUrl = static::$OAUTH_TOKEN_VALIDATION_URL . urlencode($this->getAccessToken());
+        /* @var $response \Buzz\Message\Response */
         $response = $this->browser->get($tokenValidationUrl);
         
-        if ($response->getHeader('Status Code') !== Response::HTTP_OK) {
+        if ($response->getStatusCode() !== Response::HTTP_OK) {
             $context->addViolationAt(
                 'accessToken',
-                'OAuth server found the token "' . $this->getAccessToken() . '" to be invalid.'
+                $response->getContent()
             );
         }
     }
@@ -123,12 +124,14 @@ class AccessRequest {
      * @return string
      */
     protected static function extractAccessToken(Request $request) {
-        $header = $request->headers->get('Authorization');
-        if (empty($header)) {
+//        $header = $request->headers->get('Authorization');
+        $headers = apache_request_headers();        
+        $authHeader = isset($headers['Authorization']) ? $headers['Authorization'] : '';
+        if (empty($authHeader)) {
             return '';
         }
         
-        $credentials = split(' ', $header);
+        $credentials = split(' ', $authHeader);
         
         return isset($credentials[1]) ? $credentials[1] : '';
     }
