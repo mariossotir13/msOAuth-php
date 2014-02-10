@@ -87,6 +87,30 @@ class ClientController extends Controller {
     
     /**
      * 
+     * @param string $name
+     * @return Response
+     */
+    public function imageGroupAction($name) {
+        /* @var $buzz Browser */
+        $buzz = $this->get('buzz');
+        $response = $buzz->get(
+            'http://msoauthphp.local/app_dev.php/resource/group/image/jpg/' . rawurlencode($name),
+            array('Authorization' => 'Bearer 1wRAhqWY+WWy8RhlfIOjP9JCTy3ibrWMhaJ6DzjD9BU')
+        );
+        
+        $responseContent = json_decode($response->getContent(), true);
+        
+        return $this->render(
+            'MsDemoBundle:Client:slideshow.html.twig',
+            array(
+                'group_title' => $name,
+                'image_titles' => $responseContent['image_titles']
+            )
+        );
+    }
+    
+    /**
+     * 
      * @param string $code
      * @return AccessTokenRequest
      */

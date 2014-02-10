@@ -28,7 +28,7 @@ class ResourceController extends Controller {
      * 
      * @param Request $request
      * @param string $name
-     * @return void | JsonResponse
+     * @return JsonResponse|Response
      */
     public function imageAction(Request $request, $name) {
         $accessRequest = AccessRequest::fromRequest($request, $this->container->get('buzz'));
@@ -45,7 +45,13 @@ class ResourceController extends Controller {
         
         $resource = $this->findResource($name);
         if (empty($resource)) {
-            throw $this->createNotFoundException('Could not find image: ' . $name);
+            return new JsonResponse(
+                array(
+                    'error' => JsonResponse::HTTP_NOT_FOUND,
+                    'error_message' => 'Could not find image: ' . $name
+                ),
+                JsonResponse::HTTP_NOT_FOUND
+            );
         }
         
         return new Response(
@@ -61,9 +67,9 @@ class ResourceController extends Controller {
      * 
      * @param Request $request
      * @param string $name
-     * @return void | JsonResponse
+     * @return JsonResponse
      */
-    public function imageGroup(Request $request, $name) {
+    public function imageGroupAction(Request $request, $name) {
         $accessRequest = AccessRequest::fromRequest($request, $this->get('buzz'));
         $validationResponse = $this->validateAccessRequest($accessRequest);
         if (!$validationResponse->isValid()) {
@@ -79,12 +85,18 @@ class ResourceController extends Controller {
         $repository = $this->getDoctrine()->getRepository('MsOauthBundle:ResourceGroup');
         $group = $repository->findOneByTitle($name);
         if ($group === null) {
-            throw $this->createNotFoundException('Could not find image group: ' . $name);
+            return new JsonResponse(
+                array(
+                    'error' => JsonResponse::HTTP_NOT_FOUND,
+                    'error_message' => 'Could not find image group: ' . $name
+                ),
+                JsonResponse::HTTP_NOT_FOUND
+            );
         }
         
-        $this->loadFilesOfGroup($group);
-        
-        exit;
+        return new JsonResponse(
+            array('image_titles' => $this->getImageTitlesOfGroup($group))
+        );
     }
 
     /**
@@ -118,6 +130,22 @@ class ResourceController extends Controller {
     
     /**
      * 
+     * @param ResourceGroup $group
+     * @return string[]
+     */
+    protected function getImageTitlesOfGroup(ResourceGroup $group) {
+        $titles = array();
+        $images = $group->getResources();
+        /* @var $image Resource */
+        foreach ($images as $image) {
+            $titles[] = $image->getTitle();
+        }
+        
+        return $titles;
+    }
+    
+    /**
+     * 
      * @param Resource $resource
      * @return string
      */
@@ -130,19 +158,6 @@ class ResourceController extends Controller {
         }
         
         return file_get_contents($fileInfo->getRealPath());
-    }
-    
-    /**
-     * 
-     * @param ResourceGroup $group
-     * @return void
-     * @see #loadFile
-     */
-    protected function loadFilesOfGroup(ResourceGroup $group) {
-        $images = $group->getResources();
-        foreach ($images as $image) {
-//            $this->loadFile($image);
-        }
     }
     
     /**

@@ -1,0 +1,17 @@
+{# empty Twig template #}
+{% extends "::base.html.twig" %}
+
+{% block title %}Slideshow για: {{ group_title }} | Πελάτης{% endblock %}
+
+{% block body %}
+    {% for title in image_titles %}
+    <img src="{{ path('ms_demo_resource_image', { 'name': title }) }}" />
+    <br />
+    {% endfor %}
+{% endblock %}
+
+{% block javascripts %}
+<script src="/bundles/msdemo/js/jquery.min.js"></script>
+{#<script src="path to slider script"></script>#}
+<script src="/bundles/msdemo/js/main.js"></script>
+{% endblock %}

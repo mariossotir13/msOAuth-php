@@ -4,4 +4,8 @@ ms_demo_homepage:
     
 ms_demo_resource_image:
     pattern: /demo/img/{name}
-    defaults: { _controller: MsDemoBundle:Client:image, name: "Starry Night" }
+    defaults: { _controller: MsDemoBundle:Client:image }
+    
+ms_demo_resource_image_group:
+    pattern: /demo/group/image/{name}
+    defaults: { _controller: MsDemoBundle:Client:imageGroup }
