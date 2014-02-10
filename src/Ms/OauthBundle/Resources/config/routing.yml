@@ -85,10 +85,12 @@ ms_resource:
 ms_resource_image_jpg:
     pattern: /resource/image/jpg/{name}
     defaults: { _controller: MsOauthBundle:Resource:image }
+    methods: [GET]
     
 ms_resource_image_jpg_group:
     pattern: /resource/group/image/jpg/{name}
     defaults: { _controller: MsOauthBundle:Resource:imageGroup }
+    methods: [GET]
 
 ###
 # Demos
