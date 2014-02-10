@@ -75,24 +75,13 @@ class ClientController extends Controller {
        $buzz = $this->get('buzz');
        $response = $buzz->get(
             'http://msoauthphp.local/app_dev.php/resource/image/jpg/' . urlencode($name),
-            array('Authorization' => 'Bearer 1wRAhqWY%2BWWy8RhlfIOjP9JCTy3ibrWMhaJ6DzjD9BU')
+            array('Authorization' => 'Bearer 1wRAhqWY+WWy8RhlfIOjP9JCTy3ibrWMhaJ6DzjD9BU')
         );
        
        return new Response(
            $response->getContent(),
            Response::HTTP_OK,
            array('Content-Type' => $response->getHeader('Content-Type'))
-        );
-    }
-    
-    /**
-     * 
-     * @return Response
-     */
-    public function imageAction($name) {
-       return $this->requestResource(
-            'http://msoauthphp.local/app_dev.php/resource/image/jpg/' . $name, 
-            '1wRAhqWY+WWy8RhlfIOjP9JCTy3ibrWMhaJ6DzjD9BU'
         );
     }
     
