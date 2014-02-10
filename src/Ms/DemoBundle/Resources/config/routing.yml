@@ -2,6 +2,10 @@ ms_demo_homepage:
     pattern:  /demo
     defaults: { _controller: MsDemoBundle:Client:demo1 }
     
+ms_demo_resource_image_1:
+    pattern: /demo/img1
+    defaults: { _controller: MsDemoBundle:Client:image1}
+
 ms_demo_resource_image:
     pattern: /demo/img/{name}
-    defaults: { _controller: MsDemoBundle:Client:image}
+    defaults: { _controller: MsDemoBundle:Client:image, name: "Starry Night" }

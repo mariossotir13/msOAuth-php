@@ -48,88 +48,6 @@ class ClientController extends Controller {
     function __construct() {
        $this->requestGenerator = new RequestGenerator();
     }
-    
-    /**
-     * 
-     * @return void
-     */
-    public function demo1AccessTokenExpiredGrantAction() {
-        $request = $this->requestGenerator->createAccessTokenRequest(
-            static::$AUTHORIZATION_CODE_EXPIRED
-        );
-        
-        return $this->handleAccessTokenInvalidRequest($request);
-    }
-    
-    /**
-     * 
-     * @return void
-     */
-    public function demo1AccessTokenInvalidRedirectionUriAction() {
-        $request = $this->requestGenerator->createAccessTokenRequestWithInvalidRedirectionUri(
-            static::$AUTHORIZATION_CODE
-        );
-        
-        return $this->handleAccessTokenInvalidRequest($request);
-    }
-    
-    /**
-     * 
-     * @return void
-     */
-    public function demo1AccessTokenMissingRedirectionUriAction() {
-        $request = $this->requestGenerator->createAccessTokenRequestWithMissingRedirectionUri(
-            static::$AUTHORIZATION_CODE
-        );
-        
-        return $this->handleAccessTokenInvalidRequest($request);
-    }
-    
-    /**
-     * 
-     * @return void
-     */
-    public function demo1AccessTokenMissingRequiredParameterAction() {
-        $request = $this->requestGenerator->createAccessTokenRequestWithMissingRequiredParameter(
-            static::$AUTHORIZATION_CODE
-        );
-        
-        return $this->handleAccessTokenInvalidRequest($request);
-    }
-    
-    /**
-     * 
-     * @return void
-     */
-    public function demo1AccessTokenReusedGrantAction() {
-        $request = $this->requestGenerator->createAccessTokenRequest(static::$AUTHORIZATION_CODE_REUSED);
-        
-        return $this->handleAccessTokenInvalidRequest($request);
-    }
-    
-    /**
-     * 
-     * @return void
-     */
-    public function demo1AccessTokenUnsupportedGrantTypeAction() {
-        $request = $this->requestGenerator->createAccessTokenRequestWithUnsupportedGrantType(
-            static::$AUTHORIZATION_CODE
-        );
-        
-        return $this->handleAccessTokenInvalidRequest($request);
-    }
-    
-    /**
-     * 
-     * @return void
-     */
-    public function demo1AccessTokenWrongClientIdAction() {
-        $request = $this->requestGenerator->createAccessTokenRequestWithWrongClientId(
-            static::$AUTHORIZATION_CODE_WRONG_CLIENT_ID
-        );
-        
-        return $this->handleAccessTokenInvalidRequest($request);
-    }
 
     /**
      * 
@@ -140,27 +58,31 @@ class ClientController extends Controller {
             return $this->displayAuthorizationError($request);
         }
         
-            
-//        if ($this->isAccessTokenErrorResponse($request)) {
-//            $this->displayAccessTokenErrorResponse($request);
-//        }
-        
         if ($this->isAuthorizationCodeResponse($request)) {
             return $this->exchangeCodeForToken($request->query->get('code'));
         }
         
-//        if ($this->isAccessTokenResponse($request)) {
-//            return new Response('Access token granted!');
-//        }
-        
-//        $request = new AuthorizationRequest(AuthorizationRequest::SERVER_URI);
-//        $request->addScope(AuthorizationCodeScope::BASIC);
-//        $request->setClientId(static::$CLIENT_ID);
-//        $request->setRedirectionUri(static::$REDIRECTION_URI);
-//        $request->setResponseType(AuthorizationResponseType::CODE);
-//        $request->setState(static::$STATE);
-        
         return $this->buildTemplate();
+    }
+    
+    /**
+     * 
+     * @param string $name
+     * @return Response
+     */
+    public function imageAction($name) {
+        /* @var $buzz Browser */
+       $buzz = $this->get('buzz');
+       $response = $buzz->get(
+            'http://msoauthphp.local/app_dev.php/resource/image/jpg/' . urlencode($name),
+            array('Authorization' => 'Bearer 1wRAhqWY%2BWWy8RhlfIOjP9JCTy3ibrWMhaJ6DzjD9BU')
+        );
+       
+       return new Response(
+           $response->getContent(),
+           Response::HTTP_OK,
+           array('Content-Type' => $response->getHeader('Content-Type'))
+        );
     }
     
     /**

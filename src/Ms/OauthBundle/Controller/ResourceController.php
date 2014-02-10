@@ -5,6 +5,7 @@ namespace Ms\OauthBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Ms\OauthBundle\Entity\Resource;
+use Ms\OauthBundle\Entity\ResourceGroup;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Ms\OauthBundle\Component\Access\AccessRequest;
@@ -27,7 +28,7 @@ class ResourceController extends Controller {
      * 
      * @param Request $request
      * @param string $name
-     * @return void
+     * @return void | JsonResponse
      */
     public function imageAction(Request $request, $name) {
         $accessRequest = AccessRequest::fromRequest($request, $this->container->get('buzz'));
@@ -48,6 +49,38 @@ class ResourceController extends Controller {
         }
         
         $this->loadFile($resource);
+        
+        exit;
+    }
+
+    /**
+     * 
+     * @param Request $request
+     * @param string $name
+     * @return void | JsonResponse
+     */
+    public function imageGroup(Request $request, $name) {
+        $accessRequest = AccessRequest::fromRequest($request, $this->get('buzz'));
+        $validationResponse = $this->validateAccessRequest($accessRequest);
+        if (!$validationResponse->isValid()) {
+            return new JsonResponse(
+                array(
+                    'error' => $validationResponse->getError(),
+                    'error_message' => $validationResponse->getErrorMessage()
+                ),
+                JsonResponse::HTTP_UNAUTHORIZED
+            );
+        }
+        
+        $repository = $this->getDoctrine()->getRepository('MsOauthBundle:ResourceGroup');
+        $group = $repository->findOneByTitle($name);
+        if ($group === null) {
+            throw $this->createNotFoundException('Could not find image group: ' . $name);
+        }
+        
+        $this->loadFilesOfGroup($group);
+        
+        exit;
     }
 
     /**
@@ -100,8 +133,19 @@ class ResourceController extends Controller {
                 && $fileInfo->isReadable()) {
             readfile($fileInfo->getRealPath());
         }
-        
-        exit;
+    }
+    
+    /**
+     * 
+     * @param ResourceGroup $group
+     * @return void
+     * @see #loadFile
+     */
+    protected function loadFilesOfGroup(ResourceGroup $group) {
+        $images = $group->getResources();
+        foreach ($images as $image) {
+//            $this->loadFile($image);
+        }
     }
     
     /**
@@ -122,34 +166,6 @@ class ResourceController extends Controller {
                 'resourceName' => 'invalid_request'
             )
         );
-    }
-    
-    /**
-     * 
-     * @param Request $request
-     * @return boolean
-     * @deprecated
-     */
-    protected function validateAccessToken(Request $request) {
-//        $tokenHeader = $request->headers->get('Authorization');
-//        if (empty($tokenHeader)) {
-//            return false;
-//        }
-        
-//        $tokenArr = split(' ', $tokenHeader);
-//        $token = $tokenArr[1];
-//        if (empty($token)) {
-//            return false;
-//        }
-//        /* @var $buzz Browser */    
-//        $buzz = $this->container->get('buzz');
-//        $response = $buzz->submit(
-//            $this->generateUrl('ms_oauth_access_token_validation', array('token' => $token))
-//        );
-//        $statusCode = $response->getHeader('Status Code');
-//        
-//        return $statusCode === JsonResponse::HTTP_OK;
-        return true;
     }
 }
 
