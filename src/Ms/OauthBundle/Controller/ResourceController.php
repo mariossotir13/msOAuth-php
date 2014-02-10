@@ -48,9 +48,13 @@ class ResourceController extends Controller {
             throw $this->createNotFoundException('Could not find image: ' . $name);
         }
         
-        $this->loadFile($resource);
-        
-        exit;
+        return new Response(
+            $this->loadFile($resource),
+            Response::HTTP_OK,
+            array(
+                'Content-Type' => $resource->getMimeType()
+            )
+        );
     }
 
     /**
@@ -113,26 +117,19 @@ class ResourceController extends Controller {
     }
     
     /**
-     * Η υλοποίηση βασίζεται στο εγχειρίδιο χρήσης της συνάρτησης [readfile][1].
-     * 
-     * 
-     * [1]: http://www.php.net/readfile
-     *      "PHP: readfile - Manual"
      * 
      * @param Resource $resource
-     * @return void
+     * @return string
      */
     protected function loadFile(Resource $resource) {
-        header('Content-Type: ' . $resource->getMimeType());
-        ob_clean();
-        flush();
-        
         $path = realpath(static::$WEB_ROOT . $resource->getContent());
         $fileInfo = new \SplFileInfo($path);
-        if ($fileInfo->isFile() 
-                && $fileInfo->isReadable()) {
-            readfile($fileInfo->getRealPath());
+        if (!$fileInfo->isFile() 
+                || !$fileInfo->isReadable()) {
+            return '';
         }
+        
+        return file_get_contents($fileInfo->getRealPath());
     }
     
     /**
