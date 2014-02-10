@@ -1,0 +1,26 @@
+## YAML Template.
+---
+Ms\OauthBundle\Entity\ResourceGroup:
+    type: entity
+    table: resource_groups
+    id:
+        id:
+            type: integer
+            generator: { strategy: AUTO }
+    fields:
+        title:
+            name: title
+            type: string
+            length: 255
+    manyToMany:
+        resources:
+            targetEntity: Resource
+            inversedBy: groups
+            joinTable:
+                name: resources_groups
+                joinColumns:
+                    group_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    resource_id:
+                        referencedColumnName: id

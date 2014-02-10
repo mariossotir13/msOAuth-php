@@ -8,24 +8,29 @@ namespace Ms\OauthBundle\Entity;
  * @author Marios
  */
 class Resource {
-    
+
     /**
      *
      * @var string
      */
     private $content;
-    
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $groups;
+
     /**
      * @var integer
      */
     private $id;
-    
+
     /**
      *
      * @var string
      */
     private $mimeType;
-    
+
     /**
      *
      * @var string
@@ -33,12 +38,39 @@ class Resource {
     private $title;
 
     /**
+     * Constructor
+     */
+    public function __construct() {
+        $this->groups = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add groups
+     *
+     * @param \Ms\OauthBundle\Entity\ResourceGroup $groups
+     * @return Resource
+     */
+    public function addGroup(\Ms\OauthBundle\Entity\ResourceGroup $groups) {
+        $this->groups[] = $groups;
+
+        return $this;
+    }
+
+    /**
+     * Get content
+     *
+     * @return string 
+     */
+    public function getContent() {
+        return $this->content;
+    }
+
+    /**
      * Get id
      *
      * @return integer 
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -48,10 +80,9 @@ class Resource {
      * @param string $title
      * @return Resource
      */
-    public function setTitle($title)
-    {
+    public function setTitle($title) {
         $this->title = $title;
-    
+
         return $this;
     }
 
@@ -60,8 +91,7 @@ class Resource {
      *
      * @return string 
      */
-    public function getTitle()
-    {
+    public function getTitle() {
         return $this->title;
     }
 
@@ -71,10 +101,9 @@ class Resource {
      * @param string $mimeType
      * @return Resource
      */
-    public function setMimeType($mimeType)
-    {
+    public function setMimeType($mimeType) {
         $this->mimeType = $mimeType;
-    
+
         return $this;
     }
 
@@ -83,8 +112,7 @@ class Resource {
      *
      * @return string 
      */
-    public function getMimeType()
-    {
+    public function getMimeType() {
         return $this->mimeType;
     }
 
@@ -94,20 +122,28 @@ class Resource {
      * @param string $content
      * @return Resource
      */
-    public function setContent($content)
-    {
+    public function setContent($content) {
         $this->content = $content;
-    
+
         return $this;
     }
 
     /**
-     * Get content
+     * Remove groups
      *
-     * @return string 
+     * @param \Ms\OauthBundle\Entity\ResourceGroup $groups
      */
-    public function getContent()
-    {
-        return $this->content;
+    public function removeGroup(\Ms\OauthBundle\Entity\ResourceGroup $groups) {
+        $this->groups->removeElement($groups);
     }
+
+    /**
+     * Get groups
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getGroups() {
+        return $this->groups;
+    }
+
 }

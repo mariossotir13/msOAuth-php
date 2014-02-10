@@ -14,3 +14,7 @@ Ms\OauthBundle\Entity\Resource:
         length: 64
       content:
         type: text
+    manyToMany:
+        groups:
+            targetEntity: ResourceGroup
+            mappedBy: resources
