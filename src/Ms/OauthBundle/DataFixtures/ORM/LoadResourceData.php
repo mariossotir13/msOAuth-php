@@ -78,10 +78,13 @@ class LoadResourceData extends AbstractFixture implements OrderedFixtureInterfac
         foreach (static::$IMAGES as $image) {
             $resource = $this->createImageResource($image['path'], $image['title']);
             $manager->persist($resource);
-            $manager->flush();
             
             $this->addReference($image['reference'], $resource);
         }
+        
+        $manager->persist( $this->createImageResource('images/img_1.jpg', '1') );
+        
+        $manager->flush();
     }
 
     /**
