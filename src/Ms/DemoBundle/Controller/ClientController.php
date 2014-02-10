@@ -74,7 +74,7 @@ class ClientController extends Controller {
         /* @var $buzz Browser */
        $buzz = $this->get('buzz');
        $response = $buzz->get(
-            'http://msoauthphp.local/app_dev.php/resource/image/jpg/' . urlencode($name),
+            'http://msoauthphp.local/app_dev.php/resource/image/jpg/' . rawurlencode($name),
             array('Authorization' => 'Bearer 1wRAhqWY+WWy8RhlfIOjP9JCTy3ibrWMhaJ6DzjD9BU')
         );
        
