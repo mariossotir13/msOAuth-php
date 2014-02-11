@@ -45,13 +45,14 @@ class ResourceController extends Controller {
         
         $resource = $this->findResource($name);
         if (empty($resource)) {
-            return new JsonResponse(
-                array(
-                    'error' => JsonResponse::HTTP_NOT_FOUND,
-                    'error_message' => 'Could not find image: ' . $name
-                ),
-                JsonResponse::HTTP_NOT_FOUND
-            );
+//            return new JsonResponse(
+//                array(
+//                    'error' => JsonResponse::HTTP_NOT_FOUND,
+//                    'error_message' => 'Could not find image: ' . $name
+//                ),
+//                JsonResponse::HTTP_NOT_FOUND
+//            );
+            throw $this->createNotFoundException('Could not find image: ' . $name);
         }
         
         return new Response(
@@ -85,13 +86,14 @@ class ResourceController extends Controller {
         $repository = $this->getDoctrine()->getRepository('MsOauthBundle:ResourceGroup');
         $group = $repository->findOneByTitle($name);
         if ($group === null) {
-            return new JsonResponse(
-                array(
-                    'error' => JsonResponse::HTTP_NOT_FOUND,
-                    'error_message' => 'Could not find image group: ' . $name
-                ),
-                JsonResponse::HTTP_NOT_FOUND
-            );
+//            return new JsonResponse(
+//                array(
+//                    'error' => JsonResponse::HTTP_NOT_FOUND,
+//                    'error_message' => 'Could not find image group: ' . $name
+//                ),
+//                JsonResponse::HTTP_NOT_FOUND
+//            );
+            throw $this->createNotFoundException('Could not find image group: ' . $name);
         }
         
         return new JsonResponse(
@@ -107,7 +109,14 @@ class ResourceController extends Controller {
     public function resourceAction($name) {
         $resource = $this->findResource($name);
         if(empty($resource)) {
-            return $this->createNotFoundException('Could not find resource: ' . $name);
+//            return new JsonResponse(
+//                array(
+//                    'error' => JsonResponse::HTTP_NOT_FOUND,
+//                    'error_message' => 'Could not find resource: ' . $name
+//                ),
+//                JsonResponse::HTTP_NOT_FOUND
+//            );
+            throw $this->createNotFoundException('Could not find resource: ' . $name);
         }
         
         $response = new Response($resource->getContent());
