@@ -95,13 +95,6 @@ class ResourceController extends Controller {
     public function resourceAction($name) {
         $resource = $this->findResource($name);
         if(empty($resource)) {
-//            return new JsonResponse(
-//                array(
-//                    'error' => JsonResponse::HTTP_NOT_FOUND,
-//                    'error_message' => 'Could not find resource: ' . $name
-//                ),
-//                JsonResponse::HTTP_NOT_FOUND
-//            );
             throw $this->createNotFoundException('Could not find resource: ' . $name);
         }
         
