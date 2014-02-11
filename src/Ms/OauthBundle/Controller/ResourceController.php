@@ -34,13 +34,7 @@ class ResourceController extends Controller {
         $accessRequest = AccessRequest::fromRequest($request, $this->container->get('buzz'));
         $validationResponse = $this->validateAccessRequest($accessRequest);
         if (!$validationResponse->isValid()) {
-            return new JsonResponse(
-                array(
-                    'error' => $validationResponse->getError(),
-                    'error_message' => $validationResponse->getErrorMessage()
-                ),
-                JsonResponse::HTTP_UNAUTHORIZED
-            );
+            return $this->createInvalidRequestResponse($validationResponse);
         }
         
         $resource = $this->findResource($name);
@@ -67,13 +61,7 @@ class ResourceController extends Controller {
         $accessRequest = AccessRequest::fromRequest($request, $this->get('buzz'));
         $validationResponse = $this->validateAccessRequest($accessRequest);
         if (!$validationResponse->isValid()) {
-            return new JsonResponse(
-                array(
-                    'error' => $validationResponse->getError(),
-                    'error_message' => $validationResponse->getErrorMessage()
-                ),
-                JsonResponse::HTTP_UNAUTHORIZED
-            );
+            return $this->createInvalidRequestResponse($validationResponse);
         }
         
         $repository = $this->getDoctrine()->getRepository('MsOauthBundle:ResourceGroup');
@@ -91,6 +79,7 @@ class ResourceController extends Controller {
      * 
      * @param string $name
      * @return Response
+     * @deprecated
      */
     public function resourceAction($name) {
         $resource = $this->findResource($name);
@@ -102,6 +91,21 @@ class ResourceController extends Controller {
         $response->headers->set('Content-Type', $resource->getMimeType());
         
         return $response;
+    }
+    
+    /**
+     * 
+     * @param ValidationResponse $validationResponse
+     * @return JsonResponse
+     */
+    protected function createInvalidRequestResponse(ValidationResponse $validationResponse) {
+        return new JsonResponse(
+            array(
+                'error' => $validationResponse->getError(),
+                'error_message' => $validationResponse->getErrorMessage()
+            ),
+            JsonResponse::HTTP_UNAUTHORIZED
+        );
     }
 
     /**
