@@ -1,0 +1,8 @@
+## YAML Template.
+---
+Ms\OauthBundle\Entity\ResourceOwner:
+    type: entity
+    oneToMany:
+        authorizationCodeProfiles:
+            targetEntity: AuthorizationCodeProfile
+            mappedBy: resourceOwner

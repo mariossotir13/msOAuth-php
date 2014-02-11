@@ -6,7 +6,7 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use \Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Ms\OauthBundle\Entity\Client;
-use Ms\OauthBundle\Entity\User;
+use Ms\OauthBundle\Entity\ResourceOwner;
 use Ms\OauthBundle\Entity\ClientType;
 
 /**
@@ -16,10 +16,13 @@ use Ms\OauthBundle\Entity\ClientType;
  */
 class LoadUserData extends AbstractFixture implements OrderedFixtureInterface {
 
-    /**
+    /**#@+
+     * 
      * @var string
      */
     const REF_CLIENT = 'client';
+    const REF_RESOURCE_OWNER = 'resource_owner';
+    /**#@-*/
 
     /**
      * @inheritdoc
@@ -35,12 +38,13 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface {
         $client = $this->createClient();
         $manager->persist($client);
         
-        $user = $this->createResourceOwner();
-        $manager->persist($user);
+        $resourceOwner = $this->createResourceOwner();
+        $manager->persist($resourceOwner);
         
         $manager->flush();
         
         $this->addReference(self::REF_CLIENT, $client);
+        $this->addReference(self::REF_RESOURCE_OWNER, $resourceOwner);
     }
     
     /**
@@ -64,7 +68,7 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface {
      * @return User
      */
     private function createResourceOwner() {
-        $resourceOwner = new User();
+        $resourceOwner = new ResourceOwner();
         $resourceOwner->setId('Resource Owner Demo 1')
             ->setEmail('demo1@resourceowner.com')
             ->setPassword('/3U/51Yj3OLc5QjU3qBMjK8XIYWeBwsc5ftCSwDkWX/DaRiUAyvRYdN6a8ALwjfwYyUvmfjfhsfGkOneZe62WA==')
