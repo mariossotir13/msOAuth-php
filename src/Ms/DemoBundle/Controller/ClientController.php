@@ -49,7 +49,8 @@ class ClientController extends Controller {
      * 
      */
     function __construct() {
-       $this->requestGenerator = new RequestGenerator();
+        set_time_limit(0);
+        $this->requestGenerator = new RequestGenerator();
     }
 
     /**
@@ -74,13 +75,12 @@ class ClientController extends Controller {
      * @return Response
      */
     public function imageAction($name) {
-        /* @var $buzz Browser */
-       $buzz = $this->get('buzz');
+       $browser = $this->getBrowser();
        
        /* @var $response \Buzz\Message\Response */
        $response = null;
        try {
-            $response = $buzz->get(
+            $response = $browser->get(
                  'http://msoauthphp.local/app_dev.php/resource/image/jpg/' . rawurlencode($name),
                  array('Authorization' => 'Bearer ' . static::$ACCESS_TOKEN)
             );
@@ -104,13 +104,12 @@ class ClientController extends Controller {
      * @return Response
      */
     public function imageGroupAction($name) {
-        /* @var $buzz Browser */
-        $buzz = $this->get('buzz');
+        $browser = $this->getBrowser();
         
         /* @var $response \Buzz\Message\Response */
         $response = null;
         try {
-            $response = $buzz->get(
+            $response = $browser->get(
                 'http://msoauthphp.local/app_dev.php/resource/group/image/jpg/' . rawurlencode($name),
                 array('Authorization' => 'Bearer ' . static::$ACCESS_TOKEN)
             );
@@ -226,6 +225,23 @@ class ClientController extends Controller {
         
         return new Response('Error: ' . $content['error'] . '<br />'
             . 'Error Description: ' . $content['error_description']);
+    }
+    
+    /**
+     * 
+     * @return Browser
+     */
+    protected function getBrowser() {
+        /* @var $buzz Browser */
+        $buzz = $this->get('buzz');
+        
+        /* @var $client \Buzz\Client\Curl */
+        $client = $buzz->getClient();
+        $client->setOption(CURLOPT_CONNECTTIMEOUT, 400);
+        $client->setOption(CURLOPT_TIMEOUT, 400);
+        $buzz->setClient($client);
+        
+        return $buzz;
     }
     
     /**
