@@ -73,7 +73,11 @@ ms_oauth_authentication_user_logout:
     
 ms_oauth_access_token_validation:
     pattern: /oauth2/c/accessToken/validation/{token}
-    defaults: {_controller: MsOauthBundle:Authorization:validateToken }
+    defaults: { _controller: MsOauthBundle:Authorization:validateToken }
+
+ms_oauth_access_token_info:
+    pattern: /oauth2/c/tokenInfo/{token}
+    defaults: { _controller: MsOauthBundle:Authorization:tokenInfo }
 
 ###
 # Resource Server

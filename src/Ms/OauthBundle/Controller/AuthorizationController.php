@@ -142,6 +142,35 @@ class AuthorizationController extends Controller {
             )
         );
     }
+    
+    /**
+     * 
+     * @param Request $request
+     * @param string $token
+     * @return JsonResponse
+     */
+    public function tokenInfoAction(Request $request, $token) {
+        $repository = $this->getDoctrine()->getRepository('MsOauthBundle:AccessTokenProfile');
+        /* @var $profile AccessTokenProfile */
+        $profile = $repository->findOneByAccessToken($token);
+        if ($profile === null) {
+            return new JsonResponse(
+                'Invalid token: ' . $token,
+                JsonResponse::HTTP_NOT_FOUND
+            );
+        }
+        
+        $authorizationCodeProfile = $profile->getAuthorizationCodeProfile();
+        
+        return new JsonResponse(array(
+            'client' => array(
+                'id' => $authorizationCodeProfile->getClient()->getId(),
+                'redirection_uri' => $authorizationCodeProfile->getClient()->getRedirectionUri()
+            ),
+            'resource_owner' => $authorizationCodeProfile->getResourceOwner()->getUsername(),
+            'token' => $token
+        ));
+    }
 
     /**
      * 
@@ -155,7 +184,7 @@ class AuthorizationController extends Controller {
         $profile = $repository->findOneByAccessToken($token);     
         if ($profile ===null) {
             return new JsonResponse(
-                'Invalid Token: ' . $token,
+                'Invalid token: ' . $token,
                 Response::HTTP_NOT_FOUND
             );
         }
