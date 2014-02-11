@@ -42,6 +42,16 @@ class ClientController extends Controller {
     
     /**
      *
+     * @var string[]
+     */
+    protected static $RESPONSE_HEADERS = array(
+        'Authorization',
+        'Content-Type',
+        'WWW-Authenticate'
+    );
+    
+    /**
+     *
      * @var type 
      */
     private $requestGenerator;
@@ -76,23 +86,12 @@ class ClientController extends Controller {
      * @return Response
      */
     public function imageAction($name) {
-       $browser = $this->getBrowser();
+        $response = $this->sendResourceAccessRequest('image/jpg', $name, static::$ACCESS_TOKEN);
        
-       /* @var $response \Buzz\Message\Response */
-       $response = null;
-       try {
-           $response = $this->sendAccessRequest('image/jpg', $name, static::$ACCESS_TOKEN);
-       } catch (ClientException $ex) {
-           return new Response(
-               $ex->getMessage() . ' in ' . $ex->getFile() . ' on ' . $ex->getLine(), 
-               Response::HTTP_BAD_REQUEST
-            );
-       }
-       
-       return new Response(
+        return new Response(
            $response->getContent(),
            $response->getStatusCode(),
-           array('Content-Type' => $response->getHeader('Content-Type'))
+           array('Content-Type' => $response->headers->get('Content-Type'))
         );
     }
     
@@ -102,19 +101,7 @@ class ClientController extends Controller {
      * @return Response
      */
     public function imageGroupAction($name) {
-        $browser = $this->getBrowser();
-        
-        /* @var $response \Buzz\Message\Response */
-        $response = null;
-        try {
-            $response = $this->sendAccessRequest('group/image/jpg', $name, static::$ACCESS_TOKEN);
-        } catch (ClientException $ex) {
-            return new Response(
-                $ex->getMessage() . ' in ' . $ex->getFile() . ' on ' . $ex->getLine(),
-                Response::HTTP_BAD_REQUEST
-            );
-        }
-        
+        $response = $this->sendResourceAccessRequest('group/image/jpg', $name, static::$ACCESS_TOKEN);
         if ($response->getStatusCode() !== Response::HTTP_OK) {
             return new Response($response->getContent(), $response->getStatusCode());
         }
@@ -244,10 +231,9 @@ class ClientController extends Controller {
      * @param string $path
      * @param string $name
      * @param string $token
-     * @return BuzzResponse
-     * @throws ClientException
+     * @return Response
      */
-    protected function sendAccessRequest($path, $name, $token = '') {
+    protected function sendResourceAccessRequest($path, $name, $token = '') {
         $path = trim($path, '/');
         
         $headers = array();
@@ -255,11 +241,36 @@ class ClientController extends Controller {
             $headers['Authorization'] = 'Bearer ' . $token;
         }
         
-        return $this->getBrowser()->get(
-            'http://msoauthphp.local/app_dev.php/resource/' . $path . '/' . rawurlencode($name),
-            $headers
-        );
+        try {
+            /* @var $response BuzzResponse */
+            $response = $this->getBrowser()->get(
+                'http://msoauthphp.local/app_dev.php/resource/' . $path . '/' . rawurlencode($name),
+                $headers
+            );
+        } catch (ClientException $ex) {
+            return new Response(
+               $ex->getMessage() . ' in file "' . $ex->getFile() . '" at line ' . $ex->getLine(), 
+               Response::HTTP_BAD_REQUEST
+            );
+        }
         
+        return $this->transformBuzzToSymfonyResponse($response);
+    }
+    
+    /**
+     * 
+     * @param BuzzResponse $response
+     * @return Response
+     */
+    protected function transformBuzzToSymfonyResponse(BuzzResponse $response) {
+        $headers = array();
+        foreach (static::$RESPONSE_HEADERS as $name) {
+            if ($response->getHeader($name)) {
+                $headers[$name] = $response->getHeader($name);
+            }
+        }
+        
+        return new Response($response->getContent(), $response->getStatusCode(), $headers);
     }
     
     /**
