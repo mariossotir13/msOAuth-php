@@ -14,6 +14,7 @@ use Ms\OauthBundle\Component\Authorization\AccessTokenRequest;
 use Buzz\Message\MessageInterface;
 use Ms\OauthBundle\Component\Demo\Demo1\RequestGenerator;
 use Buzz\Browser;
+use Buzz\Exception\ClientException;
 
 /**
  * Description of ClientController
@@ -26,6 +27,7 @@ class ClientController extends Controller {
      *
      * @var string
      */
+    private static $ACCESS_TOKEN = '1wRAhqWY+WWy8RhlfIOjP9JCTy3ibrWMhaJ6DzjD9BU';
     private static $AUTHORIZATION_CODE = 'some+authorization_code';
     private static $AUTHORIZATION_CODE_EXPIRED = '2DJaB1A7VsbFmr1H3AkV/DLCR9s7rBPtHb5R/wqK9O4';
     private static $AUTHORIZATION_CODE_REUSED = 'ECVkbAobtKSh9IN98WBcpAV4k3s6HXHh/bibF80MKus';
@@ -73,14 +75,21 @@ class ClientController extends Controller {
     public function imageAction($name) {
         /* @var $buzz Browser */
        $buzz = $this->get('buzz');
-       $response = $buzz->get(
-            'http://msoauthphp.local/app_dev.php/resource/image/jpg/' . rawurlencode($name),
-            array('Authorization' => 'Bearer 1wRAhqWY+WWy8RhlfIOjP9JCTy3ibrWMhaJ6DzjD9BU')
-        );
+       
+       /* @var $response \Buzz\Message\Response */
+       $response = null;
+       try {
+            $response = $buzz->get(
+                 'http://msoauthphp.local/app_dev.php/resource/image/jpg/' . rawurlencode($name),
+                 array('Authorization' => 'Bearer ' . static::$ACCESS_TOKEN)
+            );
+       } catch (ClientException $ex) {
+           return new Response($ex->getMessage(), Response::HTTP_BAD_REQUEST);
+       }
        
        return new Response(
            $response->getContent(),
-           Response::HTTP_OK,
+           $response->getStatusCode(),
            array('Content-Type' => $response->getHeader('Content-Type'))
         );
     }
@@ -93,10 +102,21 @@ class ClientController extends Controller {
     public function imageGroupAction($name) {
         /* @var $buzz Browser */
         $buzz = $this->get('buzz');
-        $response = $buzz->get(
-            'http://msoauthphp.local/app_dev.php/resource/group/image/jpg/' . rawurlencode($name),
-            array('Authorization' => 'Bearer 1wRAhqWY+WWy8RhlfIOjP9JCTy3ibrWMhaJ6DzjD9BU')
-        );
+        
+        /* @var $response \Buzz\Message\Response */
+        $response = null;
+        try {
+            $response = $buzz->get(
+                'http://msoauthphp.local/app_dev.php/resource/group/image/jpg/' . rawurlencode($name),
+                array('Authorization' => 'Bearer ' . static::$ACCESS_TOKEN)
+            );
+        } catch (ClientException $ex) {
+            return new Response($ex->getMessage(), Response::HTTP_BAD_REQUEST);
+        }
+        
+        if ($response->getStatusCode() !== Response::HTTP_OK) {
+            return new Response($response->getContent(), $response->getStatusCode());
+        }
         
         $responseContent = json_decode($response->getContent(), true);
         
