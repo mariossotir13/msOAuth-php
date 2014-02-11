@@ -15,6 +15,7 @@ use Buzz\Message\MessageInterface;
 use Ms\OauthBundle\Component\Demo\Demo1\RequestGenerator;
 use Buzz\Browser;
 use Buzz\Exception\ClientException;
+use Buzz\Message\Response as BuzzResponse;
 
 /**
  * Description of ClientController
@@ -80,10 +81,7 @@ class ClientController extends Controller {
        /* @var $response \Buzz\Message\Response */
        $response = null;
        try {
-            $response = $browser->get(
-                 'http://msoauthphp.local/app_dev.php/resource/image/jpg/' . rawurlencode($name),
-                 array('Authorization' => 'Bearer ' . static::$ACCESS_TOKEN)
-            );
+           $response = $this->sendAccessRequest('image/jpg', $name, static::$ACCESS_TOKEN);
        } catch (ClientException $ex) {
            return new Response(
                $ex->getMessage() . ' in ' . $ex->getFile() . ' on ' . $ex->getLine(), 
@@ -109,10 +107,7 @@ class ClientController extends Controller {
         /* @var $response \Buzz\Message\Response */
         $response = null;
         try {
-            $response = $browser->get(
-                'http://msoauthphp.local/app_dev.php/resource/group/image/jpg/' . rawurlencode($name),
-                array('Authorization' => 'Bearer ' . static::$ACCESS_TOKEN)
-            );
+            $response = $this->sendAccessRequest('group/image/jpg', $name, static::$ACCESS_TOKEN);
         } catch (ClientException $ex) {
             return new Response(
                 $ex->getMessage() . ' in ' . $ex->getFile() . ' on ' . $ex->getLine(),
@@ -232,16 +227,39 @@ class ClientController extends Controller {
      * @return Browser
      */
     protected function getBrowser() {
-        /* @var $buzz Browser */
-        $buzz = $this->get('buzz');
+        /* @var $browser Browser */
+        $browser = $this->get('buzz');
         
         /* @var $client \Buzz\Client\Curl */
-        $client = $buzz->getClient();
+        $client = $browser->getClient();
         $client->setOption(CURLOPT_CONNECTTIMEOUT, 400);
         $client->setOption(CURLOPT_TIMEOUT, 400);
-        $buzz->setClient($client);
+        $browser->setClient($client);
         
-        return $buzz;
+        return $browser;
+    }
+    
+    /**
+     * 
+     * @param string $path
+     * @param string $name
+     * @param string $token
+     * @return BuzzResponse
+     * @throws ClientException
+     */
+    protected function sendAccessRequest($path, $name, $token = '') {
+        $path = trim($path, '/');
+        
+        $headers = array();
+        if (!empty($token)) {
+            $headers['Authorization'] = 'Bearer ' . $token;
+        }
+        
+        return $this->getBrowser()->get(
+            'http://msoauthphp.local/app_dev.php/resource/' . $path . '/' . rawurlencode($name),
+            $headers
+        );
+        
     }
     
     /**
