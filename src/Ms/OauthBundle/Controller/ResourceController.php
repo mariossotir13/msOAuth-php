@@ -45,13 +45,6 @@ class ResourceController extends Controller {
         
         $resource = $this->findResource($name);
         if (empty($resource)) {
-//            return new JsonResponse(
-//                array(
-//                    'error' => JsonResponse::HTTP_NOT_FOUND,
-//                    'error_message' => 'Could not find image: ' . $name
-//                ),
-//                JsonResponse::HTTP_NOT_FOUND
-//            );
             throw $this->createNotFoundException('Could not find image: ' . $name);
         }
         
@@ -86,13 +79,6 @@ class ResourceController extends Controller {
         $repository = $this->getDoctrine()->getRepository('MsOauthBundle:ResourceGroup');
         $group = $repository->findOneByTitle($name);
         if ($group === null) {
-//            return new JsonResponse(
-//                array(
-//                    'error' => JsonResponse::HTTP_NOT_FOUND,
-//                    'error_message' => 'Could not find image group: ' . $name
-//                ),
-//                JsonResponse::HTTP_NOT_FOUND
-//            );
             throw $this->createNotFoundException('Could not find image group: ' . $name);
         }
         
