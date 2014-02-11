@@ -99,9 +99,9 @@ ms_resource_image_jpg_group:
 ###
 # Demos
 ##
-ms_oauth_client_demo1:
-  pattern: /client-app/demo1
-  defaults: { _controller: MsOauthBundle:Client:demo1 }
+#ms_oauth_client_demo1:
+#  pattern: /client-app/demo1
+#  defaults: { _controller: MsOauthBundle:Client:demo1 }
   
 ms_oauth_client_demo1_token_request_expiredGrant:
     pattern: /client-app/demo1/access_token/expiredGrant

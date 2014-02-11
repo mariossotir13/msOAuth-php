@@ -1,6 +1,10 @@
 ms_demo_homepage:
     pattern:  /demo
-    defaults: { _controller: MsDemoBundle:Client:demo1 }
+    defaults: { _controller: MsDemoBundle:Client:demo }
+    
+ms_demo_app:
+  pattern: /client-app/demo1
+  defaults: { _controller: MsDemoBundle:Client:demo }
     
 ms_demo_resource_image:
     pattern: /demo/img/{name}

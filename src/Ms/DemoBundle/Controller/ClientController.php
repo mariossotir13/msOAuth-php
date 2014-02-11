@@ -76,14 +76,14 @@ class ClientController extends Controller {
      * 
      * @return Response
      */
-    public function demo1Action(Request $request) {
-        if ($this->isAuthorizationErrorResponse($request)) {
-            return $this->displayAuthorizationError($request);
-        }
-        
-        if ($this->isAuthorizationCodeResponse($request)) {
-            return $this->exchangeCodeForToken($request->query->get('code'));
-        }
+    public function demoAction(Request $request) {
+//        if ($this->isAuthorizationErrorResponse($request)) {
+//            return $this->displayAuthorizationError($request);
+//        }
+//        
+//        if ($this->isAuthorizationCodeResponse($request)) {
+//            return $this->exchangeCodeForToken($request->query->get('code'));
+//        }
         
         return $this->buildTemplate();
     }
