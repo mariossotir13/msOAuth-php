@@ -28,6 +28,7 @@ class ClientController extends Controller {
      * @var string
      */
     private static $ACCESS_TOKEN = '1wRAhqWY+WWy8RhlfIOjP9JCTy3ibrWMhaJ6DzjD9BU';
+    private static $ACCESS_TOKEN_INVALID = '1wRAhq';
     private static $AUTHORIZATION_CODE = 'some+authorization_code';
     private static $AUTHORIZATION_CODE_EXPIRED = '2DJaB1A7VsbFmr1H3AkV/DLCR9s7rBPtHb5R/wqK9O4';
     private static $AUTHORIZATION_CODE_REUSED = 'ECVkbAobtKSh9IN98WBcpAV4k3s6HXHh/bibF80MKus';
@@ -84,7 +85,10 @@ class ClientController extends Controller {
                  array('Authorization' => 'Bearer ' . static::$ACCESS_TOKEN)
             );
        } catch (ClientException $ex) {
-           return new Response($ex->getMessage(), Response::HTTP_BAD_REQUEST);
+           return new Response(
+               $ex->getMessage() . ' in ' . $ex->getFile() . ' on ' . $ex->getLine(), 
+               Response::HTTP_BAD_REQUEST
+            );
        }
        
        return new Response(
@@ -111,7 +115,10 @@ class ClientController extends Controller {
                 array('Authorization' => 'Bearer ' . static::$ACCESS_TOKEN)
             );
         } catch (ClientException $ex) {
-            return new Response($ex->getMessage(), Response::HTTP_BAD_REQUEST);
+            return new Response(
+                $ex->getMessage() . ' in ' . $ex->getFile() . ' on ' . $ex->getLine(),
+                Response::HTTP_BAD_REQUEST
+            );
         }
         
         if ($response->getStatusCode() !== Response::HTTP_OK) {
