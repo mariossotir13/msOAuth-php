@@ -54,6 +54,8 @@ class LoadAuthorizationCodeData extends AbstractFixture implements OrderedFixtur
     private function createAuthorizationCodeProfile() {
         /* @var $client \Ms\OauthBundle\Entity\Client */
         $client = $this->getReference(LoadUserData::REF_CLIENT);
+        /* @var $resourceOwner \Ms\OauthBundle\Entity\ResourceOwner */
+        $resourceOwner = $this->getReference(LoadUserData::REF_RESOURCE_OWNER);
         
         $expirationDate = new \DateTime('now', new \DateTimeZone('UTC'));
         $expirationDate->add(new \DateInterval('PT' . static::$EXPIRES_IN . 'S'));
@@ -63,6 +65,7 @@ class LoadAuthorizationCodeData extends AbstractFixture implements OrderedFixtur
             ->setClient($client)
             ->setExpirationDate($expirationDate)
             ->setRedirectionUri($client->getRedirectionUri())
+            ->setResourceOwner($resourceOwner)
             ->setResponseType('code')
             ->setState('RdoTKJnaUxdRfE7QBTZX')
             ->addScope( $this->getReference(LoadAuthorizationCodeScopeData::REF_BASIC) );
@@ -77,6 +80,8 @@ class LoadAuthorizationCodeData extends AbstractFixture implements OrderedFixtur
     private function createExpiredAuthorizationCodeProfile() {
         /* @var $client \Ms\OauthBundle\Entity\Client */
         $client = $this->getReference(LoadUserData::REF_CLIENT);
+        /* @var $resourceOwner \Ms\OauthBundle\Entity\ResourceOwner */
+        $resourceOwner = $this->getReference(LoadUserData::REF_RESOURCE_OWNER);
         
         $expirationDate = new \DateTime('now', new \DateTimeZone('UTC'));
         $expirationDate->add(new \DateInterval('PT1S'));
@@ -86,6 +91,7 @@ class LoadAuthorizationCodeData extends AbstractFixture implements OrderedFixtur
             ->setClient($client)
             ->setExpirationDate($expirationDate)
             ->setRedirectionUri($client->getRedirectionUri())
+            ->setResourceOwner($resourceOwner)
             ->setResponseType('code')
             ->setState('RdoTKJnaUxdRfE7QBTZX')
             ->addScope( $this->getReference(LoadAuthorizationCodeScopeData::REF_BASIC) );

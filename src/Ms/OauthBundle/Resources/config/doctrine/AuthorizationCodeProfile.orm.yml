@@ -28,7 +28,13 @@ Ms\OauthBundle\Entity\AuthorizationCodeProfile:
             inversedBy: authorizationCodeProfiles
             joinColumn:
                 name: client_id
-                referencedColumnName: id    
+                referencedColumnName: id
+        resourceOwner:
+            targetEntity: ResourceOwner
+            inversedBy: authorizationCodeProfiles
+            joinColumn:
+                name: resource_owner_id
+                referencedColumnName: id
     manyToMany:
         scopes:
             targetEntity: AuthorizationCodeScope

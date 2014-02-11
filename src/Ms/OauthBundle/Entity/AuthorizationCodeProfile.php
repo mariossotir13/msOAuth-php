@@ -54,6 +54,11 @@ class AuthorizationCodeProfile {
      * @var string 
      */
     private $redirectionUri;
+    
+    /**
+     * @var \Ms\OauthBundle\Entity\ResourceOwner
+     */
+    private $resourceOwner;
 
     /**
      *
@@ -144,6 +149,15 @@ class AuthorizationCodeProfile {
      */
     public function getRedirectionUri() {
         return $this->redirectionUri;
+    }
+
+    /**
+     * Get resourceOwner
+     *
+     * @return \Ms\OauthBundle\Entity\ResourceOwner 
+     */
+    public function getResourceOwner() {
+        return $this->resourceOwner;
     }
 
     /**
@@ -246,6 +260,19 @@ class AuthorizationCodeProfile {
     public function setRedirectionUri($redirectionUri) {
         $this->redirectionUri = $redirectionUri;
 
+        return $this;
+    }
+
+
+    /**
+     * Set resourceOwner
+     *
+     * @param \Ms\OauthBundle\Entity\ResourceOwner $resourceOwner
+     * @return AuthorizationCodeProfile
+     */
+    public function setResourceOwner(\Ms\OauthBundle\Entity\ResourceOwner $resourceOwner = null) {
+        $this->resourceOwner = $resourceOwner;
+    
         return $this;
     }
 
