@@ -28,17 +28,10 @@ security:
 
         secured_area_client:
             pattern: ^/oauth2/c
-#            context: oauth2
+            context: oauth2
             provider: client
             http_basic:
                 realm: "MsOauth"
-#            simple_form:
-#                authenticator: ms_oauthbundle_authenticator_client
-#                check_path: ms_oauth_authentication_client_login_check
-##                csrf_provider: form.csrf_provider
-#                failure_path: ms_oauth_authentication_client_login_failure
-#                login_path: ms_oauth_authentication_client_login
-#                username_parameter: _id
             logout:
                 path:   /oauth2/c/authentication/logout
                 target: /oauth2/c/registration/
@@ -46,11 +39,10 @@ security:
 
         secured_area_user:
             pattern: ^/oauth2/u
-#            context: oauth2
+            context: oauth2
             provider: user
             form_login:
                 check_path: ms_oauth_authentication_user_login_check
-#                csrf_provider: form.csrf_provider
                 login_path: ms_oauth_authentication_user_login
                 username_parameter: _id
             logout:

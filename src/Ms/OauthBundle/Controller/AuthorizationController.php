@@ -19,6 +19,7 @@ use Ms\OauthBundle\Entity\AccessTokenProfile;
 use Ms\OauthBundle\Component\Authorization\AccessTokenErrorResponse;
 use Ms\OauthBundle\Component\Authorization\AccessTokenResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Ms\OauthBundle\Entity\ResourceOwner;
 
 /**
  * Description of AuthorizationController
@@ -205,6 +206,7 @@ class AuthorizationController extends Controller {
             ->setClient($this->getClientFromRequest($authRequest))
             ->setExpirationDate($expirationDate)
             ->setRedirectionUri($authRequest->getRedirectionUri())
+            ->setResourceOwner($this->getResourceOwnerAlreadyLoggedIn())
             ->setResponseType($authRequest->getResponseType())
             ->setState($authRequest->getState());
 
@@ -387,6 +389,17 @@ class AuthorizationController extends Controller {
         $clientRepo = $this->getDoctrine()->getRepository('Ms\OauthBundle\Entity\Client');
 
         return $clientRepo->find($clientId);
+    }
+    
+    /**
+     * 
+     * @return ResourceOwner
+     */
+    protected function getResourceOwnerAlreadyLoggedIn() {
+        /* @var $securityContext \Symfony\Component\Security\Core\SecurityContextInterface */
+        $securityContext = $this->get('security.context');
+        
+        return $securityContext->getToken()->getUser();
     }
 
     /**
