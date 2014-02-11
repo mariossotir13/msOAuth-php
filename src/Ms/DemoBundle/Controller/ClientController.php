@@ -12,10 +12,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Ms\OauthBundle\Component\Authorization\AccessTokenRequest;
 use Buzz\Message\MessageInterface;
-use Ms\OauthBundle\Component\Demo\Demo1\RequestGenerator;
+use Ms\DemoBundle\Component\Ms\Oauth\RequestGenerator;
 use Buzz\Browser;
 use Buzz\Exception\ClientException;
 use Buzz\Message\Response as BuzzResponse;
+use Ms\DemoBundle\Component\Ms\Oauth\OauthMediator;
 
 /**
  * Description of ClientController
@@ -52,6 +53,12 @@ class ClientController extends Controller {
     
     /**
      *
+     * @var OauthMediator
+     */
+    private $oauthMediator;
+    
+    /**
+     *
      * @var type 
      */
     private $requestGenerator;
@@ -62,6 +69,7 @@ class ClientController extends Controller {
     function __construct() {
         set_time_limit(0);
         $this->requestGenerator = new RequestGenerator();
+        $this->oauthMediator = new OauthMediator($this);
     }
 
     /**
@@ -86,7 +94,10 @@ class ClientController extends Controller {
      * @return Response
      */
     public function imageAction($name) {
-        $response = $this->sendResourceAccessRequest('image/jpg', $name, static::$ACCESS_TOKEN);
+        $response = $this->sendResourceAccessRequest('image/jpg', $name);
+        if ($this->oauthMediator->isUnauthorizedResponse($response)) {
+            return $this->oauthMediator->requestAccessToken();
+        }
        
         return new Response(
            $response->getContent(),
@@ -228,6 +239,15 @@ class ClientController extends Controller {
     
     /**
      * 
+     * @param Response $response
+     * @return bool
+     */
+    protected function isUnauthorizedResponse(Response $response) {
+        return $response->headers->has('WWW-Authenticate');
+    }
+    
+    /**
+     * 
      * @param string $path
      * @param string $name
      * @param string $token
@@ -354,10 +374,11 @@ class ClientController extends Controller {
      * 
      * @param MessageInterface $response
      * @return boolean
+     * @deprecated
      */
-    private function isUnauthorizedResponse(MessageInterface $response) {
-        return $response->getHeader('WWW-Authenticate') !== '';
-    }
+//    private function isUnauthorizedResponse(MessageInterface $response) {
+//        return $response->getHeader('WWW-Authenticate') !== '';
+//    }
     
     /**
      * 
