@@ -84,6 +84,21 @@ class ClientController extends Controller {
 //        if ($this->isAuthorizationCodeResponse($request)) {
 //            return $this->exchangeCodeForToken($request->query->get('code'));
 //        }
+        if ($this->oauthMediator->isAuthorizationCodeErrorResponse($request)) {
+            return $this->displayAuthorizationCodeRequestError($request);
+        }
+        
+        if ($this->oauthMediator->isAuthorizationCodeResponse($request)) {
+            $response = $this->oauthMediator->exchangeAuthorizationCodeForAccessToken(
+                $this->oauthMediator->getAuthorizationCodeFromResponse($request)
+            );
+            
+            if ($this->oauthMediator->isAccessTokenErrorResponse($response)) {
+                return $this->displayAccessTokenErrorResponse($response);
+            }
+            
+            return $this->redirect($this->oauthMediator->getReferer());
+        }
         
         return $this->buildTemplate();
     }
@@ -94,10 +109,14 @@ class ClientController extends Controller {
      * @return Response
      */
     public function imageAction($name) {
-        $response = $this->sendResourceAccessRequest('image/jpg', $name);
-        if ($this->oauthMediator->isUnauthorizedResponse($response)) {
-            return $this->oauthMediator->requestAccessToken();
+        $accessToken = $this->oauthMediator->getAccessToken();
+        if (empty($accessToken)) {
+            return $this->oauthMediator->requestAuthorizationCode();
         }
+        $response = $this->sendResourceAccessRequest('image/jpg', $name, $accessToken);
+//        if ($this->oauthMediator->isUnauthorizedResponse($response)) {
+//            return $this->oauthMediator->requestAuthorizationCode();
+//        }
        
         return new Response(
            $response->getContent(),
@@ -168,6 +187,7 @@ class ClientController extends Controller {
             'MsDemoBundle:Client:demo_1.html.twig', 
 //            array('url' => $request->toUri())
             array(
+                'errors' => $errors,
                 'url_access_token_full' => $this->requestGenerator->createAuthorizationRequest(true)
             )
         );
@@ -175,10 +195,10 @@ class ClientController extends Controller {
     
     /**
      * 
-     * @param MessageInterface $response
+     * @param Response $response
      * @return Response
      */
-    private function displayAccessTokenErrorResponse(MessageInterface $response) {
+    private function displayAccessTokenErrorResponse(Response $response) {
         $jsonContent = $response->getContent();
         $content = json_decode($jsonContent, true);
         
@@ -195,7 +215,7 @@ class ClientController extends Controller {
      * @param Request $request
      * @return Response
      */
-    private function displayAuthorizationError(Request $request) {
+    private function displayAuthorizationCodeRequestError(Request $request) {
         $error = $request->query->get(AuthorizationErrorResponse::ERROR);
         $error .= $request->query->has(AuthorizationErrorResponse::ERROR_DESCRIPTION)
             ? ': ' . $request->query->get(AuthorizationErrorResponse::ERROR_DESCRIPTION)
