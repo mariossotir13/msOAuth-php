@@ -20,6 +20,11 @@ class ResourceGroup {
     private $title;
 
     /**
+     * @var \Ms\OauthBundle\Entity\ResourceOwner
+     */
+    private $owner;
+
+    /**
      * @var \Doctrine\Common\Collections\Collection
      */
     private $resources;
@@ -91,4 +96,27 @@ class ResourceGroup {
         return $this->resources;
     }
 
+
+    /**
+     * Set owner
+     *
+     * @param \Ms\OauthBundle\Entity\ResourceOwner $owner
+     * @return ResourceGroup
+     */
+    public function setOwner(\Ms\OauthBundle\Entity\ResourceOwner $owner = null)
+    {
+        $this->owner = $owner;
+    
+        return $this;
+    }
+
+    /**
+     * Get owner
+     *
+     * @return \Ms\OauthBundle\Entity\ResourceOwner 
+     */
+    public function getOwner()
+    {
+        return $this->owner;
+    }
 }

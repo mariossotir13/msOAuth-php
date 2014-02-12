@@ -6,3 +6,9 @@ Ms\OauthBundle\Entity\ResourceOwner:
         authorizationCodeProfiles:
             targetEntity: AuthorizationCodeProfile
             mappedBy: resourceOwner
+        resources:
+            targetEntity: Resource
+            mappedBy: owner
+        resourceGroups:
+            targetEntity: ResourceGroup
+            mappedBy: owner

@@ -31,7 +31,11 @@ class ResourceController extends Controller {
      * @return JsonResponse|Response
      */
     public function imageAction(Request $request, $name) {
-        $accessRequest = AccessRequest::fromRequest($request, $this->container->get('buzz'));
+        $accessRequest = AccessRequest::fromRequest(
+            $request, 
+            $this->container->get('buzz'),
+            $this->container
+        );
         $validationResponse = $this->validateAccessRequest($accessRequest);
         if (!$validationResponse->isValid()) {
             return $this->createInvalidRequestResponse($validationResponse);
@@ -42,13 +46,16 @@ class ResourceController extends Controller {
             throw $this->createNotFoundException('Could not find image: ' . $name);
         }
         
-        return new Response(
+        $response = new Response(
             $this->loadFile($resource),
             Response::HTTP_OK,
             array(
                 'Content-Type' => $resource->getMimeType()
             )
         );
+        $response->setMaxAge(3600);
+        
+        return $response;
     }
 
     /**
@@ -58,7 +65,11 @@ class ResourceController extends Controller {
      * @return JsonResponse
      */
     public function imageGroupAction(Request $request, $name) {
-        $accessRequest = AccessRequest::fromRequest($request, $this->get('buzz'));
+        $accessRequest = AccessRequest::fromRequest(
+            $request, 
+            $this->get('buzz'),
+            $this->container
+        );
         $validationResponse = $this->validateAccessRequest($accessRequest);
         if (!$validationResponse->isValid()) {
             return $this->createInvalidRequestResponse($validationResponse);

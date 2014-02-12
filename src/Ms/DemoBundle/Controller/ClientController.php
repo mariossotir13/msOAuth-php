@@ -31,7 +31,9 @@ class ClientController extends Controller {
      */
     protected static $RESPONSE_HEADERS = array(
         'Authorization',
+        'Cache-Control',
         'Content-Type',
+        'Expires',
         'WWW-Authenticate'
     );
     
@@ -94,9 +96,10 @@ class ClientController extends Controller {
         $response = $this->sendResourceAccessRequest('image/jpg', $name, $accessToken);
        
         return new Response(
-           $response->getContent(),
-           $response->getStatusCode(),
+            $response->getContent(),
+            $response->getStatusCode(),
            array('Content-Type' => $response->headers->get('Content-Type'))
+//            $response->headers
         );
     }
     

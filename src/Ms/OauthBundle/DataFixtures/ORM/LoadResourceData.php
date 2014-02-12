@@ -97,7 +97,8 @@ class LoadResourceData extends AbstractFixture implements OrderedFixtureInterfac
         $resource = new Resource();
         $resource->setContent($path)
             ->setMimeType('image/jpg')
-            ->setTitle($title);
+            ->setTitle($title)
+            ->setOwner($this->getReference(LoadUserData::REF_RESOURCE_OWNER));
 
         return $resource;
     }

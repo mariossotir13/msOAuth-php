@@ -20,6 +20,16 @@ class ResourceOwner extends User {
     private $authorizationCodeProfiles;
 
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $resources;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $resourceGroups;
+
+    /**
      * Constructor
      */
     public function __construct() {
@@ -56,4 +66,70 @@ class ResourceOwner extends User {
         return $this->authorizationCodeProfiles;
     }
 
+
+    /**
+     * Add resources
+     *
+     * @param \Ms\OauthBundle\Entity\Resource $resources
+     * @return ResourceOwner
+     */
+    public function addResource(\Ms\OauthBundle\Entity\Resource $resources)
+    {
+        $this->resources[] = $resources;
+    
+        return $this;
+    }
+
+    /**
+     * Remove resources
+     *
+     * @param \Ms\OauthBundle\Entity\Resource $resources
+     */
+    public function removeResource(\Ms\OauthBundle\Entity\Resource $resources)
+    {
+        $this->resources->removeElement($resources);
+    }
+
+    /**
+     * Get resources
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getResources()
+    {
+        return $this->resources;
+    }
+
+    /**
+     * Add resourceGroups
+     *
+     * @param \Ms\OauthBundle\Entity\ResourceGroup $resourceGroups
+     * @return ResourceOwner
+     */
+    public function addResourceGroup(\Ms\OauthBundle\Entity\ResourceGroup $resourceGroups)
+    {
+        $this->resourceGroups[] = $resourceGroups;
+    
+        return $this;
+    }
+
+    /**
+     * Remove resourceGroups
+     *
+     * @param \Ms\OauthBundle\Entity\ResourceGroup $resourceGroups
+     */
+    public function removeResourceGroup(\Ms\OauthBundle\Entity\ResourceGroup $resourceGroups)
+    {
+        $this->resourceGroups->removeElement($resourceGroups);
+    }
+
+    /**
+     * Get resourceGroups
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getResourceGroups()
+    {
+        return $this->resourceGroups;
+    }
 }

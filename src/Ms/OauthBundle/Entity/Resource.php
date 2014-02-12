@@ -32,6 +32,11 @@ class Resource {
     private $mimeType;
 
     /**
+     * @var \Ms\OauthBundle\Entity\ResourceOwner
+     */
+    private $owner;
+
+    /**
      *
      * @var string
      */
@@ -146,4 +151,27 @@ class Resource {
         return $this->groups;
     }
 
+
+    /**
+     * Set owner
+     *
+     * @param \Ms\OauthBundle\Entity\ResourceOwner $owner
+     * @return Resource
+     */
+    public function setOwner(\Ms\OauthBundle\Entity\ResourceOwner $owner = null)
+    {
+        $this->owner = $owner;
+    
+        return $this;
+    }
+
+    /**
+     * Get owner
+     *
+     * @return \Ms\OauthBundle\Entity\ResourceOwner 
+     */
+    public function getOwner()
+    {
+        return $this->owner;
+    }
 }

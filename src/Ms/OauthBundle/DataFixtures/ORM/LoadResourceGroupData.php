@@ -32,7 +32,8 @@ class LoadResourceGroupData extends AbstractFixture implements OrderedFixtureInt
             ->addResource($this->getReference(LoadResourceData::REF_RESOURCE_IMG_VANGOGH_2))
             ->addResource($this->getReference(LoadResourceData::REF_RESOURCE_IMG_VANGOGH_3))
             ->addResource($this->getReference(LoadResourceData::REF_RESOURCE_IMG_VANGOGH_4))
-            ->addResource($this->getReference(LoadResourceData::REF_RESOURCE_IMG_VANGOGH_5));
+            ->addResource($this->getReference(LoadResourceData::REF_RESOURCE_IMG_VANGOGH_5))
+            ->setOwner($this->getReference(LoadUserData::REF_RESOURCE_OWNER));
         $manager->persist($group);
         
         $manager->flush();

@@ -40,6 +40,7 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface {
         
         $resourceOwner = $this->createResourceOwner();
         $manager->persist($resourceOwner);
+        $manager->persist( $this->createResourceOwner2() );
         
         $manager->flush();
         
@@ -71,6 +72,20 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface {
         $resourceOwner = new ResourceOwner();
         $resourceOwner->setId('Resource Owner Demo 1')
             ->setEmail('demo1@resourceowner.com')
+            ->setPassword('/3U/51Yj3OLc5QjU3qBMjK8XIYWeBwsc5ftCSwDkWX/DaRiUAyvRYdN6a8ALwjfwYyUvmfjfhsfGkOneZe62WA==')
+            ->setSalt('TzqIyVkrVRTIYQ==');
+        
+        return $resourceOwner;
+    }
+    
+    /**
+     * 
+     * @return User
+     */
+    private function createResourceOwner2() {
+        $resourceOwner = new ResourceOwner();
+        $resourceOwner->setId('Resource Owner Demo 2')
+            ->setEmail('demo1@resourceowner2.com')
             ->setPassword('/3U/51Yj3OLc5QjU3qBMjK8XIYWeBwsc5ftCSwDkWX/DaRiUAyvRYdN6a8ALwjfwYyUvmfjfhsfGkOneZe62WA==')
             ->setSalt('TzqIyVkrVRTIYQ==');
         

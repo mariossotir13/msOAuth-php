@@ -46,7 +46,9 @@ class OauthMediator {
      */
     private static $RESPONSE_HEADERS = array(
         'Authorization',
+        'Cache-Control',
         'Content-Type',
+//        'Expires',
         'WWW-Authenticate'
     );
     

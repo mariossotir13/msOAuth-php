@@ -12,6 +12,13 @@ Ms\OauthBundle\Entity\ResourceGroup:
             name: title
             type: string
             length: 255
+    manyToOne:
+        owner:
+            targetEntity: ResourceOwner
+            inversedBy: resourceGroups
+            joinColumn:
+                name: owner_id
+                referencedColumnName: id
     manyToMany:
         resources:
             targetEntity: Resource
