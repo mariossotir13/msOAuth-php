@@ -25,7 +25,6 @@ class RequestGenerator {
     private static $GRANT_TYPE_UNSUPPORTED = 'ac';
     private static $REDIRECTION_URI = 'http://msoauthphp.local/app_dev.php/client-app/demo1';
     private static $REDIRECTION_URI_INVALID = 'http://msoauthphp.local/app_dev.php/client-app/demo1#a';
-    private static $PASSWORD = 'fmodKwVrRQOC2Io7TpWu0VDkTrA=';
     private static $SCOPE_INVALID = 'c';
     private static $STATE = 'RdoTKJnaUxdRfE7QBTZX';
     /**@#-*/
