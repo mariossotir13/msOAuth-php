@@ -148,6 +148,10 @@ class ClientController extends Controller {
      * @return Response
      */
     protected function displayAccessTokenErrorResponse(Response $response) {
+        if ($this->oauthMediator->isUnauthenticatedResponse($response)) {
+            return $this->buildTemplate(array('Bad client credentials.'));
+        }
+        
         $jsonContent = $response->getContent();
         $content = json_decode($jsonContent, true);
         
