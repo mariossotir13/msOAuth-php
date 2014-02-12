@@ -4,15 +4,19 @@
 {% block title %}Demo 1 | Πελάτης{% endblock %}
 
 {% block body %}
+    {% if errors %}
+        <article id="ms-oauth-error">
+            <h3>Σφάλμα Εξουσιοδότησης</h3>
+            <p>{{ errors[0] }}</p>
+        </article>
+        <hr />
+    {% endif %}
 
-        
-        <a href="{{ url_access_token_full }}">Έκδοση Τεκμηρίου Πρόσβασης - Πλήρης Διαδικασία</a>
-        <br>
-        <a href="{{ path('ms_demo_resource_image', {'name': '1'}) }}">Αίτηση για εικόνα 1</a>
-        <br>
-        <a href="{{ path('ms_demo_resource_image_group', {'name': 'Van Gogh Paintings'}) }}">Slideshow</a>
-        
-        
+    <a href="{{ url_access_token_full }}">Έκδοση Τεκμηρίου Πρόσβασης - Πλήρης Διαδικασία</a>
+    <br>
+    <a href="{{ path('ms_demo_resource_image', {'name': '1'}) }}">Αίτηση για εικόνα 1</a>
+    <br>
+    <a href="{{ path('ms_demo_resource_image_group', {'name': 'Van Gogh Paintings'}) }}">Slideshow</a>
+
     <p><a href="{{ path('ms_oauth_authentication_user_logout') }}">Αποσύνδεση Ιδιοκτήτη Πόρων</a></p>
-
 {% endblock %}
