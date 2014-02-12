@@ -48,6 +48,22 @@ class AccessTokenResponse extends JsonResponse {
     
     /**
      * 
+     * @param JsonResponse $response
+     * @return AccessTokenResponse
+     */
+    public static function fromJsonResponse(JsonResponse $response) {
+        $responseContent = json_decode($response->getContent(), true);
+        
+        return new AccessTokenResponse(
+            $responseContent[static::$EXPIRES_IN],
+            $responseContent[static::$SCOPE],
+            $responseContent[static::$TOKEN],
+            $responseContent[static::$TOKEN_TYPE]
+        );
+    }
+    
+    /**
+     * 
      * @param int $expiresIn
      * @param Collection $scopes
      * @param string $accessToken
