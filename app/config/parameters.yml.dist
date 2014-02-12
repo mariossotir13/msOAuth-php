@@ -17,3 +17,4 @@ parameters:
     code_grant_expires_in: 600
     access_token_expires_in: 3600
     security_provider_key_client: client_provider_key
+    access_token_file: "%kernel.root_dir%/cache/ms/oauth/access_token.json"
