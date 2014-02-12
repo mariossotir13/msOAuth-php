@@ -13,6 +13,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Ms\OauthBundle\Component\Authorization\AccessTokenRequest;
 use Ms\OauthBundle\Component\Authorization\AccessTokenResponse;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Ms\OauthBundle\Component\Authorization\AuthorizationRequest;
+use Ms\OauthBundle\Entity\AuthorizationCodeScope;
+use Ms\OauthBundle\Component\Authorization\AuthorizationResponseType;
 
 /**
  * Description of OauthMediator
@@ -31,8 +34,10 @@ class OauthMediator {
      * 
      * @var string
      */
-    private static $CLIENT_ID= 'zMuobKhbnvJUTYc+EnXfRwiiHP4/OpmM5CLrdpkIsm4';
-    private static $PASSWORD = 'fmodKwVrRQOC2Io7TpWu0VDkTrA=';
+    private static $CLIENT_ID= 'client_id';
+    private static $CLIENT_SECRET = 'client_secret';
+    private static $REDIRECTION_URI = 'redirection_uri';
+    private static $STATE = 'RdoTKJnaUxdRfE7QBTZX';
     /**#@-*/
     
     /**
@@ -84,15 +89,6 @@ class OauthMediator {
      * @return Response
      */
     public function exchangeAuthorizationCodeForAccessToken($code) {
-//        $response = $this->sendAccessTokenRequest($code);        
-//        $content = json_decode($response->getContent(), true);
-//        if (isset($content['access_token'])) {
-//            return new Response('Access Token: ' . $content['access_token']);
-//        }
-//        
-//        return new Response('Error: ' . $content['error'] . '<br />'
-//            . 'Error Description: ' . $content['error_description']);
-        
         $response = $this->sendAccessTokenRequest($code);
         if (!$this->isAccessTokenErrorResponse($response)) {
             $content = json_decode($response->getContent(), true);
@@ -202,18 +198,31 @@ class OauthMediator {
      */
     public function requestAuthorizationCode() {
         $this->storeReferer();
-        $authorizationCodeRequestUrl = $this->requestGenerator->createAuthorizationRequest(true);
+        $request = new AuthorizationRequest(AuthorizationRequest::SERVER_URI);
+        $request->addScope(AuthorizationCodeScope::BASIC);
+        $request->setClientId( $this->getConfigurationParameter(static::$CLIENT_ID) );
+        $request->setRedirectionUri( $this->getConfigurationParameter(static::$REDIRECTION_URI) );
+        $request->setResponseType(AuthorizationResponseType::CODE);
+        $request->setState(static::$STATE);
         
-        return $this->controller->redirect($authorizationCodeRequestUrl);
+        return $this->controller->redirect($request->toUri());
     }
     
     /**
      * 
-     * @return Response
+     * @param string $code
+     * @param boolean $asUri
+     * @return AccessTokenRequest
      */
-//    public function requestAccessToken() {
-//        return $this->requestAuthorizationCode();
-//    }
+    protected function createAccessTokenRequest($code, $asUri = false) {
+        $request = new AccessTokenRequest(AccessTokenRequest::SERVER_URI);
+        $request->setClientId( $this->getConfigurationParameter(static::$CLIENT_ID) );
+        $request->setCode($code);
+        $request->setGrantType('authorization_code');
+        $request->setRedirectionUri( $this->getConfigurationParameter(static::$REDIRECTION_URI) );
+        
+        return $asUri ? $request->toUri(true) : $request;
+    }
     
     /**
      * 
@@ -234,6 +243,18 @@ class OauthMediator {
     
     /**
      * 
+     * @param string $param
+     * @return string
+     */
+    protected function getConfigurationParameter($param) {
+        /* @var $container \Symfony\Component\DependencyInjection\Container */
+        $container = $this->controller->get('service_container');
+        
+        return $container->getParameter($param);
+    }
+    
+    /**
+     * 
      * @return string
      */
     public function getReferer() {
@@ -249,7 +270,7 @@ class OauthMediator {
      * @return JsonResponse
      */
     protected function sendAccessTokenRequest($authorizationCode) {
-        $request = $this->requestGenerator->createAccessTokenRequest($authorizationCode);
+        $request = $this->createAccessTokenRequest($authorizationCode);
         $browser = $this->getBrowser();
         $buzzResponse = $browser->submit(
             AccessTokenRequest::SERVER_URI, 
@@ -270,7 +291,11 @@ class OauthMediator {
      * @return JsonResponse
      */
     protected function sendAccessTokenRequestWithCredentials(AccessTokenRequest $tokenRequest) {
-        $credentials = base64_encode(static::$CLIENT_ID . ':' . static::$PASSWORD);
+        $credentials = base64_encode(
+            $this->getConfigurationParameter(static::$CLIENT_ID) 
+            . ':' 
+            . $this->getConfigurationParameter(static::$CLIENT_SECRET)
+        );
         $browser = $this->getBrowser();
         $buzzResponse = $browser->submit(
             AccessTokenRequest::SERVER_URI,
@@ -337,22 +362,4 @@ class OauthMediator {
         
         return new Response($content, $response->getStatusCode(), $headers);
     }
-    
-    /**
-     * 
-     * @param Response $response
-     * @return JsonResponse
-     */
-//    protected function transformBuzzToSymfonyJsonResponse(BuzzResponse $response) {
-//        $headers = array();
-//        foreach (static::$RESPONSE_HEADERS as $name) {
-//            if ($response->getHeader($name)) {
-//                $headers[$name] = $response->getHeader($name);
-//            }
-//        }
-//        
-//        $content = is_array($response->getContent()) ? $response->getContent() : array();
-//        
-//        return new JsonResponse($content, $response->getStatusCode(), $headers);
-//    }
 }
