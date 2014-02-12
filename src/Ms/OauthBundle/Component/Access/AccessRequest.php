@@ -106,7 +106,7 @@ class AccessRequest {
      * @return void
      */
     public function validateAccessToken(ExecutionContextInterface $context) {
-        $tokenValidationUrl = static::$OAUTH_TOKEN_VALIDATION_URL . urlencode($this->getAccessToken());
+        $tokenValidationUrl = static::$OAUTH_TOKEN_VALIDATION_URL . $this->getAccessToken();
         /* @var $response \Buzz\Message\Response */
         $response = $this->browser->get($tokenValidationUrl);
         
