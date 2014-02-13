@@ -3,15 +3,10 @@
 namespace Ms\DemoBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Ms\OauthBundle\Component\Authorization\AuthorizationRequest;
-use Ms\OauthBundle\Entity\AuthorizationCodeScope;
-use Ms\OauthBundle\Component\Authorization\AuthorizationResponseType;
 use Ms\OauthBundle\Component\Authorization\AuthorizationErrorResponse;
 use Ms\OauthBundle\Component\Authorization\AccessTokenErrorResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Ms\OauthBundle\Component\Authorization\AccessTokenRequest;
-use Buzz\Message\MessageInterface;
 use Ms\DemoBundle\Component\Ms\Oauth\RequestGenerator;
 use Buzz\Browser;
 use Buzz\Exception\ClientException;
