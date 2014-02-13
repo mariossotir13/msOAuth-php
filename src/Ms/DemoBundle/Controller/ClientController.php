@@ -98,8 +98,8 @@ class ClientController extends Controller {
         return new Response(
             $response->getContent(),
             $response->getStatusCode(),
-           array('Content-Type' => $response->headers->get('Content-Type'))
-//            $response->headers
+//           array('Content-Type' => $response->headers->get('Content-Type'))
+            $response->headers->all()
         );
     }
     
