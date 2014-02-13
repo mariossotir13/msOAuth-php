@@ -4,16 +4,13 @@
 {% block title %}Slideshow για: {{ group_title }} | Πελάτης{% endblock %}
 {% block stylesheets %}
 <link href="/bundles/msdemo/jsImgSlider/1/js-image-slider.css" rel="stylesheet" type="text/css" />
-{#<link href="/bundles/msdemo/css/slidejs-example.css" rel="stylesheet" type="text/css" />
-<link href="/bundles/msdemo/css/slidejs-font-awesome.min.css" rel="stylesheet" type="text/css" />
-<link href="/bundles/msdemo/css/main.css" rel="stylesheet" type="text/css" />#}
 {% endblock %}
 
 {% block body %}
 <div id="sliderFrame">
     <div id="slider">
         {% for title in image_titles %}
-        <img src="{{ path('ms_demo_resource_image', { 'name': title }) }}" />
+        <a class="lazyImage" href="{{ path('ms_demo_resource_image', { 'name': title }) }}"></a>
         {% endfor %}
     </div>
 </div>
@@ -21,7 +18,4 @@
 
 {% block javascripts %}
 <script src="/bundles/msdemo/jsImgSlider/1/js-image-slider.js"></script>
-{#<script src="/bundles/msdemo/js/jquery.min.js"></script>
-<script src="/bundles/msdemo/js/jquery.slides.min.js"></script>
-<script src="/bundles/msdemo/js/main.js"></script>#}
 {% endblock %}
