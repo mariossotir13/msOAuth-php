@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Ms\OauthBundle\Component\Access\AccessRequest;
 use Ms\OauthBundle\Component\Authorization\ValidationResponse;
+use Ms\OauthBundle\Component\Authorization\AccessTokenErrorResponse;
 
 /**
  * Description of ResourceController
@@ -112,8 +113,8 @@ class ResourceController extends Controller {
     protected function createInvalidRequestResponse(ValidationResponse $validationResponse) {
         return new JsonResponse(
             array(
-                'error' => $validationResponse->getError(),
-                'error_message' => $validationResponse->getErrorMessage()
+                AccessTokenErrorResponse::ERROR => $validationResponse->getError(),
+                AccessTokenErrorResponse::ERROR_DESCRIPTION => $validationResponse->getErrorMessage()
             ),
             JsonResponse::HTTP_UNAUTHORIZED
         );

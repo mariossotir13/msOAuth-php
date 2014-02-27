@@ -111,7 +111,8 @@ class ClientController extends Controller {
         
         $response = $this->sendResourceAccessRequest('group/image/jpg', $name, $accessToken);
         if ($response->getStatusCode() !== Response::HTTP_OK) {
-            return new Response($response->getContent(), $response->getStatusCode());
+//            return new Response($response->getContent(), $response->getStatusCode());
+            return $this->displayAccessTokenErrorResponse($response);
         }
         
         $responseContent = json_decode($response->getContent(), true);
