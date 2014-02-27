@@ -1,22 +1,84 @@
 {# empty Twig template #}
 {% extends "::base.html.twig" %}
 
+{% block stylesheets %}
+<link href="/bundles/msdemo/css/bootstrap-3.1.1/css/bootstrap.min.css" rel="stylesheet" />
+<link href="/bundles/msdemo/css/main.css" rel="stylesheet" />
+{% endblock %}
+
 {% block title %}Demo 1 | Πελάτης{% endblock %}
 
 {% block body %}
-    {% if errors %}
-        <article id="ms-oauth-error">
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header"><a class="navbar-brand" href="#">Slide-show Maker</a></div>
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">Αρχική</a></li>
+                    <li><a href="#">Επικοινωνία</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="container msdemo-main-container" role="main">
+        <div class="jumbotron">
+            <h2>Slide-show Maker</h2>
+            <p>Η διαδικτυακή υπηρεσία Slide-show Maker σας δίνει τη δυνατότητα να δημιουργήσετε ένα slide-show από συλλογές φωτογραφιών τις οποίες διατηρείται στο Διαδίκτυο.</p>
+            <p>Ακολουθήστε τις οδηγίες παρακάτω και δημιουργήστε δοκιμαστικά την πρώτη σας παρουσίαση.</p>
+        </div>
+{#        <a href="{{ path('ms_demo_resource_image_group', {'name': 'Van Gogh Paintings'}) }}">Slideshow</a>#}
+    </div>
+    
+    <div class="container">
+        {% if errors %}
+        {#<article id="ms-oauth-error">
             <h3>Σφάλμα Εξουσιοδότησης</h3>
             <p>{{ errors[0] }}</p>
         </article>
-        <hr />
-    {% endif %}
+        <hr />#}
+        <div class="panel panel-danger">
+            <div class="panel-heading"><h3 class="panel-title">Σφάλμα Εξουσιοδότησης</h3></div>
+            <div class="panel-body">{{ errors[0] }}</div>
+        </div>
+        {% endif %}
+        
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <p>Ολοκληρώστε τα εξής τρία βήματα:
+                    <ol class="list-group">
+                        <li class="list-group-item">επιλέξτε την υπηρεσία στην οποία έχετε αποθηκευμένη τη συλλογή των φωτογραφιών σας,</li>
+                        <li class="list-group-item">συμπληρώστε τον τίτλο της εν λόγω συλλογής,</li>
+                        <li class="list-group-item">τέλος, πατήστε το κουμπί "Δημιουργία Παρουσίασης"</li>
+                    </ol>
+                    και περιμένετε καθώς ο Slide-show Maker δημιουργεί την παρουσίασή σας.
+                </p>
+            </div>
+            <div class="panel-body">
+                <form role="form" action="{{ path('ms_demo_resource_image_group_form') }}">
+                    <div class="form-group">
+                        <label for="photo-service">Υπηρεσία</label>
+                        <select id="photo-service" class="form-control">
+                            <option value="1">Flickr</option>
+                            <option value="2">Picasa</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="photo-album-name">Τίτλος Συλλογής Φωτογραφιών</label>
+                        <input type="text" class="form-control" placeholder="Τίτλος" />
+                    </div>
+                    <button type="submit" class="btn btn-default">Δημιουργία Παρουσίασης</button>
+                </form>
+            </div>
+        </div>
+    </div>
 
 {#    <a href="{{ url_access_token_full }}">Έκδοση Τεκμηρίου Πρόσβασης - Πλήρης Διαδικασία</a>#}
 {#    <br>#}
 {#    <a href="{{ path('ms_demo_resource_image', {'name': '1'}) }}">Αίτηση για εικόνα 1</a>#}
 {#    <br>#}
-    <a href="{{ path('ms_demo_resource_image_group', {'name': 'Van Gogh Paintings'}) }}">Slideshow</a>
+    
+    {#<a href="{{ path('ms_demo_resource_image_group', {'name': 'Van Gogh Paintings'}) }}">Slideshow</a>#}
 
 {#    <p><a href="{{ path('ms_oauth_authentication_user_logout') }}">Αποσύνδεση Ιδιοκτήτη Πόρων</a></p>#}
 {% endblock %}

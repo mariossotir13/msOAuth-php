@@ -103,7 +103,7 @@ class ClientController extends Controller {
      * @param string $name
      * @return Response
      */
-    public function imageGroupAction($name) {
+    public function imageGroupAction($name = 'Van Gogh Paintings') {
         $accessToken = $this->oauthMediator->getAccessToken();
         if (empty($accessToken)) {
             return $this->oauthMediator->requestAuthorizationCode();

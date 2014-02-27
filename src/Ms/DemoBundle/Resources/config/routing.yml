@@ -13,3 +13,7 @@ ms_demo_resource_image:
 ms_demo_resource_image_group:
     pattern: /demo/group/image/{name}
     defaults: { _controller: MsDemoBundle:Client:imageGroup }
+    
+ms_demo_resource_image_group_form:
+    pattern: /demo/group/image
+    defaults: { _controller: MsDemoBundle:Client:imageGroup }
