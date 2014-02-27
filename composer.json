@@ -8,6 +8,7 @@
     },
     "require-dev": {
         "firephp/firephp-core": "dev-master",
+        "phpdocumentor/phpdocumentor": "2.*",
         "phpunit/phpunit": "3.7.*",
         "sensio/buzz-bundle":"dev-master"
     },

@@ -2,7 +2,7 @@
 {% extends "MsOauthBundle:Authorization:base.html.twig" %}
 
 {% block body %}
-<p>Η εφαρμογή "{{ client.appTitle }}" ζητάει πρόσβαση στις παρακάτω πληροφορίες του λογαριασμού σας:</p>
+<p>Η εφαρμογή "{{ client.appTitle }}" ζητάει εξουσιοδότηση για τα εξής δικαιώματα:</p>
 <ul>
     {% for scope in scopes %}
         <li>{{ scope.description }}</li>

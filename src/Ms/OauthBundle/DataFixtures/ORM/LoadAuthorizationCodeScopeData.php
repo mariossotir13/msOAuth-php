@@ -35,11 +35,11 @@ class LoadAuthorizationCodeScopeData extends AbstractFixture implements OrderedF
     public function load(ObjectManager $manager) {
         $basic = $this->createScope(
             AuthorizationCodeScope::BASIC,
-            'Το βασικό σύνολο πληροφοριών.'
+            'Δικαίωμα προσπέλασης των πόρων σας μόνο για ανάγνωση.'
         );
         $full = $this->createScope(
             AuthorizationCodeScope::FULL,
-            'Ολόκληρο το σύνολο πληροφοριών.'
+            'Δικαίωμα επεξεργασίας των πόρων σας.'
         );
         
         $manager->persist($basic);
