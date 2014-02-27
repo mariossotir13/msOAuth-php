@@ -4,10 +4,14 @@
 {% block title %}Slideshow για: {{ group_title }} | Πελάτης{% endblock %}
 {% block stylesheets %}
 <link href="/bundles/msdemo/jsImgSlider/1/js-image-slider.css" rel="stylesheet" type="text/css" />
+<link href="/bundles/msdemo/css/main.css" rel="stylesheet" type="text/css" />
 {% endblock %}
 
 {% block body %}
 <div id="sliderFrame">
+    <div id="sliderDetails">
+        <span id="groupName">{{ group_title }}</span>
+    </div>
     <div id="slider">
         {% for title in image_titles %}
         <a class="lazyImage" href="{{ path('ms_demo_resource_image', { 'name': title }) }}"></a>
