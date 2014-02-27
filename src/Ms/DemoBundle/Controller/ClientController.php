@@ -93,25 +93,25 @@ class ClientController extends Controller {
         return new Response(
             $response->getContent(),
             $response->getStatusCode(),
-//           array('Content-Type' => $response->headers->get('Content-Type'))
             $response->headers->all()
         );
     }
     
     /**
      * 
+     * @param Request $request
      * @param string $name
      * @return Response
      */
-    public function imageGroupAction($name = 'Van Gogh Paintings') {
+    public function imageGroupAction(Request $request, $name = 'Van Gogh Paintings') {
         $accessToken = $this->oauthMediator->getAccessToken();
         if (empty($accessToken)) {
             return $this->oauthMediator->requestAuthorizationCode();
         }
         
+        $name = $request->request->get('name') ?: $name;
         $response = $this->sendResourceAccessRequest('group/image/jpg', $name, $accessToken);
         if ($response->getStatusCode() !== Response::HTTP_OK) {
-//            return new Response($response->getContent(), $response->getStatusCode());
             return $this->displayAccessTokenErrorResponse($response);
         }
         

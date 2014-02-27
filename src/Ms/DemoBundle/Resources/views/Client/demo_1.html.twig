@@ -14,7 +14,7 @@
             <div class="navbar-header"><a class="navbar-brand" href="#">Slide-show Maker</a></div>
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#">Αρχική</a></li>
+                    <li class="active"><a href="{{ path('ms_demo_homepage') }}">Αρχική</a></li>
                     <li><a href="#">Επικοινωνία</a></li>
                 </ul>
             </div>
@@ -55,7 +55,7 @@
                 </p>
             </div>
             <div class="panel-body">
-                <form role="form" action="{{ path('ms_demo_resource_image_group_form') }}">
+                <form role="form" action="{{ path('ms_demo_resource_image_group_form') }}" method="post">
                     <div class="form-group">
                         <label for="photo-service">Υπηρεσία</label>
                         <select id="photo-service" class="form-control">
@@ -65,7 +65,7 @@
                     </div>
                     <div class="form-group">
                         <label for="photo-album-name">Τίτλος Συλλογής Φωτογραφιών</label>
-                        <input type="text" class="form-control" placeholder="Τίτλος" />
+                        <input id="photo-album-name" name="name" type="text" class="form-control" placeholder="Τίτλος" />
                     </div>
                     <button type="submit" class="btn btn-default">Δημιουργία Παρουσίασης</button>
                 </form>
