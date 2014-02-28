@@ -1,0 +1,46 @@
+{# empty Twig template #}
+{% extends "::base.html.twig" %}
+
+{% block stylesheets %}
+<link href="/bundles/msoauth/resource_server/bootstrap-3.1.1/css/bootstrap.min.css" rel="stylesheet" />
+<link href="/bundles/msoauth/resource_server/main.css" rel="stylesheet" />
+{% endblock %}
+
+{% block title %}Προφίλ Χρήστη | Resource Server{% endblock %}
+
+{% block body %}
+<div class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="{{ logout_url }}">{{ logout_title }}</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="msdemo-main-container">
+    <div class="container">
+        <div class="jumbotron">
+            <h2>Οι Συλλογές Σας</h2>
+            <p>Καλώς ήρθατε, {{ username }}! Παρακάτω παρατίθενται οι συλλογές φωτογραφιών σας.</p>
+        </div>
+    {% for group in image_groups %}
+        <div class="panel panel-default">
+            <div class="panel-heading"><h3>{{ group.title }}</h3></div>
+            <div class="panel-body">
+                <ul class="list-group">
+                {% for image in images[group.title] %}
+                    <li class="list-group-item">
+                        <h3 class="list-group-item-heading">{{ image.title }}</h3>
+                        <img class="msoauth-resource-server-image" 
+                             src="{{ path('ms_resource_image_jpg', { 'name': image.title }) }}" 
+                             title="{{ image.title }}" /></li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+</div>
+{% endblock %}
