@@ -54,4 +54,5 @@ security:
         - { path: ^/oauth2/c/authorization/access_token, roles: ROLE_MS_OAUTH_BUNDLE_CLIENT }
         - { path: ^/oauth2/c/authentication/login, roles: IS_AUTHENTICATED_ANONYMOUSLY } 
         - { path: ^/oauth2/u/authorization/accept, roles: ROLE_MS_OAUTH_BUNDLE_USER }
+        - { path: ^/oauth2/u/profile, roles: ROLE_MS_OAUTH_BUNDLE_USER }
         - { path: ^/oauth2/u/authentication/login, roles: IS_AUTHENTICATED_ANONYMOUSLY } 

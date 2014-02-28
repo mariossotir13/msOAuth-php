@@ -76,6 +76,7 @@ Ms\OauthBundle\Component\Authorization\AuthorizationRequest:
                 
 Ms\OauthBundle\Component\Access\AccessRequest:
     group_sequence:
+        - Resource
         - Main
         - AccessRequest
     constraints: 
@@ -88,4 +89,4 @@ Ms\OauthBundle\Component\Access\AccessRequest:
         resourceName:
             - NotBlank:
                 message: "Please, specify a resource name."
-                groups: [Main]
+                groups: [Resource]

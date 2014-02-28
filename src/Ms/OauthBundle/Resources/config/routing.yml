@@ -86,6 +86,10 @@ ms_oauth_access_token_info:
 ###
 # Resource Server
 ##
+ms_resource_user_profile:
+    pattern: /oauth2/u/profile
+    defaults: { _controller: MsOauthBundle:Resource:userProfile }
+
 ms_resource:
     pattern: /resource/{name}
     defaults: { _controller: MsOauthBundle:Resource:resource }
