@@ -5,6 +5,12 @@ ms_demo_homepage:
 ms_demo_app:
   pattern: /client-app/demo1
   defaults: { _controller: MsDemoBundle:Client:demo }
+  
+ms_demo_exchange_code:
+    pattern: /demo/exchange_code/{code}
+    defaults: { _controller: MsDemoBundle:Client:exchangeCodeForToken }
+    requirements:
+        code: ".+"
     
 ms_demo_resource_image:
     pattern: /demo/img/{name}

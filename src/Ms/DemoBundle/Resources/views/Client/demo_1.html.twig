@@ -26,16 +26,10 @@
             <p>Η διαδικτυακή υπηρεσία Slide-show Maker σας δίνει τη δυνατότητα να δημιουργήσετε ένα slide-show από συλλογές φωτογραφιών τις οποίες διατηρείται στο Διαδίκτυο.</p>
             <p>Ακολουθήστε τις οδηγίες παρακάτω και δημιουργήστε δοκιμαστικά την πρώτη σας παρουσίαση.</p>
         </div>
-{#        <a href="{{ path('ms_demo_resource_image_group', {'name': 'Van Gogh Paintings'}) }}">Slideshow</a>#}
     </div>
     
     <div class="container">
         {% if errors %}
-        {#<article id="ms-oauth-error">
-            <h3>Σφάλμα Εξουσιοδότησης</h3>
-            <p>{{ errors[0] }}</p>
-        </article>
-        <hr />#}
         <div class="panel panel-danger">
             <div class="panel-heading"><h3 class="panel-title">Σφάλμα Εξουσιοδότησης</h3></div>
             <div class="panel-body">{{ errors[0] }}</div>
@@ -54,7 +48,7 @@
                 </p>
             </div>
             <div class="panel-body">
-                <form role="form" action="{{ path('ms_demo_resource_image_group_form') }}" method="post">
+                <form role="form" action="{{ path('ms_demo_resource_image_group_form') }}" method="get">
                     <div class="form-group">
                         <label for="photo-service">Υπηρεσία</label>
                         <select id="photo-service" class="form-control">
@@ -67,17 +61,16 @@
                         <input id="photo-album-name" name="name" type="text" class="form-control" placeholder="Τίτλος" />
                     </div>
                     <button type="submit" class="btn btn-default">Δημιουργία Παρουσίασης</button>
+                    <div class="form-group form-inline msdemo-form-supplementary">
+                        <label for="oauth-full-view">Χειροκίνητη ανταλλαγή κωδικού εξουσιοδότησης για τεκμήριο πρόσβασης;</label>
+                        <input id="oauth-full-view" name="oauth-full-view" type="checkbox" class="form-control" />
+                    </div>
                 </form>
+                {% if code|default('') %}
+                <p>Λάβατε τον εξής κωδικό εξουσιοδότησης: {{ code }}</p>
+                <a href="{{ path('ms_demo_exchange_code', {'code': code, 'referer': referer}) }}">Ανταλλάξτε τον κωδικό εξουσιοδότησης για ένα νέο τεκμήριο πρόσβασης.</a>
+                {% endif %}
             </div>
         </div>
     </div>
-
-{#    <a href="{{ url_access_token_full }}">Έκδοση Τεκμηρίου Πρόσβασης - Πλήρης Διαδικασία</a>#}
-{#    <br>#}
-{#    <a href="{{ path('ms_demo_resource_image', {'name': '1'}) }}">Αίτηση για εικόνα 1</a>#}
-{#    <br>#}
-    
-    {#<a href="{{ path('ms_demo_resource_image_group', {'name': 'Van Gogh Paintings'}) }}">Slideshow</a>#}
-
-{#    <p><a href="{{ path('ms_oauth_authentication_user_logout') }}">Αποσύνδεση Ιδιοκτήτη Πόρων</a></p>#}
 {% endblock %}

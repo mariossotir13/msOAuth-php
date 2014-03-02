@@ -22,6 +22,12 @@ class ClientController extends Controller {
     
     /**
      *
+     * @var string
+     */
+    protected static $SESSION_KEY_OAUTH_FULL_VIEW = 'ms_oauth.full_view';
+    
+    /**
+     *
      * @var string[]
      */
     protected static $RESPONSE_HEADERS = array(
@@ -63,10 +69,21 @@ class ClientController extends Controller {
         }
         
         if ($this->oauthMediator->isAuthorizationCodeResponse($request)) {
+            /* @var $session \Symfony\Component\HttpFoundation\Session\Session */
+            $session = $this->get('session');
+            $fullView = (int) $session->get(static::$SESSION_KEY_OAUTH_FULL_VIEW, 0);
+            if ($fullView) {
+                $session->remove(static::$SESSION_KEY_OAUTH_FULL_VIEW);
+                
+                return $this->buildTemplate(array(
+                    'code' => $this->oauthMediator->getAuthorizationCodeFromResponse($request),
+                    'referer' => $this->oauthMediator->getReferer()
+                ));
+            }
+            
             $response = $this->oauthMediator->exchangeAuthorizationCodeForAccessToken(
                 $this->oauthMediator->getAuthorizationCodeFromResponse($request)
             );
-            
             if ($this->oauthMediator->isAccessTokenErrorResponse($response)) {
                 return $this->displayAccessTokenErrorResponse($response);
             }
@@ -75,6 +92,22 @@ class ClientController extends Controller {
         }
         
         return $this->buildTemplate();
+    }
+    
+    /**
+     * 
+     * @param Request $request
+     * @param string $code
+     * @param string $referer
+     * @return Response
+     */
+    public function exchangeCodeForTokenAction(Request $request, $code) {
+        $response = $this->oauthMediator->exchangeAuthorizationCodeForAccessToken($code);
+        if ($this->oauthMediator->isAccessTokenErrorResponse($response)) {
+            return $this->displayAccessTokenErrorResponse($response);
+        }
+
+        return $this->redirect($request->query->get('referer', ''));
     }
     
     /**
@@ -104,12 +137,15 @@ class ClientController extends Controller {
      * @return Response
      */
     public function imageGroupAction(Request $request, $name = 'Van Gogh Paintings') {
+        $session = $this->get('session');
+        $session->set(static::$SESSION_KEY_OAUTH_FULL_VIEW, $request->query->has('oauth-full-view'));
+        
         $accessToken = $this->oauthMediator->getAccessToken();
         if (empty($accessToken)) {
             return $this->oauthMediator->requestAuthorizationCode();
         }
         
-        $name = $request->request->get('name') ?: $name;
+        $name = $request->query->get('name') ?: $name;
         $response = $this->sendResourceAccessRequest('group/image/jpg', $name, $accessToken);
         if ($response->getStatusCode() !== Response::HTTP_OK) {
             return $this->displayAccessTokenErrorResponse($response);
@@ -128,14 +164,16 @@ class ClientController extends Controller {
     
     /**
      * 
-     * @param array $errors
+     * @param array $variables
      * @return void
      */
-    protected function buildTemplate(array $errors = array()) {
+    protected function buildTemplate(array $variables = array()) {
         return $this->render(
             'MsDemoBundle:Client:demo_1.html.twig', 
             array(
-                'errors' => $errors,
+                'code' => isset($variables['code']) ? $variables['code'] : '',
+                'errors' => isset($variables['errors']) ? $variables['errors'] : array(),
+                'referer' => isset($variables['referer']) ? $variables['referer'] : '',
                 'url_access_token_full' => $this->requestGenerator->createAuthorizationRequest(true)
             )
         );
@@ -148,7 +186,9 @@ class ClientController extends Controller {
      */
     protected function displayAccessTokenErrorResponse(Response $response) {
         if ($this->oauthMediator->isUnauthenticatedResponse($response)) {
-            return $this->buildTemplate(array('Bad client credentials.'));
+            return $this->buildTemplate(array(
+                'errors' => array('Bad client credentials.')
+            ));
         }
         
         $jsonContent = $response->getContent();
@@ -159,7 +199,7 @@ class ClientController extends Controller {
             ? ': ' . $content[AccessTokenErrorResponse::ERROR_DESCRIPTION]
             : '';
         
-        return $this->buildTemplate(array($error));
+        return $this->buildTemplate(array('errors' => array($error)));
     }
     
     /**
@@ -173,7 +213,7 @@ class ClientController extends Controller {
             ? ': ' . $request->query->get(AuthorizationErrorResponse::ERROR_DESCRIPTION)
             : '';
         
-        return $this->buildTemplate(array($error));
+        return $this->buildTemplate(array('errors' => array($error)));
     }
     
     /**

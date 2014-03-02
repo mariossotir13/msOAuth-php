@@ -2,6 +2,12 @@
     padding-top: 70px;
 }
 
+.msdemo-form-supplementary {
+    font-size: 12px;
+    font-style: italic;
+    font-weight: normal;
+}
+
 #groupName {
   color: #333;
   font-family: 'Arial Narrow';
